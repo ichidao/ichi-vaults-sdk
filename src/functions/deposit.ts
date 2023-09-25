@@ -1,0 +1,210 @@
+import { ContractTransaction, Overrides } from '@ethersproject/contracts';
+import { JsonRpcProvider } from '@ethersproject/providers';
+import { MaxUint256 } from '@ethersproject/constants';
+import { BigNumber } from 'ethers';
+import { getDepositGuardContract, getERC20Contract, getIchiVaultContract } from '../contracts';
+import parseBigInt from '../utils/parseBigInt';
+import { Aam, SupportedChainId } from '../types';
+import calculateGasMargin from '../types/calculateGasMargin';
+import formatBigInt from '../utils/formatBigInt';
+import { getIchiVaultInfo } from './vault';
+import addressConfig from '../utils/config/addresses';
+
+export async function isTokenAllowed(
+  tokenIdx: 0 | 1,
+  vaultAddress: string,
+  jsonProvider: JsonRpcProvider,
+  aam: Aam,
+): Promise<boolean> {
+  const { chainId } = jsonProvider.network;
+  if (!Object.values(SupportedChainId).includes(chainId)) {
+    throw new Error(`Unsupported chainId: ${chainId}`);
+  }
+
+  const vault = await getIchiVaultInfo(chainId, aam, vaultAddress);
+
+  if (!vault) throw new Error(`Vault not found [${chainId}, ${vaultAddress}]`);
+
+  const tokenAllowed = vault[tokenIdx === 0 ? 'allowTokenA' : 'allowTokenB'];
+
+  return tokenAllowed;
+}
+
+export async function isDepositTokenApproved(
+  accountAddress: string,
+  tokenIdx: 0 | 1,
+  amount: string | number,
+  vaultAddress: string,
+  jsonProvider: JsonRpcProvider,
+  aam: Aam,
+): Promise<boolean> {
+  const { chainId } = jsonProvider.network;
+  if (!Object.values(SupportedChainId).includes(chainId)) {
+    throw new Error(`Unsupported chainId: ${chainId}`);
+  }
+
+  const signer = jsonProvider.getSigner(accountAddress);
+  const vault = await getIchiVaultInfo(chainId, aam, vaultAddress);
+
+  if (!vault) throw new Error(`Vault not found [${chainId}, ${vaultAddress}]`);
+
+  const token = vault[tokenIdx === 0 ? 'tokenA' : 'tokenB'];
+
+  const tokenContract = getERC20Contract(token, signer);
+  const currentAllowanceBN = await tokenContract.allowance(accountAddress, vaultAddress);
+  const tokenDecimals = await tokenContract.decimals();
+
+  const currentAllowance = +formatBigInt(currentAllowanceBN, +tokenDecimals);
+
+  return currentAllowance !== 0 && currentAllowance >= +(amount ?? 0);
+}
+
+export async function approveDepositToken(
+  accountAddress: string,
+  tokenIdx: 0 | 1,
+  vaultAddress: string,
+  jsonProvider: JsonRpcProvider,
+  aam: Aam,
+  amount?: string | number | BigNumber,
+  overrides?: Overrides,
+): Promise<ContractTransaction> {
+  const { chainId } = jsonProvider.network;
+  if (!Object.values(SupportedChainId).includes(chainId)) {
+    throw new Error(`Unsupported chainId: ${chainId}`);
+  }
+
+  const signer = jsonProvider.getSigner(accountAddress);
+  const vault = await getIchiVaultInfo(chainId, aam, vaultAddress);
+  if (!vault) throw new Error(`Vault not found [${chainId}, ${vaultAddress}]`);
+
+  const token = vault[tokenIdx === 0 ? 'tokenA' : 'tokenB'];
+
+  const tokenContract = getERC20Contract(token, signer);
+  const tokenDecimals = await tokenContract.decimals();
+
+  // eslint-disable-next-line no-nested-ternary
+  const amountBN = amount
+    ? amount instanceof BigNumber
+      ? amount
+      : parseBigInt(amount, +tokenDecimals || 18)
+    : MaxUint256;
+
+  const depositGuardAddress = addressConfig[chainId as SupportedChainId]![aam]?.depositGuardAddress ?? '';
+  const gasLimit =
+    overrides?.gasLimit ?? calculateGasMargin(await tokenContract.estimateGas.approve(depositGuardAddress, amountBN));
+
+  return tokenContract.approve(depositGuardAddress, amountBN, { gasLimit });
+}
+
+export async function getMaxDepositAmount(
+  tokenIdx: 0 | 1,
+  vaultAddress: string,
+  jsonProvider: JsonRpcProvider,
+  aam: Aam,
+): Promise<BigNumber> {
+  const { chainId } = jsonProvider.network;
+  if (!Object.values(SupportedChainId).includes(chainId)) {
+    throw new Error(`Unsupported chainId: ${chainId}`);
+  }
+  const vault = await getIchiVaultInfo(chainId, aam, vaultAddress);
+  if (!vault) throw new Error(`Vault not found [${chainId}, ${vaultAddress}]`);
+
+  const vaultContract = getIchiVaultContract(vaultAddress, jsonProvider);
+
+  const maxDepositAmount = tokenIdx === 0 ? vaultContract.deposit0Max() : vaultContract.deposit1Max();
+
+  return maxDepositAmount;
+}
+
+export async function deposit(
+  accountAddress: string,
+  amount0: string | number | BigNumber,
+  amount1: string | number | BigNumber,
+  vaultAddress: string,
+  jsonProvider: JsonRpcProvider,
+  aam: Aam,
+  percentSlippage = 1,
+  overrides?: Overrides,
+): Promise<ContractTransaction> {
+  const { chainId } = jsonProvider.network;
+  if (!Object.values(SupportedChainId).includes(chainId)) {
+    throw new Error(`Unsupported chainId: ${chainId}`);
+  }
+  const signer = jsonProvider.getSigner(accountAddress);
+  const vaultContract = getIchiVaultContract(vaultAddress, signer);
+  const vault = await getIchiVaultInfo(chainId, aam, vaultAddress);
+  if (!vault) throw new Error(`Vault not found [${chainId}, ${vaultAddress}]`);
+  const vaultDeployerAddress = addressConfig[chainId as SupportedChainId]![aam]?.vaultDeployerAddress ?? '';
+  
+  const token0 = vault.tokenA;
+  const token1 = vault.tokenB;
+  const isToken0Allowed = vault.allowTokenA;
+  const isToken1Allowed = vault.allowTokenB;
+  const token0Contract = getERC20Contract(token0, signer);
+  const token1Contract = getERC20Contract(token1, signer);
+  const token0Decimals = await token0Contract.decimals();
+  const token1Decimals = await token1Contract.decimals();
+  const amount0BN = amount0 instanceof BigNumber ? amount0 : parseBigInt(amount0, +token0Decimals);
+  const amount1BN = amount1 instanceof BigNumber ? amount1 : parseBigInt(amount1, +token1Decimals);
+  if (!isToken0Allowed && amount0BN > BigNumber.from(0)){
+    throw new Error(`Deposit of token0 is not allowed: ${chainId}, ${vaultAddress}`);
+  }
+  if (!isToken1Allowed && amount1BN > BigNumber.from(0)){
+    throw new Error(`Deposit of token1 is not allowed: ${chainId}, ${vaultAddress}`);
+  }
+  let depositAmount = amount0BN;
+  let depositToken = token0;
+  let params: Parameters<typeof vaultContract.deposit> = [amount0BN, BigNumber.from(0), accountAddress];
+  if (amount1BN > BigNumber.from(0)){
+    depositAmount = amount1BN;
+    depositToken = token1;
+    params = [BigNumber.from(0), amount1BN, accountAddress];
+  }
+
+  // obtain Deposit Guard contract
+  const depositGuardAddress = addressConfig[chainId as SupportedChainId]![aam]?.depositGuardAddress ?? '';
+  const depositGuardContract = getDepositGuardContract(
+    depositGuardAddress,
+    signer
+  );
+
+  // the first call: get estimated LP amount
+  let lpAmount = await depositGuardContract.callStatic.forwardDepositToICHIVault(
+    vaultAddress,
+    vaultDeployerAddress,
+    depositToken,
+    depositAmount,
+    BigNumber.from(0),
+    accountAddress
+  );
+
+  // reduce the estimated LP amount by an acceptable slippage %, for example 1%
+  if (percentSlippage < 0.01) throw new Error('Slippage parameter is less than 0.01%.')
+  if (percentSlippage > 100) throw new Error('Slippage parameter is more than 100%.')
+  lpAmount = lpAmount.mul(Math.floor((100-percentSlippage)*1000)).div(100000);
+
+  const gasLimit = overrides?.gasLimit ?? 
+    calculateGasMargin(await depositGuardContract.estimateGas.forwardDepositToICHIVault(
+      vaultAddress,
+      vaultDeployerAddress,
+      depositToken, 
+      depositAmount,
+      lpAmount,
+      accountAddress, 
+    ));
+
+  // the second call: actual deposit transaction
+  const tx = await depositGuardContract.forwardDepositToICHIVault(
+    vaultAddress,
+    vaultDeployerAddress,
+    depositToken, 
+    depositAmount,
+    lpAmount,
+    accountAddress, 
+    {
+      ...overrides, gasLimit
+    }
+  );
+
+  return tx;
+}
