@@ -135,7 +135,7 @@ export async function deposit(
   const vault = await getIchiVaultInfo(chainId, dex, vaultAddress);
   if (!vault) throw new Error(`Vault not found [${chainId}, ${vaultAddress}]`);
   const vaultDeployerAddress = addressConfig[chainId as SupportedChainId]![dex]?.vaultDeployerAddress ?? '';
-  
+
   const token0 = vault.tokenA;
   const token1 = vault.tokenB;
   const isToken0Allowed = vault.allowTokenA;
@@ -146,16 +146,17 @@ export async function deposit(
   const token1Decimals = await token1Contract.decimals();
   const amount0BN = amount0 instanceof BigNumber ? amount0 : parseBigInt(amount0, +token0Decimals);
   const amount1BN = amount1 instanceof BigNumber ? amount1 : parseBigInt(amount1, +token1Decimals);
-  if (!isToken0Allowed && amount0BN > BigNumber.from(0)){
+  if (!isToken0Allowed && amount0BN > BigNumber.from(0)) {
     throw new Error(`Deposit of token0 is not allowed: ${chainId}, ${vaultAddress}`);
   }
-  if (!isToken1Allowed && amount1BN > BigNumber.from(0)){
+  if (!isToken1Allowed && amount1BN > BigNumber.from(0)) {
     throw new Error(`Deposit of token1 is not allowed: ${chainId}, ${vaultAddress}`);
   }
   let depositAmount = amount0BN;
   let depositToken = token0;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   let params: Parameters<typeof vaultContract.deposit> = [amount0BN, BigNumber.from(0), accountAddress];
-  if (amount1BN > BigNumber.from(0)){
+  if (amount1BN > BigNumber.from(0)) {
     depositAmount = amount1BN;
     depositToken = token1;
     params = [BigNumber.from(0), amount1BN, accountAddress];
@@ -163,10 +164,7 @@ export async function deposit(
 
   // obtain Deposit Guard contract
   const depositGuardAddress = addressConfig[chainId as SupportedChainId]![dex]?.depositGuardAddress ?? '';
-  const depositGuardContract = getDepositGuardContract(
-    depositGuardAddress,
-    signer
-  );
+  const depositGuardContract = getDepositGuardContract(depositGuardAddress, signer);
 
   // the first call: get estimated LP amount
   let lpAmount = await depositGuardContract.callStatic.forwardDepositToICHIVault(
@@ -175,35 +173,39 @@ export async function deposit(
     depositToken,
     depositAmount,
     BigNumber.from(0),
-    accountAddress
+    accountAddress,
   );
 
   // reduce the estimated LP amount by an acceptable slippage %, for example 1%
-  if (percentSlippage < 0.01) throw new Error('Slippage parameter is less than 0.01%.')
-  if (percentSlippage > 100) throw new Error('Slippage parameter is more than 100%.')
-  lpAmount = lpAmount.mul(Math.floor((100-percentSlippage)*1000)).div(100000);
+  if (percentSlippage < 0.01) throw new Error('Slippage parameter is less than 0.01%.');
+  if (percentSlippage > 100) throw new Error('Slippage parameter is more than 100%.');
+  lpAmount = lpAmount.mul(Math.floor((100 - percentSlippage) * 1000)).div(100000);
 
-  const gasLimit = overrides?.gasLimit ?? 
-    calculateGasMargin(await depositGuardContract.estimateGas.forwardDepositToICHIVault(
-      vaultAddress,
-      vaultDeployerAddress,
-      depositToken, 
-      depositAmount,
-      lpAmount,
-      accountAddress, 
-    ));
+  const gasLimit =
+    overrides?.gasLimit ??
+    calculateGasMargin(
+      await depositGuardContract.estimateGas.forwardDepositToICHIVault(
+        vaultAddress,
+        vaultDeployerAddress,
+        depositToken,
+        depositAmount,
+        lpAmount,
+        accountAddress,
+      ),
+    );
 
   // the second call: actual deposit transaction
   const tx = await depositGuardContract.forwardDepositToICHIVault(
     vaultAddress,
     vaultDeployerAddress,
-    depositToken, 
+    depositToken,
     depositAmount,
     lpAmount,
-    accountAddress, 
+    accountAddress,
     {
-      ...overrides, gasLimit
-    }
+      ...overrides,
+      gasLimit,
+    },
   );
 
   return tx;

@@ -20,7 +20,7 @@ import {
   getTotalSupply,
   getUserAmounts,
   getUserBalance,
-  getTokenDecimals
+  getTokenDecimals,
 } from '../index';
 import formatBigInt from '../utils/formatBigInt';
 import parseBigInt from '../utils/parseBigInt';
@@ -31,9 +31,9 @@ const provider = new Web3Provider(hdWalletProvider, { chainId: SupportedChainId.
 const account = process.env.ACCOUNT!;
 
 const vault = {
-  address: '0x3ac9b3db3350a515c702ba19a001d099d4a5f132', //USDC-wETH not inverted
+  address: '0x3ac9b3db3350a515c702ba19a001d099d4a5f132', // USDC-wETH vault (not inverted)
   chainId: SupportedChainId.polygon,
-  dex: SupportedDex.UniswapV3
+  dex: SupportedDex.UniswapV3,
 };
 
 const iface = new ethers.utils.Interface(ICHIVAULT_ABI);
@@ -72,7 +72,8 @@ describe('Vault', () => {
 
     if (!isAllowed0 && Number(amount0) > 0) return;
     if (!isAllowed1 && Number(amount1) > 0) return;
-    if (parseBigInt(amount0, token0Decimals) > maxDeposit0 || parseBigInt(amount1, token1Decimals) > maxDeposit1) return;
+    if (parseBigInt(amount0, token0Decimals) > maxDeposit0 || parseBigInt(amount1, token1Decimals) > maxDeposit1)
+      return;
 
     const r = await deposit(account, amount0, amount1, vault.address, provider, vault.dex);
     const a = await r.wait();
@@ -134,7 +135,6 @@ describe('Vault', () => {
         expect(formatBigInt(result.shares)).toEqual(share);
       });
   });
-
 });
 
 describe('GraphQL', () => {

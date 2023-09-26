@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 import { getAddress } from '@ethersproject/address';
 import { SignerOrProvider } from '../types';
 import {
@@ -6,7 +7,7 @@ import {
   IchiVault__factory,
   IchiVault,
   DepositGuard__factory,
-  DepositGuard
+  DepositGuard,
 } from '../../abis/types';
 
 function getERC20Contract(address: string, signerOrProvider: SignerOrProvider): ERC20 {
@@ -24,8 +25,4 @@ function getIchiVaultContract(address: string, signerOrProvider: SignerOrProvide
   return IchiVault__factory.connect(address, signerOrProvider);
 }
 
-export {
-  getERC20Contract,
-  getDepositGuardContract,
-  getIchiVaultContract
-};
+export { getERC20Contract, getDepositGuardContract, getIchiVaultContract };

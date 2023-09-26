@@ -15,18 +15,16 @@ const urls: Record<SupportedChainId, dexGraph> = {
     [SupportedDex.UniswapV3]: 'https://api.thegraph.com/subgraphs/name/ichi-org/arbitrum-v1',
   },
   [SupportedChainId.mainnet]: {
-    [SupportedDex.UniswapV3]: 'https://api.thegraph.com/subgraphs/name/ichi-org/v1',
+    [SupportedDex.UniswapV3]: 'https://api.thegraph.com/subgraphs/name/ichi-org/mainnet-v1',
   },
   [SupportedChainId.polygon]: {
     [SupportedDex.UniswapV3]: 'https://api.thegraph.com/subgraphs/name/ichi-org/polygon-v1',
     [SupportedDex.Retro]: 'https://api.thegraph.com/subgraphs/name/ichi-org/polygon-v1-retro',
   },
   [SupportedChainId.bsc]: {
-    [SupportedDex.Pancakeswap]: 'https://api.thegraph.com/subgraphs/name/ichi-org/bnb-v1-pancakeswap'
+    [SupportedDex.Pancakeswap]: 'https://api.thegraph.com/subgraphs/name/ichi-org/bnb-v1-pancakeswap',
   },
 };
-
-// const APP_URL = 'https://app.ichi.org';
 
 const vaultQuery = gql`
   query ($vaultAddress: String!) {
@@ -40,6 +38,7 @@ const vaultQuery = gql`
   }
 `;
 
+// eslint-disable-next-line import/prefer-default-export
 export async function getIchiVaultInfo(
   chainId: SupportedChainId,
   dex: SupportedDex,
