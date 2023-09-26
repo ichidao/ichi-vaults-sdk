@@ -126,7 +126,7 @@ const web3Provider = new Web3Provider(YOUR_WEB3_PROVIDER);
 const vaultAddress = "0x3ac9...a5f132"
 const dex = SupportedDex.UniswapV3
 
-const ratio = await isTokenAllowed(
+const isAllowed = await isTokenAllowed(
     0, // token idx can be 0 or 1
     vaultAddress, 
     web3Provider,
@@ -154,7 +154,7 @@ const web3Provider = new Web3Provider(YOUR_WEB3_PROVIDER);
 const vaultAddress = "0x3ac9...a5f132"
 const dex = SupportedDex.UniswapV3
 
-const ratio = await getMaxDepositAmount(
+const maxAmount = await getMaxDepositAmount(
     0, // token idx can be 0 or 1
     vaultAddress, 
     web3Provider,

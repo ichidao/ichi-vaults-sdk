@@ -1,3 +1,4 @@
+/* eslint-disable no-shadow */
 import { Signer } from '@ethersproject/abstract-signer';
 import { Provider } from '@ethersproject/providers';
 import { BigNumber } from 'ethers';
@@ -19,7 +20,7 @@ export enum SupportedDex {
 
 export const ichiVaultDecimals = 18;
 
-export type TotalAmountsBN = [BigNumber, BigNumber] & {total0: BigNumber, total1: BigNumber};
-export type UserAmountsBN = [BigNumber, BigNumber] & {amount0: BigNumber, amount1: BigNumber};
-export type TotalAmounts = [string, string] & {total0: string, total1: string};
-export type UserAmounts = [string, string] & {amount0: string, amount1: string};
+export type TotalAmountsBN = [BigNumber, BigNumber] & { total0: BigNumber; total1: BigNumber };
+export type UserAmountsBN = [BigNumber, BigNumber] & { amount0: BigNumber; amount1: BigNumber };
+export type TotalAmounts = [string, string] & { total0: string; total1: string };
+export type UserAmounts = [string, string] & { amount0: string; amount1: string };
