@@ -131,7 +131,6 @@ export async function deposit(
     throw new Error(`Unsupported chainId: ${chainId}`);
   }
   const signer = jsonProvider.getSigner(accountAddress);
-  const vaultContract = getIchiVaultContract(vaultAddress, signer);
   const vault = await getIchiVaultInfo(chainId, dex, vaultAddress);
   if (!vault) throw new Error(`Vault not found [${chainId}, ${vaultAddress}]`);
   const vaultDeployerAddress = addressConfig[chainId as SupportedChainId]![dex]?.vaultDeployerAddress ?? '';
@@ -154,12 +153,9 @@ export async function deposit(
   }
   let depositAmount = amount0BN;
   let depositToken = token0;
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  let params: Parameters<typeof vaultContract.deposit> = [amount0BN, BigNumber.from(0), accountAddress];
   if (amount1BN > BigNumber.from(0)) {
     depositAmount = amount1BN;
     depositToken = token1;
-    params = [BigNumber.from(0), amount1BN, accountAddress];
   }
 
   // obtain Deposit Guard contract
