@@ -130,7 +130,7 @@ const ratio = await isTokenAllowed(
     0, // token idx can be 0 or 1
     vaultAddress, 
     web3Provider,
-    dex,
+    dex
 )
 
 ```
@@ -158,7 +158,7 @@ const ratio = await getMaxDepositAmount(
     0, // token idx can be 0 or 1
     vaultAddress, 
     web3Provider,
-    dex,
+    dex
 )
 
 ```
@@ -197,7 +197,7 @@ const txnDetails = await deposit(
     vaultAddress, 
     web3Provider,
     dex,
-    2 // slippage (percents)
+    1 // acceptable slippage (percents)
 )
 ```
 
@@ -226,7 +226,7 @@ const shares: string = await getUserBalance(
     accountAddress,
     vaultAddress, 
     web3Provider
-    dex,
+    dex
 )
 
 // - or - 
@@ -418,6 +418,3 @@ enum SupportedDex {
   Pancakeswap,
 }
 ```
-
-
-This version of `@ichivaults/sdk` is still in beta, so unfortunately documentation is pretty sparse at the moment. Comments and the source code itself are the best ways to get an idea of what's going on. More thorough documentation is a priority as development continues!
