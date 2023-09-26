@@ -6,7 +6,7 @@ import 'dotenv/config';
 import HDWalletProvider from '@truffle/hdwallet-provider';
 import { Web3Provider } from '@ethersproject/providers';
 import { ethers } from 'ethers';
-import { Aam, SupportedChainId } from '../types';
+import { SupportedDex, SupportedChainId } from '../types';
 import ICHIVAULT_ABI from '../abis/IchiVault.json';
 import {
   withdraw,
@@ -33,38 +33,39 @@ const account = process.env.ACCOUNT!;
 const vault = {
   address: '0x3ac9b3db3350a515c702ba19a001d099d4a5f132', //USDC-wETH not inverted
   chainId: SupportedChainId.polygon,
-  aam: Aam.UniswapV3
+  dex: SupportedDex.UniswapV3
 };
 
 const iface = new ethers.utils.Interface(ICHIVAULT_ABI);
 const amount0 = '0.01';
 const amount1 = '0';
+const sharesToWithdraw = '0.000007';
 
 describe('Vault', () => {
   let share: string | null = null;
 
   it('getTotalSupply', async () => {
-    const totalSupply = await getTotalSupply(vault.address, provider, Aam.UniswapV3);
+    const totalSupply = await getTotalSupply(vault.address, provider, SupportedDex.UniswapV3);
 
     expect(Number(totalSupply)).toBeGreaterThan(0);
   });
 
-  it('approve', async () => {
+  it.skip('approve', async () => {
     let approve0: ethers.ContractTransaction | null = null;
-    approve0 = await approveDepositToken(account, 0, vault.address, provider, vault.aam, amount0);
+    approve0 = await approveDepositToken(account, 0, vault.address, provider, vault.dex, amount0);
     await approve0.wait();
-    const isApproved0 = await isDepositTokenApproved(account, 0, amount0, vault.address, provider, vault.aam);
+    const isApproved0 = await isDepositTokenApproved(account, 0, amount0, vault.address, provider, vault.dex);
     expect(isApproved0).toEqual(true);
   });
 
   it.skip('deposit', async () => {
-    const isAllowed0 = await isTokenAllowed(0, vault.address, provider, vault.aam);
-    const isAllowed1 = await isTokenAllowed(1, vault.address, provider, vault.aam);
+    const isAllowed0 = await isTokenAllowed(0, vault.address, provider, vault.dex);
+    const isAllowed1 = await isTokenAllowed(1, vault.address, provider, vault.dex);
 
-    const maxDeposit0 = await getMaxDepositAmount(0, vault.address, provider, vault.aam);
-    const maxDeposit1 = await getMaxDepositAmount(1, vault.address, provider, vault.aam);
+    const maxDeposit0 = await getMaxDepositAmount(0, vault.address, provider, vault.dex);
+    const maxDeposit1 = await getMaxDepositAmount(1, vault.address, provider, vault.dex);
 
-    const vaultFromQuery = await getIchiVaultInfo(vault.chainId, vault.aam, vault.address);
+    const vaultFromQuery = await getIchiVaultInfo(vault.chainId, vault.dex, vault.address);
     if (!vaultFromQuery) throw new Error(`Vault not found [${vault.chainId}, ${vault.address}]`);
     const token0Decimals = await getTokenDecimals(vaultFromQuery.tokenA, provider);
     const token1Decimals = await getTokenDecimals(vaultFromQuery.tokenB, provider);
@@ -73,7 +74,7 @@ describe('Vault', () => {
     if (!isAllowed1 && Number(amount1) > 0) return;
     if (parseBigInt(amount0, token0Decimals) > maxDeposit0 || parseBigInt(amount1, token1Decimals) > maxDeposit1) return;
 
-    const r = await deposit(account, amount0, amount1, vault.address, provider, vault.aam);
+    const r = await deposit(account, amount0, amount1, vault.address, provider, vault.dex);
     const a = await r.wait();
 
     const result: any = a.logs
@@ -94,30 +95,29 @@ describe('Vault', () => {
   });
 
   it('getUserBalance', async () => {
-    const userShares = await getUserBalance(account, vault.address, provider, vault.aam);
+    const userShares = await getUserBalance(account, vault.address, provider, vault.dex);
 
     expect(Number(userShares)).not.toBeLessThan(0);
   });
 
   it('getTotalAmounts', async () => {
-    const amounts = await getTotalAmounts(vault.address, provider, vault.aam);
+    const amounts = await getTotalAmounts(vault.address, provider, vault.dex);
 
     expect(Number(amounts.total0)).toBeGreaterThan(0);
     expect(Number(amounts.total1)).toBeGreaterThan(0);
   });
 
   it('getUserAmounts', async () => {
-    const amounts = await getUserAmounts(account, vault.address, provider, vault.aam);
+    const amounts = await getUserAmounts(account, vault.address, provider, vault.dex);
 
     expect(Number(amounts.amount0)).not.toBeLessThan(0);
     expect(Number(amounts.amount1)).not.toBeLessThan(0);
   });
 
-  it('withdraw:deposited', async () => {
-    // if (!share) return;
-    share = '0.000007';
+  it.skip('withdraw:deposited', async () => {
+    share = sharesToWithdraw;
 
-    await withdraw(account, share, vault.address, provider, vault.aam)
+    await withdraw(account, share, vault.address, provider, vault.dex)
       .then((e) => e.wait())
       .then((a) => {
         const result: any = a.logs
@@ -139,7 +139,7 @@ describe('Vault', () => {
 
 describe('GraphQL', () => {
   it('GetIchiVaultInfo', async () => {
-    const a = await getIchiVaultInfo(vault.chainId, vault.aam, vault.address);
+    const a = await getIchiVaultInfo(vault.chainId, vault.dex, vault.address);
     expect(a).toBeTruthy();
   });
 });

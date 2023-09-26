@@ -1,6 +1,6 @@
-![Deifedge Logo](https://app.defiedge.io/favicon.png)
-# @ichivault/sdk
-![MIT License](https://badgen.net/badge/license/MIT/blue) ![minified gzipped size](https://badgen.net/bundlephobia/minzip/@ichivault/sdk@0.0.1-a/)
+![Ichivaults Logo](https://ichi.org/static/img_logo_ichi_black-1c38d8d8e04542b1421ef1a1b2169f57.svg)
+# @ichidao/ichi-vaults-sdk
+![MIT License](https://badgen.net/badge/license/MIT/blue)
 
 This sdk contains collection of functions to interact with IchiVault's smart contract.
 
@@ -25,11 +25,11 @@ This sdk contains collection of functions to interact with IchiVault's smart con
 ## Installation
 Install with
 ```bash
-yarn add @ichivaults/sdk
+yarn add @ichidao/ichi-vaults-sdk
 ```
 or
 ```bash
-npm install @ichivaults/sdk
+npm install @ichidao/ichi-vaults-sdk
 ```
 
 ## Usage
@@ -39,24 +39,24 @@ npm install @ichivaults/sdk
 
 | param | type |  default | required
 | -------- | -------- | -------- | --------
-| userAddress   | string | - | true
+| accountAddress   | string | - | true
 | tokenIdx           | 0 \| 1 | - | true
 | amount   | string \| number, | - | true |
-| strategyAddress   | string | - | true |
+| vaultAddress   | string | - | true |
 | jsonProvider      | [JsonRpcProvider](https://github.com/ethers-io/ethers.js/blob/f97b92bbb1bde22fcc44100af78d7f31602863ab/packages/providers/src.ts/json-rpc-provider.ts#L393) | - | true
-| aam   | Aam | - | true |
+| dex   | SupportedDex | - | true |
 
 <br/>
 
 ```typescript
 import { Web3Provider } from '@ethersproject/providers';
-import { isDepositTokenApproved } from '@ichivaults/sdk';
+import { isDepositTokenApproved, SupportedDex } from '@ichidao/ichi-vaults-sdk';
 
 const web3Provider = new Web3Provider(YOUR_WEB3_PROVIDER);
 const vaultAddress = "0x3ac9...a5f132"
 const accountAddress = "0xaaaa...aaaaaa"
 const amount = 100
-const aam = Aam.UniswapV3
+const dex = SupportedDex.UniswapV3
 
 const isToken0Approved: boolean = await isDepositTokenApproved(
     accountAddress,
@@ -64,7 +64,7 @@ const isToken0Approved: boolean = await isDepositTokenApproved(
     amount,
     vaultAddress, 
     web3Provider,
-    aam
+    dex
 )
 ```
 
@@ -76,7 +76,7 @@ const isToken0Approved: boolean = await isDepositTokenApproved(
 | tokenIdx           | 0 \| 1 | - | true
 | vaultAddress   | string | - | true |
 | jsonProvider      | [JsonRpcProvider](https://github.com/ethers-io/ethers.js/blob/f97b92bbb1bde22fcc44100af78d7f31602863ab/packages/providers/src.ts/json-rpc-provider.ts#L393) | - | true
-| aam   | Aam | - | true | 
+| dex   | SupportedDex | - | true | 
 | amount   | string \| number | undefined | false | 
 | overrides         | [Overrides](https://github.com/ethers-io/ethers.js/blob/f97b92bbb1bde22fcc44100af78d7f31602863ab/packages/contracts/lib/index.d.ts#L7)  | undefined | false
 
@@ -84,20 +84,20 @@ const isToken0Approved: boolean = await isDepositTokenApproved(
 
 ```typescript
 import { Web3Provider } from '@ethersproject/providers';
-import { approveDepositToken } from '@ichivaults/sdk';
+import { approveDepositToken, SupportedDex } from '@ichidao/ichi-vaults-sdk';
 
 const web3Provider = new Web3Provider(YOUR_WEB3_PROVIDER);
 const vaultAddress = "0x3ac9...a5f132"
 const accountAddress = "0xaaaa...aaaaaa"
 const amount = 100
-const aam = Aam.UniswapV3
+const dex = SupportedDex.UniswapV3
 
-const txnDetails = await approveStrategyToken(
+const txnDetails = await approveDepositToken(
     accountAddress, 
     0, // token idx can be 0 or 1
     vaultAddress, 
     web3Provider,
-    aam,
+    dex,
     amount // (optional)
 );
 
@@ -114,23 +114,23 @@ await txnDetails.wait();
 | tokenIdx           | 0 \| 1 | - | true
 | vaultAddress   | string | - | true |
 | jsonProvider      | [JsonRpcProvider](https://github.com/ethers-io/ethers.js/blob/f97b92bbb1bde22fcc44100af78d7f31602863ab/packages/providers/src.ts/json-rpc-provider.ts#L393) | - | true
-| aam   | Aam | - | true | 
+| dex   | SupportedDex | - | true | 
 
 <br/>
 
 ```typescript
 import { Web3Provider } from '@ethersproject/providers';
-import { isTokenAllowed } from '@ichivaults/sdk';
+import { isTokenAllowed, SupportedDex } from '@ichidao/ichi-vaults-sdk';
 
 const web3Provider = new Web3Provider(YOUR_WEB3_PROVIDER);
 const vaultAddress = "0x3ac9...a5f132"
-const aam = Aam.UniswapV3
+const dex = SupportedDex.UniswapV3
 
 const ratio = await isTokenAllowed(
     0, // token idx can be 0 or 1
     vaultAddress, 
     web3Provider,
-    aam,
+    dex,
 )
 
 ```
@@ -142,28 +142,28 @@ const ratio = await isTokenAllowed(
 | tokenIdx           | 0 \| 1 | - | true
 | vaultAddress   | string | - | true |
 | jsonProvider      | [JsonRpcProvider](https://github.com/ethers-io/ethers.js/blob/f97b92bbb1bde22fcc44100af78d7f31602863ab/packages/providers/src.ts/json-rpc-provider.ts#L393) | - | true
-| aam   | Aam | - | true | 
+| dex   | SupportedDex | - | true | 
 
 <br/>
 
 ```typescript
 import { Web3Provider } from '@ethersproject/providers';
-import { getMaxDepositAmount } from '@ichivaults/sdk';
+import { getMaxDepositAmount, SupportedDex } from '@ichidao/ichi-vaults-sdk';
 
 const web3Provider = new Web3Provider(YOUR_WEB3_PROVIDER);
 const vaultAddress = "0x3ac9...a5f132"
-const aam = Aam.UniswapV3
+const dex = SupportedDex.UniswapV3
 
 const ratio = await getMaxDepositAmount(
     0, // token idx can be 0 or 1
     vaultAddress, 
     web3Provider,
-    aam,
+    dex,
 )
 
 ```
 
-#### 4. `deposit()`
+#### 5. `deposit()`
 
 | param | type |  default | required
 | -------- | -------- | -------- | --------
@@ -172,7 +172,7 @@ const ratio = await getMaxDepositAmount(
 | amount1           | string \| number | - | true
 | vaultAddress   | string | - | true 
 | jsonProvider      | [JsonRpcProvider](https://github.com/ethers-io/ethers.js/blob/f97b92bbb1bde22fcc44100af78d7f31602863ab/packages/providers/src.ts/json-rpc-provider.ts#L393) | - | true
-| aam   | Aam | - | true 
+| dex   | SupportedDex | - | true 
 | percentSlippage   | number | 1 | false 
 | overrides         | [Overrides](https://github.com/ethers-io/ethers.js/blob/f97b92bbb1bde22fcc44100af78d7f31602863ab/packages/contracts/lib/index.d.ts#L7)  | undefined | false
 
@@ -180,11 +180,11 @@ const ratio = await getMaxDepositAmount(
 
 ```typescript
 import { Web3Provider } from '@ethersproject/providers';
-import { deposit } from '@ichivaults/sdk';
+import { deposit, SupportedDex } from '@ichidao/ichi-vaults-sdk';
 
 const web3Provider = new Web3Provider(YOUR_WEB3_PROVIDER);
 const vaultAddress = "0x3ac9...a5f132"
-const aam = Aam.UniswapV3
+const dex = SupportedDex.UniswapV3
 const accountAddress = "0xaaaa...aaaaaa"
 
 const amount0 = 100
@@ -196,37 +196,37 @@ const txnDetails = await deposit(
     amount1, // can be 0 when only depositing amount0
     vaultAddress, 
     web3Provider,
-    aam,
+    dex,
     2 // slippage (percents)
 )
 ```
 
-#### 5. `getUserBalance()`
+#### 6. `getUserBalance()`
 
 | param | type |  default | required
 | -------- | -------- | -------- | --------
 | accountAddress   | string | - | true |
 | vaultAddress   | string | - | true |
 | jsonProvider      | [JsonRpcProvider](https://github.com/ethers-io/ethers.js/blob/f97b92bbb1bde22fcc44100af78d7f31602863ab/packages/providers/src.ts/json-rpc-provider.ts#L393) | - | true
-| aam   | Aam | - | true 
+| dex   | SupportedDex | - | true 
 | raw   | true | undefined | false | 
 
 <br/>
 
 ```typescript
 import { Web3Provider } from '@ethersproject/providers';
-import { getUserBalance } from '@ichivaults/sdk';
+import { getUserBalance, SupportedDex } from '@ichidao/ichi-vaults-sdk';
 
 const web3Provider = new Web3Provider(YOUR_WEB3_PROVIDER);
 const vaultAddress = "0x3ac9...a5f132"
-const aam = Aam.UniswapV3
+const dex = SupportedDex.UniswapV3
 const accountAddress = "0xaaaa...aaaaaa"
 
 const shares: string = await getUserBalance(
     accountAddress,
     vaultAddress, 
     web3Provider
-    aam,
+    dex,
 )
 
 // - or - 
@@ -235,37 +235,37 @@ const sharesBN: BigNumber = await getUserBalance(
     accountAddress,
     vaultAddress, 
     web3Provider
-    aam,
+    dex,
     true
 )
 ```
 
-#### 6. `getUserAmounts()`
+#### 7. `getUserAmounts()`
 
 | param | type |  default | required
 | -------- | -------- | -------- | --------
 | accountAddress   | string | - | true |
 | vaultAddress   | string | - | true |
 | jsonProvider      | [JsonRpcProvider](https://github.com/ethers-io/ethers.js/blob/f97b92bbb1bde22fcc44100af78d7f31602863ab/packages/providers/src.ts/json-rpc-provider.ts#L393) | - | true
-| aam   | Aam | - | true 
+| dex   | SupportedDex | - | true 
 | raw   | true | undefined | false | 
 
 <br/>
 
 ```typescript
 import { Web3Provider } from '@ethersproject/providers';
-import { getUserAmounts } from '@ichivaults/sdk';
+import { getUserAmounts, SupportedDex } from '@ichidao/ichi-vaults-sdk';
 
 const web3Provider = new Web3Provider(YOUR_WEB3_PROVIDER);
 const vaultAddress = "0x3ac9...a5f132"
-const aam = Aam.UniswapV3
+const dex = SupportedDex.UniswapV3
 const accountAddress = "0xaaaa...aaaaaa"
 
 const amounts: [string, string] & {amount0: string, amount1: string} = await getUserAmounts(
     accountAddress,
     vaultAddress, 
     web3Provider
-    aam,
+    dex,
 )
 
 // - or - 
@@ -274,35 +274,35 @@ const amountsBN: [BigNumber, BigNumber] & {amount0: BigNumber, amount1: BigNumbe
     accountAddress,
     vaultAddress, 
     web3Provider
-    aam,
+    dex,
     true
 )
 ```
 
-#### 7. `getTotalSupply()`
+#### 8. `getTotalSupply()`
 
 | param | type |  default | required
 | -------- | -------- | -------- | --------
 | vaultAddress   | string | - | true |
 | jsonProvider      | [JsonRpcProvider](https://github.com/ethers-io/ethers.js/blob/f97b92bbb1bde22fcc44100af78d7f31602863ab/packages/providers/src.ts/json-rpc-provider.ts#L393) | - | true
-| aam   | Aam | - | true 
+| dex   | SupportedDex | - | true 
 | raw   | true | undefined | false | 
 
 <br/>
 
 ```typescript
 import { Web3Provider } from '@ethersproject/providers';
-import { getTotalSupply } from '@ichivaults/sdk';
+import { getTotalSupply, SupportedDex } from '@ichidao/ichi-vaults-sdk';
 
 const web3Provider = new Web3Provider(YOUR_WEB3_PROVIDER);
 const vaultAddress = "0x3ac9...a5f132"
-const aam = Aam.UniswapV3
+const dex = SupportedDex.UniswapV3
 
 const shares: string = await getTotalSupply(
     accountAddress,
     vaultAddress, 
     web3Provider
-    aam,
+    dex,
 )
 
 // - or - 
@@ -311,36 +311,36 @@ const sharesBN: BigNumber = await getTotalSupply(
     accountAddress,
     vaultAddress, 
     web3Provider
-    aam,
+    dex,
     true
 )
 ```
 
-#### 8. `getTotalAmounts()`
+#### 9. `getTotalAmounts()`
 
 | param | type |  default | required
 | -------- | -------- | -------- | --------
 | vaultAddress   | string | - | true |
 | jsonProvider      | [JsonRpcProvider](https://github.com/ethers-io/ethers.js/blob/f97b92bbb1bde22fcc44100af78d7f31602863ab/packages/providers/src.ts/json-rpc-provider.ts#L393) | - | true
-| aam   | Aam | - | true 
+| dex   | SupportedDex | - | true 
 | raw   | true | undefined | false | 
 
 <br/>
 
 ```typescript
 import { Web3Provider } from '@ethersproject/providers';
-import { getTotalAmounts } from '@ichivaults/sdk';
+import { getTotalAmounts, SupportedDex } from '@ichidao/ichi-vaults-sdk';
 
 const web3Provider = new Web3Provider(YOUR_WEB3_PROVIDER);
 const vaultAddress = "0x3ac9...a5f132"
-const aam = Aam.UniswapV3
+const dex = SupportedDex.UniswapV3
 const accountAddress = "0xaaaa...aaaaaa"
 
 const amounts: [string, string] & {total0: string, total1: string} = await getTotalAmounts(
     accountAddress,
     vaultAddress, 
     web3Provider
-    aam,
+    dex,
 )
 
 // - or - 
@@ -349,12 +349,12 @@ const amountsBN: [BigNumber, BigNumber] & {total0: BigNumber, total1: BigNumber}
     accountAddress,
     vaultAddress, 
     web3Provider
-    aam,
+    dex,
     true
 )
 ```
 
-#### 9. `withdraw()`
+#### 10. `withdraw()`
 
 | param | type |  default | required
 | -------- | -------- | -------- | --------
@@ -362,25 +362,25 @@ const amountsBN: [BigNumber, BigNumber] & {total0: BigNumber, total1: BigNumber}
 | shares           | string \| number | - | true
 | vaultAddress   | string | - | true 
 | jsonProvider      | [JsonRpcProvider](https://github.com/ethers-io/ethers.js/blob/f97b92bbb1bde22fcc44100af78d7f31602863ab/packages/providers/src.ts/json-rpc-provider.ts#L393) | - | true
-| aam   | Aam | - | true 
+| dex   | SupportedDex | - | true 
 | overrides         | [Overrides](https://github.com/ethers-io/ethers.js/blob/f97b92bbb1bde22fcc44100af78d7f31602863ab/packages/contracts/lib/index.d.ts#L7)  | undefined | false
 
 <br/>
 
 ```typescript
 import { Web3Provider } from '@ethersproject/providers';
-import { getUserBalance, withdraw } from '@defiedge/sdk';
+import { getUserBalance, withdraw, SupportedDex } from '@ichidao/ichi-vaults-sdk';
 
 const web3Provider = new Web3Provider(YOUR_WEB3_PROVIDER);
 const vaultAddress = "0x3ac9...a5f132"
-const aam = Aam.UniswapV3
+const dex = SupportedDex.UniswapV3
 const accountAddress = "0xaaaa...aaaaaa"
 
 const totalUserShares: string = await getUserBalance(
     accountAddress,
     vaultAddress, 
     web3Provider
-    aam,
+    dex,
 )
 
 let shares = Number(totalUserShare) * 0.5 // 50% of user deshare balance
@@ -390,7 +390,7 @@ const txnDetails = await withdraw(
     shares, 
     vaultAddress, 
     web3Provider,
-    aam
+    dex
 )
 ```
 
@@ -409,10 +409,10 @@ enum SupportedChainId {
 }
 ```
 
-### Aam
+### SupportedDex
 
 ```typescript
-enum Aam {
+enum SupportedDex {
   UniswapV3,
   Retro,
   Pancakeswap,

@@ -5,7 +5,7 @@ import { JsonRpcProvider } from '@ethersproject/providers';
 import { BigNumber } from 'ethers';
 import { getIchiVaultContract } from '../contracts';
 import parseBigInt from '../utils/parseBigInt';
-import { SupportedChainId, Aam } from '../types';
+import { SupportedChainId, SupportedDex } from '../types';
 import calculateGasMargin from '../types/calculateGasMargin';
 import { getIchiVaultInfo } from './vault';
 
@@ -14,7 +14,7 @@ export async function withdraw(
   shares: string | number | BigNumber,
   vaultAddress: string,
   jsonProvider: JsonRpcProvider,
-  aam: Aam,
+  dex: SupportedDex,
   overrides?: Overrides,
 ): Promise<ContractTransaction> {
   const { chainId } = jsonProvider.network;
@@ -26,7 +26,7 @@ export async function withdraw(
   const signer = jsonProvider.getSigner(accountAddress);
 
   const vaultContract = getIchiVaultContract(vaultAddress, signer);
-  const vault = await getIchiVaultInfo(chainId, aam, vaultAddress);
+  const vault = await getIchiVaultInfo(chainId, dex, vaultAddress);
   if (!vault) throw new Error(`Vault not found [${chainId}, ${vaultAddress}]`);
 
   const params: Parameters<typeof vaultContract.withdraw> = [

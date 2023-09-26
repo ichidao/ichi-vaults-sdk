@@ -4,7 +4,7 @@ import { MaxUint256 } from '@ethersproject/constants';
 import { BigNumber } from 'ethers';
 import { getDepositGuardContract, getERC20Contract, getIchiVaultContract } from '../contracts';
 import parseBigInt from '../utils/parseBigInt';
-import { Aam, SupportedChainId } from '../types';
+import { SupportedDex, SupportedChainId } from '../types';
 import calculateGasMargin from '../types/calculateGasMargin';
 import formatBigInt from '../utils/formatBigInt';
 import { getIchiVaultInfo } from './vault';
@@ -14,14 +14,14 @@ export async function isTokenAllowed(
   tokenIdx: 0 | 1,
   vaultAddress: string,
   jsonProvider: JsonRpcProvider,
-  aam: Aam,
+  dex: SupportedDex,
 ): Promise<boolean> {
   const { chainId } = jsonProvider.network;
   if (!Object.values(SupportedChainId).includes(chainId)) {
     throw new Error(`Unsupported chainId: ${chainId}`);
   }
 
-  const vault = await getIchiVaultInfo(chainId, aam, vaultAddress);
+  const vault = await getIchiVaultInfo(chainId, dex, vaultAddress);
 
   if (!vault) throw new Error(`Vault not found [${chainId}, ${vaultAddress}]`);
 
@@ -36,7 +36,7 @@ export async function isDepositTokenApproved(
   amount: string | number,
   vaultAddress: string,
   jsonProvider: JsonRpcProvider,
-  aam: Aam,
+  dex: SupportedDex,
 ): Promise<boolean> {
   const { chainId } = jsonProvider.network;
   if (!Object.values(SupportedChainId).includes(chainId)) {
@@ -44,7 +44,7 @@ export async function isDepositTokenApproved(
   }
 
   const signer = jsonProvider.getSigner(accountAddress);
-  const vault = await getIchiVaultInfo(chainId, aam, vaultAddress);
+  const vault = await getIchiVaultInfo(chainId, dex, vaultAddress);
 
   if (!vault) throw new Error(`Vault not found [${chainId}, ${vaultAddress}]`);
 
@@ -64,7 +64,7 @@ export async function approveDepositToken(
   tokenIdx: 0 | 1,
   vaultAddress: string,
   jsonProvider: JsonRpcProvider,
-  aam: Aam,
+  dex: SupportedDex,
   amount?: string | number | BigNumber,
   overrides?: Overrides,
 ): Promise<ContractTransaction> {
@@ -74,7 +74,7 @@ export async function approveDepositToken(
   }
 
   const signer = jsonProvider.getSigner(accountAddress);
-  const vault = await getIchiVaultInfo(chainId, aam, vaultAddress);
+  const vault = await getIchiVaultInfo(chainId, dex, vaultAddress);
   if (!vault) throw new Error(`Vault not found [${chainId}, ${vaultAddress}]`);
 
   const token = vault[tokenIdx === 0 ? 'tokenA' : 'tokenB'];
@@ -89,7 +89,7 @@ export async function approveDepositToken(
       : parseBigInt(amount, +tokenDecimals || 18)
     : MaxUint256;
 
-  const depositGuardAddress = addressConfig[chainId as SupportedChainId]![aam]?.depositGuardAddress ?? '';
+  const depositGuardAddress = addressConfig[chainId as SupportedChainId]![dex]?.depositGuardAddress ?? '';
   const gasLimit =
     overrides?.gasLimit ?? calculateGasMargin(await tokenContract.estimateGas.approve(depositGuardAddress, amountBN));
 
@@ -100,13 +100,13 @@ export async function getMaxDepositAmount(
   tokenIdx: 0 | 1,
   vaultAddress: string,
   jsonProvider: JsonRpcProvider,
-  aam: Aam,
+  dex: SupportedDex,
 ): Promise<BigNumber> {
   const { chainId } = jsonProvider.network;
   if (!Object.values(SupportedChainId).includes(chainId)) {
     throw new Error(`Unsupported chainId: ${chainId}`);
   }
-  const vault = await getIchiVaultInfo(chainId, aam, vaultAddress);
+  const vault = await getIchiVaultInfo(chainId, dex, vaultAddress);
   if (!vault) throw new Error(`Vault not found [${chainId}, ${vaultAddress}]`);
 
   const vaultContract = getIchiVaultContract(vaultAddress, jsonProvider);
@@ -122,7 +122,7 @@ export async function deposit(
   amount1: string | number | BigNumber,
   vaultAddress: string,
   jsonProvider: JsonRpcProvider,
-  aam: Aam,
+  dex: SupportedDex,
   percentSlippage = 1,
   overrides?: Overrides,
 ): Promise<ContractTransaction> {
@@ -132,9 +132,9 @@ export async function deposit(
   }
   const signer = jsonProvider.getSigner(accountAddress);
   const vaultContract = getIchiVaultContract(vaultAddress, signer);
-  const vault = await getIchiVaultInfo(chainId, aam, vaultAddress);
+  const vault = await getIchiVaultInfo(chainId, dex, vaultAddress);
   if (!vault) throw new Error(`Vault not found [${chainId}, ${vaultAddress}]`);
-  const vaultDeployerAddress = addressConfig[chainId as SupportedChainId]![aam]?.vaultDeployerAddress ?? '';
+  const vaultDeployerAddress = addressConfig[chainId as SupportedChainId]![dex]?.vaultDeployerAddress ?? '';
   
   const token0 = vault.tokenA;
   const token1 = vault.tokenB;
@@ -162,7 +162,7 @@ export async function deposit(
   }
 
   // obtain Deposit Guard contract
-  const depositGuardAddress = addressConfig[chainId as SupportedChainId]![aam]?.depositGuardAddress ?? '';
+  const depositGuardAddress = addressConfig[chainId as SupportedChainId]![dex]?.depositGuardAddress ?? '';
   const depositGuardContract = getDepositGuardContract(
     depositGuardAddress,
     signer

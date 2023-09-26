@@ -3,7 +3,7 @@
 import { JsonRpcProvider } from '@ethersproject/providers';
 import { BigNumber } from 'ethers';
 import { getERC20Contract, getIchiVaultContract } from '../contracts';
-import { SupportedChainId, Aam, TotalAmounts, TotalAmountsBN, UserAmounts, UserAmountsBN, ichiVaultDecimals } from '../types';
+import { SupportedChainId, SupportedDex, TotalAmounts, TotalAmountsBN, UserAmounts, UserAmountsBN, ichiVaultDecimals } from '../types';
 import formatBigInt from '../utils/formatBigInt';
 import { getIchiVaultInfo } from './vault';
 
@@ -20,14 +20,14 @@ export async function getUserBalance(
   accountAddress: string,
   vaultAddress: string,
   jsonProvider: JsonRpcProvider,
-  aam: Aam,
+  dex: SupportedDex,
 ): Promise<string>;
 
 export async function getUserBalance(
   accountAddress: string,
   vaultAddress: string,
   jsonProvider: JsonRpcProvider,
-  aam: Aam,
+  dex: SupportedDex,
   raw: true,
 ): Promise<BigNumber>;
 
@@ -35,14 +35,14 @@ export async function getUserBalance(
   accountAddress: string,
   vaultAddress: string,
   jsonProvider: JsonRpcProvider,
-  aam: Aam,
+  dex: SupportedDex,
   raw?: true,
 ) {
   const { chainId } = jsonProvider.network;
   if (!Object.values(SupportedChainId).includes(chainId)) {
     throw new Error(`Unsupported chainId: ${chainId ?? 'undefined'}`);
   }
-  const vault = await getIchiVaultInfo(chainId, aam, vaultAddress);
+  const vault = await getIchiVaultInfo(chainId, dex, vaultAddress);
   if (!vault) throw new Error(`Vault not found [${chainId}, ${vaultAddress}]`);
 
   const vaultContract = getIchiVaultContract(vaultAddress, jsonProvider);
@@ -54,27 +54,27 @@ export async function getUserBalance(
 export async function getTotalAmounts(
   vaultAddress: string,
   jsonProvider: JsonRpcProvider,
-  aam: Aam,
+  dex: SupportedDex,
 ): Promise<TotalAmounts>;
 
 export async function getTotalAmounts(
   vaultAddress: string,
   jsonProvider: JsonRpcProvider,
-  aam: Aam,
+  dex: SupportedDex,
   raw: true,
 ): Promise<TotalAmountsBN>;
 
 export async function getTotalAmounts(
   vaultAddress: string,
   jsonProvider: JsonRpcProvider,
-  aam: Aam,
+  dex: SupportedDex,
   raw?: true,
 ) {
   const { chainId } = jsonProvider.network;
   if (!Object.values(SupportedChainId).includes(chainId)) {
     throw new Error(`Unsupported chainId: ${chainId ?? 'undefined'}`);
   }
-  const vault = await getIchiVaultInfo(chainId, aam, vaultAddress);
+  const vault = await getIchiVaultInfo(chainId, dex, vaultAddress);
   if (!vault) throw new Error(`Vault not found [${chainId}, ${vaultAddress}]`);
   
   const vaultContract = getIchiVaultContract(vaultAddress, jsonProvider);
@@ -98,27 +98,27 @@ export async function getTotalAmounts(
 export async function getTotalSupply(
   vaultAddress: string,
   jsonProvider: JsonRpcProvider,
-  aam: Aam,
+  dex: SupportedDex,
 ): Promise<string>;
 
 export async function getTotalSupply(
   vaultAddress: string,
   jsonProvider: JsonRpcProvider,
-  aam: Aam,
+  dex: SupportedDex,
   raw: true
 ): Promise<BigNumber>;
 
 export async function getTotalSupply(
   vaultAddress: string,
   jsonProvider: JsonRpcProvider,
-  aam: Aam,
+  dex: SupportedDex,
   raw?: true
 ) {
   const { chainId } = jsonProvider.network;
   if (!Object.values(SupportedChainId).includes(chainId)) {
     throw new Error(`Unsupported chainId: ${chainId ?? 'undefined'}`);
   }
-  const vault = await getIchiVaultInfo(chainId, aam, vaultAddress);
+  const vault = await getIchiVaultInfo(chainId, dex, vaultAddress);
   if (!vault) throw new Error(`Vault not found [${chainId}, ${vaultAddress}]`);
   
   const vaultContract = getIchiVaultContract(vaultAddress, jsonProvider);
@@ -131,14 +131,14 @@ export async function getUserAmounts(
   accountAddress: string,
   vaultAddress: string,
   jsonProvider: JsonRpcProvider,
-  aam: Aam,
+  dex: SupportedDex,
 ): Promise<UserAmounts>;
 
 export async function getUserAmounts(
   accountAddress: string,
   vaultAddress: string,
   jsonProvider: JsonRpcProvider,
-  aam: Aam,
+  dex: SupportedDex,
   raw: true,
 ): Promise<UserAmountsBN>;
 
@@ -146,7 +146,7 @@ export async function getUserAmounts(
   accountAddress: string,
   vaultAddress: string,
   jsonProvider: JsonRpcProvider,
-  aam: Aam,
+  dex: SupportedDex,
   raw?: true,
 ) {
   const { chainId } = jsonProvider.network;
@@ -154,12 +154,12 @@ export async function getUserAmounts(
     throw new Error(`Unsupported chainId: ${chainId}`);
   }
   const vaultContract = getIchiVaultContract(vaultAddress, jsonProvider);
-  const vault = await getIchiVaultInfo(chainId, aam, vaultAddress);
+  const vault = await getIchiVaultInfo(chainId, dex, vaultAddress);
   if (!vault) throw new Error(`Vault not found [${chainId}, ${vaultAddress}]`);
 
-  const totalAmountsBN = await getTotalAmounts(vaultAddress, jsonProvider, aam, true);
+  const totalAmountsBN = await getTotalAmounts(vaultAddress, jsonProvider, dex, true);
   const totalSupplyBN = await vaultContract.totalSupply();
-  const userBalanceBN = await getUserBalance(accountAddress, vaultAddress, jsonProvider, aam, true);
+  const userBalanceBN = await getUserBalance(accountAddress, vaultAddress, jsonProvider, dex, true);
   if (totalSupplyBN !== BigNumber.from(0)){
     const userAmountsBN = {
       amount0: userBalanceBN.mul(totalAmountsBN[0]).div(totalSupplyBN),

@@ -11,7 +11,7 @@ export enum SupportedChainId {
   bsc = 56,
 }
 
-export enum Aam {
+export enum SupportedDex {
   UniswapV3,
   Retro,
   Pancakeswap,
