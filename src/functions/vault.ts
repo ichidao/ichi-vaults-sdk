@@ -1,6 +1,7 @@
 // eslint-disable-next-line import/no-unresolved
 import { request, gql } from 'graphql-request';
 import { SupportedDex, SupportedChainId, IchiVault } from '../types';
+// eslint-disable-next-line import/no-cycle
 import { VaultQueryData, VaultsByTokensQueryData } from '../types/vaultQueryData';
 
 const promises: Record<string, Promise<any>> = {};
@@ -40,7 +41,7 @@ const vaultQuery = gql`
 
 const vaultByTokensQuery = gql`
   query ($addressTokenA: String!, $addressTokenB: String!) {
-    ichiVaults(where: {tokenA: $addressTokenA, tokenB: $addressTokenB}) {
+    ichiVaults(where: { tokenA: $addressTokenA, tokenB: $addressTokenB }) {
       id
       tokenA
       tokenB
@@ -79,7 +80,6 @@ export async function getVaultsByTokens(
   depositTokenAddress: string,
   pairedTokenAddress: string,
 ): Promise<VaultsByTokensQueryData['ichiVaults']> {
-
   const url = urls[chainId]![dex];
   if (!url) throw new Error(`Unsupported DEX ${dex} on chain ${chainId}`);
 
@@ -89,9 +89,14 @@ export async function getVaultsByTokens(
   const key1 = `${addressTokenA}-${addressTokenB}`;
   if (Object.prototype.hasOwnProperty.call(promises, key1)) return promises[key1];
 
-  promises[key1] = request<VaultsByTokensQueryData, { addressTokenA: string, addressTokenB: string }>(url, vaultByTokensQuery, {
-    addressTokenA, addressTokenB,
-  })
+  promises[key1] = request<VaultsByTokensQueryData, { addressTokenA: string; addressTokenB: string }>(
+    url,
+    vaultByTokensQuery,
+    {
+      addressTokenA,
+      addressTokenB,
+    },
+  )
     .then(({ ichiVaults }) => ichiVaults)
     .finally(() => setTimeout(() => delete promises[key1], 2 * 60 * 100 /* 2 mins */));
 
@@ -103,9 +108,14 @@ export async function getVaultsByTokens(
   const key2 = `${addressTokenA}-${addressTokenB}`;
   if (Object.prototype.hasOwnProperty.call(promises, key2)) return promises[key2];
 
-  promises[key2] = request<VaultsByTokensQueryData, { addressTokenA: string, addressTokenB: string }>(url, vaultByTokensQuery, {
-    addressTokenA, addressTokenB,
-  })
+  promises[key2] = request<VaultsByTokensQueryData, { addressTokenA: string; addressTokenB: string }>(
+    url,
+    vaultByTokensQuery,
+    {
+      addressTokenA,
+      addressTokenB,
+    },
+  )
     .then(({ ichiVaults }) => ichiVaults)
     .finally(() => setTimeout(() => delete promises[key2], 2 * 60 * 100 /* 2 mins */));
 

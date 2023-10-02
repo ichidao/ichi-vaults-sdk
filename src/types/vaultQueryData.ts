@@ -1,4 +1,5 @@
-import { IchiVault } from "..";
+// eslint-disable-next-line import/no-cycle
+import { IchiVault } from '..';
 
 export interface VaultQueryData {
   ichiVault: IchiVault;

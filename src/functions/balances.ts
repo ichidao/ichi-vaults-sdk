@@ -14,6 +14,7 @@ import {
   ichiVaultDecimals,
 } from '../types';
 import formatBigInt from '../utils/formatBigInt';
+// eslint-disable-next-line import/no-cycle
 import { getIchiVaultInfo } from './vault';
 
 export async function getTokenDecimals(tokenAddress: string, jsonProvider: JsonRpcProvider): Promise<number> {

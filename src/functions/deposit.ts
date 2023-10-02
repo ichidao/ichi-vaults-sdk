@@ -7,6 +7,7 @@ import parseBigInt from '../utils/parseBigInt';
 import { SupportedDex, SupportedChainId } from '../types';
 import calculateGasMargin from '../types/calculateGasMargin';
 import formatBigInt from '../utils/formatBigInt';
+// eslint-disable-next-line import/no-cycle
 import { getIchiVaultInfo } from './vault';
 import addressConfig from '../utils/config/addresses';
 

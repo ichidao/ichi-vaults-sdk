@@ -7,6 +7,7 @@ import { getIchiVaultContract } from '../contracts';
 import parseBigInt from '../utils/parseBigInt';
 import { SupportedChainId, SupportedDex } from '../types';
 import calculateGasMargin from '../types/calculateGasMargin';
+// eslint-disable-next-line import/no-cycle
 import { getIchiVaultInfo } from './vault';
 
 export async function withdraw(

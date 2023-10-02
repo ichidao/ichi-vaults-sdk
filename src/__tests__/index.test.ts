@@ -42,7 +42,7 @@ const vault = {
 const tokens = {
   pairedToken: '0x111111517e4929d3dcbdfa7cce55d30d4b6bc4d6',
   depositToken: '0x1bfd67037b42cf73acf2047067bd4f2c47d9bfd6',
-}
+};
 
 const iface = new ethers.utils.Interface(ICHIVAULT_ABI);
 const amount0 = '0.01';
