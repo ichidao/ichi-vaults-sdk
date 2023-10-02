@@ -21,11 +21,14 @@ import {
   getUserAmounts,
   getUserBalance,
   getTokenDecimals,
+  getVaultsByTokens,
 } from '../index';
 import formatBigInt from '../utils/formatBigInt';
 import parseBigInt from '../utils/parseBigInt';
 
 const hdWalletProvider = new HDWalletProvider([process.env.PRIVATE_KEY!], process.env.PROVIDER_URL!, 0, 1);
+
+// const jsonRpcProvider = new ethers.providers.JsonRpcProvider(process.env.PROVIDER_URL);
 
 const provider = new Web3Provider(hdWalletProvider, { chainId: SupportedChainId.polygon, name: 'polygon' });
 const account = process.env.ACCOUNT!;
@@ -35,6 +38,11 @@ const vault = {
   chainId: SupportedChainId.polygon,
   dex: SupportedDex.UniswapV3,
 };
+
+const tokens = {
+  pairedToken: '0x111111517e4929d3dcbdfa7cce55d30d4b6bc4d6',
+  depositToken: '0x1bfd67037b42cf73acf2047067bd4f2c47d9bfd6',
+}
 
 const iface = new ethers.utils.Interface(ICHIVAULT_ABI);
 const amount0 = '0.01';
@@ -140,6 +148,10 @@ describe('Vault', () => {
 describe('GraphQL', () => {
   it('GetIchiVaultInfo', async () => {
     const a = await getIchiVaultInfo(vault.chainId, vault.dex, vault.address);
+    expect(a).toBeTruthy();
+  });
+  it('Get vaults by tokens', async () => {
+    const a = await getVaultsByTokens(vault.chainId, vault.dex, tokens.depositToken, tokens.pairedToken);
     expect(a).toBeTruthy();
   });
 });

@@ -16,7 +16,7 @@ export async function isTokenAllowed(
   jsonProvider: JsonRpcProvider,
   dex: SupportedDex,
 ): Promise<boolean> {
-  const { chainId } = jsonProvider.network;
+  const { chainId } = await jsonProvider.getNetwork();
   if (!Object.values(SupportedChainId).includes(chainId)) {
     throw new Error(`Unsupported chainId: ${chainId}`);
   }
@@ -38,7 +38,7 @@ export async function isDepositTokenApproved(
   jsonProvider: JsonRpcProvider,
   dex: SupportedDex,
 ): Promise<boolean> {
-  const { chainId } = jsonProvider.network;
+  const { chainId } = await jsonProvider.getNetwork();
   if (!Object.values(SupportedChainId).includes(chainId)) {
     throw new Error(`Unsupported chainId: ${chainId}`);
   }
@@ -68,7 +68,7 @@ export async function approveDepositToken(
   amount?: string | number | BigNumber,
   overrides?: Overrides,
 ): Promise<ContractTransaction> {
-  const { chainId } = jsonProvider.network;
+  const { chainId } = await jsonProvider.getNetwork();
   if (!Object.values(SupportedChainId).includes(chainId)) {
     throw new Error(`Unsupported chainId: ${chainId}`);
   }
@@ -102,7 +102,7 @@ export async function getMaxDepositAmount(
   jsonProvider: JsonRpcProvider,
   dex: SupportedDex,
 ): Promise<BigNumber> {
-  const { chainId } = jsonProvider.network;
+  const { chainId } = await jsonProvider.getNetwork();
   if (!Object.values(SupportedChainId).includes(chainId)) {
     throw new Error(`Unsupported chainId: ${chainId}`);
   }
@@ -126,7 +126,7 @@ export async function deposit(
   percentSlippage = 1,
   overrides?: Overrides,
 ): Promise<ContractTransaction> {
-  const { chainId } = jsonProvider.network;
+  const { chainId } = await jsonProvider.getNetwork();
   if (!Object.values(SupportedChainId).includes(chainId)) {
     throw new Error(`Unsupported chainId: ${chainId}`);
   }
