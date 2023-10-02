@@ -17,7 +17,7 @@ export async function withdraw(
   dex: SupportedDex,
   overrides?: Overrides,
 ): Promise<ContractTransaction> {
-  const { chainId } = jsonProvider.network;
+  const { chainId } = await jsonProvider.getNetwork();
 
   if (!Object.values(SupportedChainId).includes(chainId)) {
     throw new Error(`Unsupported chainId: ${chainId ?? 'undefined'}`);

@@ -44,7 +44,7 @@ export async function getUserBalance(
   dex: SupportedDex,
   raw?: true,
 ) {
-  const { chainId } = jsonProvider.network;
+  const { chainId } = await jsonProvider.getNetwork();
   if (!Object.values(SupportedChainId).includes(chainId)) {
     throw new Error(`Unsupported chainId: ${chainId ?? 'undefined'}`);
   }
@@ -76,7 +76,7 @@ export async function getTotalAmounts(
   dex: SupportedDex,
   raw?: true,
 ) {
-  const { chainId } = jsonProvider.network;
+  const { chainId } = await jsonProvider.getNetwork();
   if (!Object.values(SupportedChainId).includes(chainId)) {
     throw new Error(`Unsupported chainId: ${chainId ?? 'undefined'}`);
   }
@@ -120,7 +120,7 @@ export async function getTotalSupply(
   dex: SupportedDex,
   raw?: true,
 ) {
-  const { chainId } = jsonProvider.network;
+  const { chainId } = await jsonProvider.getNetwork();
   if (!Object.values(SupportedChainId).includes(chainId)) {
     throw new Error(`Unsupported chainId: ${chainId ?? 'undefined'}`);
   }
@@ -155,7 +155,7 @@ export async function getUserAmounts(
   dex: SupportedDex,
   raw?: true,
 ) {
-  const { chainId } = jsonProvider.network;
+  const { chainId } = await jsonProvider.getNetwork();
   if (!Object.values(SupportedChainId).includes(chainId)) {
     throw new Error(`Unsupported chainId: ${chainId}`);
   }

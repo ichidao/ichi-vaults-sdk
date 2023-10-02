@@ -24,3 +24,11 @@ export type TotalAmountsBN = [BigNumber, BigNumber] & { total0: BigNumber; total
 export type UserAmountsBN = [BigNumber, BigNumber] & { amount0: BigNumber; amount1: BigNumber };
 export type TotalAmounts = [string, string] & { total0: string; total1: string };
 export type UserAmounts = [string, string] & { amount0: string; amount1: string };
+
+export interface IchiVault {
+  id: string;
+  tokenA: string;
+  tokenB: string;
+  allowTokenA: boolean;
+  allowTokenB: boolean;
+}
