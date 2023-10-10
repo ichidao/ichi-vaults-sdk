@@ -30,13 +30,20 @@ const hdWalletProvider = new HDWalletProvider([process.env.PRIVATE_KEY!], proces
 
 // const jsonRpcProvider = new ethers.providers.JsonRpcProvider(process.env.PROVIDER_URL);
 
-const provider = new Web3Provider(hdWalletProvider, { chainId: SupportedChainId.polygon, name: 'polygon' });
+// const provider = new Web3Provider(hdWalletProvider, { chainId: SupportedChainId.polygon, name: 'polygon' });
+const provider = new Web3Provider(hdWalletProvider, { chainId: SupportedChainId.arbitrum, name: 'arbitrum' });
 const account = process.env.ACCOUNT!;
 
+// const vault = {
+//   address: '0x3ac9b3db3350a515c702ba19a001d099d4a5f132', // USDC-wETH vault (not inverted)
+//   chainId: SupportedChainId.polygon,
+//   dex: SupportedDex.UniswapV3,
+// };
+
 const vault = {
-  address: '0x3ac9b3db3350a515c702ba19a001d099d4a5f132', // USDC-wETH vault (not inverted)
-  chainId: SupportedChainId.polygon,
-  dex: SupportedDex.UniswapV3,
+  address: '0x39d1c25ff266b3a725adca21119042072a7060d1', // ARB-RAM  vault
+  chainId: SupportedChainId.arbitrum,
+  dex: SupportedDex.Ramses,
 };
 
 const tokens = {
@@ -53,7 +60,7 @@ describe('Vault', () => {
   let share: string | null = null;
 
   it('getTotalSupply', async () => {
-    const totalSupply = await getTotalSupply(vault.address, provider, SupportedDex.UniswapV3);
+    const totalSupply = await getTotalSupply(vault.address, provider, vault.dex);
 
     expect(Number(totalSupply)).toBeGreaterThan(0);
   });
