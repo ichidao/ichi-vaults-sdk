@@ -14,6 +14,7 @@ type dexGraph = PartialRecord<SupportedDex, string>;
 const urls: Record<SupportedChainId, dexGraph> = {
   [SupportedChainId.arbitrum]: {
     [SupportedDex.UniswapV3]: 'https://api.thegraph.com/subgraphs/name/ichi-org/arbitrum-v1',
+    [SupportedDex.Ramses]: 'https://api.thegraph.com/subgraphs/name/ichi-org/arbitrum-v1-ramses',
   },
   [SupportedChainId.mainnet]: {
     [SupportedDex.UniswapV3]: 'https://api.thegraph.com/subgraphs/name/ichi-org/mainnet-v1',

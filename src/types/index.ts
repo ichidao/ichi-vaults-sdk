@@ -16,6 +16,7 @@ export enum SupportedDex {
   UniswapV3,
   Retro,
   Pancakeswap,
+  Ramses,
 }
 
 export const ichiVaultDecimals = 18;
