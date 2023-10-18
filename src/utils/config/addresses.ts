@@ -17,6 +17,11 @@ const addressConfig: Record<SupportedChainId, Config> = {
       depositGuardAddress: '0x932E1908461De58b0891E5022431dc995Cb95C5E',
       vaultDeployerAddress: '0x508C3daa571854247726ba26949f182086Ff89B0',
     },
+    [SupportedDex.Ramses]: {
+      factoryAddress: '0xedAc86bc526557c422AB1F6BF848bF0da9fB44A6',
+      depositGuardAddress: '0x2472cA62c19ab99AB9947A7754fc38945b68Fb68',
+      vaultDeployerAddress: '0x508C3daa571854247726ba26949f182086Ff89B0',
+    },
   },
   [SupportedChainId.polygon]: {
     [SupportedDex.UniswapV3]: {
@@ -41,6 +46,11 @@ const addressConfig: Record<SupportedChainId, Config> = {
     [SupportedDex.Pancakeswap]: {
       factoryAddress: '0x131c03ca881B7cC66d7a5120A9273ebf675C241D',
       depositGuardAddress: '0x454130394B8013D4a7288fe9Db570A0a24C606c2',
+      vaultDeployerAddress: '0x05cC3CA6E768a68A7f86b09e3ceE754437bd5f12',
+    },
+    [SupportedDex.Thena]: {
+      factoryAddress: '0xAc93148e93d1C49D89b1166BFd74942E80F5D501',
+      depositGuardAddress: '0xd9272a45BbF488816C6A5351894bCE7b04a66eE1',
       vaultDeployerAddress: '0x05cC3CA6E768a68A7f86b09e3ceE754437bd5f12',
     },
   },

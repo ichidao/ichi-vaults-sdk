@@ -25,6 +25,7 @@ const urls: Record<SupportedChainId, dexGraph> = {
   },
   [SupportedChainId.bsc]: {
     [SupportedDex.Pancakeswap]: 'https://api.thegraph.com/subgraphs/name/ichi-org/bnb-v1-pancakeswap',
+    [SupportedDex.Thena]: 'https://api.thegraph.com/subgraphs/name/ichi-org/bnb-v1-thena',
   },
 };
 

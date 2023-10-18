@@ -31,7 +31,8 @@ const hdWalletProvider = new HDWalletProvider([process.env.PRIVATE_KEY!], proces
 // const jsonRpcProvider = new ethers.providers.JsonRpcProvider(process.env.PROVIDER_URL);
 
 // const provider = new Web3Provider(hdWalletProvider, { chainId: SupportedChainId.polygon, name: 'polygon' });
-const provider = new Web3Provider(hdWalletProvider, { chainId: SupportedChainId.arbitrum, name: 'arbitrum' });
+// const provider = new Web3Provider(hdWalletProvider, { chainId: SupportedChainId.arbitrum, name: 'arbitrum' });
+const provider = new Web3Provider(hdWalletProvider, { chainId: SupportedChainId.bsc, name: 'bsc' });
 const account = process.env.ACCOUNT!;
 
 // const vault = {
@@ -40,10 +41,16 @@ const account = process.env.ACCOUNT!;
 //   dex: SupportedDex.UniswapV3,
 // };
 
+// const vault = {
+//   address: '0x0146204ddca2646a915bd0df74b47498acb4ab3d', // WETH-RAM  vault
+//   chainId: SupportedChainId.arbitrum,
+//   dex: SupportedDex.Ramses,
+// };
+
 const vault = {
-  address: '0x39d1c25ff266b3a725adca21119042072a7060d1', // ARB-RAM  vault
-  chainId: SupportedChainId.arbitrum,
-  dex: SupportedDex.Ramses,
+  address: '0x4fff5696f74c85fd617385842c58d3fb4b29654d', // ETH-THE  vault
+  chainId: SupportedChainId.bsc,
+  dex: SupportedDex.Thena,
 };
 
 const tokens = {
