@@ -466,6 +466,8 @@ enum SupportedDex {
   UniswapV3,
   Retro,
   Pancakeswap,
+  Ramses,
+  Thena,
 }
 ```
 
