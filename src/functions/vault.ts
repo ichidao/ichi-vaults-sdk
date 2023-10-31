@@ -22,6 +22,7 @@ const urls: Record<SupportedChainId, dexGraph> = {
   [SupportedChainId.polygon]: {
     [SupportedDex.UniswapV3]: 'https://api.thegraph.com/subgraphs/name/ichi-org/polygon-v1',
     [SupportedDex.Retro]: 'https://api.thegraph.com/subgraphs/name/ichi-org/polygon-v1-retro',
+    [SupportedDex.Quickswap]: 'https://api.thegraph.com/subgraphs/name/ichi-org/polygon-v1-quickswap',
   },
   [SupportedChainId.bsc]: {
     [SupportedDex.Pancakeswap]: 'https://api.thegraph.com/subgraphs/name/ichi-org/bnb-v1-pancakeswap',

@@ -34,6 +34,11 @@ const addressConfig: Record<SupportedChainId, Config> = {
       depositGuardAddress: '0x9B3Ea1A39576925fA94c4BCC7eECFA0d95D331E1',
       vaultDeployerAddress: '0x0768A75F616B98ee0937673bD83B7aBF142236Ea',
     },
+    [SupportedDex.Quickswap]: {
+      factoryAddress: '0x11700544C577Cb543a498B27B4F0f7018BDb6E8a',
+      depositGuardAddress: '0xDB8E25D78483D13781622A40e69a9E39A4b590B6',
+      vaultDeployerAddress: '0x0768A75F616B98ee0937673bD83B7aBF142236Ea',
+    },
   },
   [SupportedChainId.mainnet]: {
     [SupportedDex.UniswapV3]: {

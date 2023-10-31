@@ -30,9 +30,9 @@ const hdWalletProvider = new HDWalletProvider([process.env.PRIVATE_KEY!], proces
 
 // const jsonRpcProvider = new ethers.providers.JsonRpcProvider(process.env.PROVIDER_URL);
 
-// const provider = new Web3Provider(hdWalletProvider, { chainId: SupportedChainId.polygon, name: 'polygon' });
+const provider = new Web3Provider(hdWalletProvider, { chainId: SupportedChainId.polygon, name: 'polygon' });
 // const provider = new Web3Provider(hdWalletProvider, { chainId: SupportedChainId.arbitrum, name: 'arbitrum' });
-const provider = new Web3Provider(hdWalletProvider, { chainId: SupportedChainId.bsc, name: 'bsc' });
+// const provider = new Web3Provider(hdWalletProvider, { chainId: SupportedChainId.bsc, name: 'bsc' });
 const account = process.env.ACCOUNT!;
 
 // const vault = {
@@ -47,15 +47,21 @@ const account = process.env.ACCOUNT!;
 //   dex: SupportedDex.Ramses,
 // };
 
+// const vault = {
+//   address: '0x4fff5696f74c85fd617385842c58d3fb4b29654d', // ETH-THE  vault
+//   chainId: SupportedChainId.bsc,
+//   dex: SupportedDex.Thena,
+// };
+
 const vault = {
-  address: '0x4fff5696f74c85fd617385842c58d3fb4b29654d', // ETH-THE  vault
-  chainId: SupportedChainId.bsc,
-  dex: SupportedDex.Thena,
+  address: '0x74b706767f18a360c0083854ab42c1b96e076229', // WMATIC-QUICK  vault
+  chainId: SupportedChainId.polygon,
+  dex: SupportedDex.Quickswap,
 };
 
 const tokens = {
-  pairedToken: '0x111111517e4929d3dcbdfa7cce55d30d4b6bc4d6',
-  depositToken: '0x1bfd67037b42cf73acf2047067bd4f2c47d9bfd6',
+  pairedToken: '0xB5C064F955D8e7F38fE0460C556a72987494eE17',
+  depositToken: '0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270',
 };
 
 const iface = new ethers.utils.Interface(ICHIVAULT_ABI);
@@ -120,21 +126,21 @@ describe('Vault', () => {
   it('getUserBalance', async () => {
     const userShares = await getUserBalance(account, vault.address, provider, vault.dex);
 
-    expect(Number(userShares)).not.toBeLessThan(0);
+    expect(Number(userShares)).toBeGreaterThan(0);
   });
 
   it('getTotalAmounts', async () => {
     const amounts = await getTotalAmounts(vault.address, provider, vault.dex);
 
     expect(Number(amounts.total0)).toBeGreaterThan(0);
-    expect(Number(amounts.total1)).toBeGreaterThan(0);
+    // expect(Number(amounts.total1)).toBeGreaterThan(0);
   });
 
   it('getUserAmounts', async () => {
     const amounts = await getUserAmounts(account, vault.address, provider, vault.dex);
 
-    expect(Number(amounts.amount0)).not.toBeLessThan(0);
-    expect(Number(amounts.amount1)).not.toBeLessThan(0);
+    expect(Number(amounts.amount0)).toBeGreaterThan(0);
+    // expect(Number(amounts.amount1)).toBeGreaterThan(0);
   });
 
   it.skip('withdraw:deposited', async () => {

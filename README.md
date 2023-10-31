@@ -468,6 +468,7 @@ enum SupportedDex {
   Pancakeswap,
   Ramses,
   Thena,
+  Quickswap,
 }
 ```
 
