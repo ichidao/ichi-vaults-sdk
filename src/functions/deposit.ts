@@ -52,7 +52,8 @@ export async function isDepositTokenApproved(
   const token = vault[tokenIdx === 0 ? 'tokenA' : 'tokenB'];
 
   const tokenContract = getERC20Contract(token, signer);
-  const currentAllowanceBN = await tokenContract.allowance(accountAddress, vaultAddress);
+  const depositGuardAddress = addressConfig[chainId as SupportedChainId]![dex]?.depositGuardAddress ?? '';
+  const currentAllowanceBN = await tokenContract.allowance(accountAddress, depositGuardAddress);
   const tokenDecimals = await tokenContract.decimals();
 
   const currentAllowance = +formatBigInt(currentAllowanceBN, +tokenDecimals);

@@ -65,9 +65,10 @@ const tokens = {
 };
 
 const iface = new ethers.utils.Interface(ICHIVAULT_ABI);
-const amount0 = '0.01';
+const amount0 = '0.1';
 const amount1 = '0';
 const sharesToWithdraw = '0.000007';
+const bigAmount = '1000';
 
 describe('Vault', () => {
   let share: string | null = null;
@@ -81,9 +82,14 @@ describe('Vault', () => {
   it.skip('approve', async () => {
     let approve0: ethers.ContractTransaction | null = null;
     approve0 = await approveDepositToken(account, 0, vault.address, provider, vault.dex, amount0);
-    await approve0.wait();
+    const a = await approve0.wait();
     const isApproved0 = await isDepositTokenApproved(account, 0, amount0, vault.address, provider, vault.dex);
     expect(isApproved0).toEqual(true);
+  });
+
+  it('isDepositTokenApproved', async () => {
+    const isApproved0 = await isDepositTokenApproved(account, 0, bigAmount, vault.address, provider, vault.dex);
+    expect(isApproved0).toEqual(false);
   });
 
   it.skip('deposit', async () => {
