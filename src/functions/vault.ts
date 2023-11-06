@@ -15,6 +15,7 @@ const urls: Record<SupportedChainId, dexGraph> = {
   [SupportedChainId.arbitrum]: {
     [SupportedDex.UniswapV3]: 'https://api.thegraph.com/subgraphs/name/ichi-org/arbitrum-v1',
     [SupportedDex.Ramses]: 'https://api.thegraph.com/subgraphs/name/ichi-org/arbitrum-v1-ramses',
+    [SupportedDex.Horiza]: 'https://api.thegraph.com/subgraphs/name/ichi-org/arbitrum-v1-horiza',
   },
   [SupportedChainId.mainnet]: {
     [SupportedDex.UniswapV3]: 'https://api.thegraph.com/subgraphs/name/ichi-org/mainnet-v1',

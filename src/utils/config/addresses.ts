@@ -22,6 +22,11 @@ const addressConfig: Record<SupportedChainId, Config> = {
       depositGuardAddress: '0x2472cA62c19ab99AB9947A7754fc38945b68Fb68',
       vaultDeployerAddress: '0x508C3daa571854247726ba26949f182086Ff89B0',
     },
+    [SupportedDex.Horiza]: {
+      factoryAddress: '0x1Cc05B01f2e52ae3bb29F7A0059Fe112C60aA3f4',
+      depositGuardAddress: '0x067ec6134e6ec277c7d9589889c85b94a293bf04',
+      vaultDeployerAddress: '0x508C3daa571854247726ba26949f182086Ff89B0',
+    },
   },
   [SupportedChainId.polygon]: {
     [SupportedDex.UniswapV3]: {

@@ -469,6 +469,7 @@ enum SupportedDex {
   Ramses,
   Thena,
   Quickswap,
+  Horiza,
 }
 ```
 
