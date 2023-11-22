@@ -27,7 +27,7 @@ export async function withdraw(
   const signer = jsonProvider.getSigner(accountAddress);
 
   const vaultContract = getIchiVaultContract(vaultAddress, signer);
-  const vault = await getIchiVaultInfo(chainId, dex, vaultAddress);
+  const vault = await getIchiVaultInfo(chainId, dex, vaultAddress, jsonProvider);
   if (!vault) throw new Error(`Vault not found [${chainId}, ${vaultAddress}]`);
 
   const params: Parameters<typeof vaultContract.withdraw> = [

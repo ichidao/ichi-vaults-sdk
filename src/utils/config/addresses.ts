@@ -64,6 +64,13 @@ const addressConfig: Record<SupportedChainId, Config> = {
       vaultDeployerAddress: '0x05cC3CA6E768a68A7f86b09e3ceE754437bd5f12',
     },
   },
+  [SupportedChainId.eon]: {
+    [SupportedDex.Ascent]: {
+      factoryAddress: '0x242cd12579467983dc521D8aC46EB13936ab65De',
+      depositGuardAddress: '0xaBe5B5AC472Ead17B4B4CaC7fAF42430748ab3b3',
+      vaultDeployerAddress: '0xB9200A707f11357D3B1cBDEbd51c8dDA84960Bde',
+    },
+  },
 };
 
 export default addressConfig;

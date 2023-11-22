@@ -10,16 +10,18 @@ export enum SupportedChainId {
   mainnet = 1,
   polygon = 137,
   bsc = 56,
+  eon = 7332,
 }
 
 export enum SupportedDex {
-  UniswapV3,
-  Retro,
-  Pancakeswap,
-  Ramses,
-  Thena,
-  Quickswap,
-  Horiza,
+  UniswapV3 = 'Uniswap V3',
+  Retro = 'Retro',
+  Pancakeswap = 'PancakeSwap',
+  Ramses = 'Ramses',
+  Thena = 'Thena',
+  Quickswap = 'QuickSwap',
+  Horiza = 'Horiza',
+  Ascent = 'Ascent',
 }
 
 export const ichiVaultDecimals = 18;
