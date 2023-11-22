@@ -22,7 +22,7 @@ export async function isTokenAllowed(
     throw new Error(`Unsupported chainId: ${chainId}`);
   }
 
-  const vault = await getIchiVaultInfo(chainId, dex, vaultAddress);
+  const vault = await getIchiVaultInfo(chainId, dex, vaultAddress, jsonProvider);
 
   if (!vault) throw new Error(`Vault not found [${chainId}, ${vaultAddress}]`);
 
@@ -45,7 +45,7 @@ export async function isDepositTokenApproved(
   }
 
   const signer = jsonProvider.getSigner(accountAddress);
-  const vault = await getIchiVaultInfo(chainId, dex, vaultAddress);
+  const vault = await getIchiVaultInfo(chainId, dex, vaultAddress, jsonProvider);
 
   if (!vault) throw new Error(`Vault not found [${chainId}, ${vaultAddress}]`);
 
@@ -76,7 +76,7 @@ export async function approveDepositToken(
   }
 
   const signer = jsonProvider.getSigner(accountAddress);
-  const vault = await getIchiVaultInfo(chainId, dex, vaultAddress);
+  const vault = await getIchiVaultInfo(chainId, dex, vaultAddress, jsonProvider);
   if (!vault) throw new Error(`Vault not found [${chainId}, ${vaultAddress}]`);
 
   const token = vault[tokenIdx === 0 ? 'tokenA' : 'tokenB'];
@@ -108,7 +108,7 @@ export async function getMaxDepositAmount(
   if (!Object.values(SupportedChainId).includes(chainId)) {
     throw new Error(`Unsupported chainId: ${chainId}`);
   }
-  const vault = await getIchiVaultInfo(chainId, dex, vaultAddress);
+  const vault = await getIchiVaultInfo(chainId, dex, vaultAddress, jsonProvider);
   if (!vault) throw new Error(`Vault not found [${chainId}, ${vaultAddress}]`);
 
   const vaultContract = getIchiVaultContract(vaultAddress, jsonProvider);
@@ -133,7 +133,7 @@ export async function deposit(
     throw new Error(`Unsupported chainId: ${chainId}`);
   }
   const signer = jsonProvider.getSigner(accountAddress);
-  const vault = await getIchiVaultInfo(chainId, dex, vaultAddress);
+  const vault = await getIchiVaultInfo(chainId, dex, vaultAddress, jsonProvider);
   if (!vault) throw new Error(`Vault not found [${chainId}, ${vaultAddress}]`);
   const vaultDeployerAddress = addressConfig[chainId as SupportedChainId]![dex]?.vaultDeployerAddress ?? '';
 

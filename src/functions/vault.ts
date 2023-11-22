@@ -1,8 +1,10 @@
 // eslint-disable-next-line import/no-unresolved
 import { request, gql } from 'graphql-request';
+import { JsonRpcProvider } from '@ethersproject/providers';
 import { SupportedDex, SupportedChainId, IchiVault } from '../types';
 // eslint-disable-next-line import/no-cycle
 import { VaultQueryData, VaultsByTokensQueryData } from '../types/vaultQueryData';
+import { getIchiVaultContract } from '../contracts';
 
 const promises: Record<string, Promise<any>> = {};
 
@@ -11,6 +13,7 @@ type PartialRecord<K extends keyof any, T> = {
 };
 type dexGraph = PartialRecord<SupportedDex, string>;
 
+// 'none' indicates that graph is not enabled on that chain
 const urls: Record<SupportedChainId, dexGraph> = {
   [SupportedChainId.arbitrum]: {
     [SupportedDex.UniswapV3]: 'https://api.thegraph.com/subgraphs/name/ichi-org/arbitrum-v1',
@@ -28,6 +31,9 @@ const urls: Record<SupportedChainId, dexGraph> = {
   [SupportedChainId.bsc]: {
     [SupportedDex.Pancakeswap]: 'https://api.thegraph.com/subgraphs/name/ichi-org/bnb-v1-pancakeswap',
     [SupportedDex.Thena]: 'https://api.thegraph.com/subgraphs/name/ichi-org/bnb-v1-thena',
+  },
+  [SupportedChainId.eon]: {
+    [SupportedDex.Ascent]: 'none',
   },
 };
 
@@ -55,11 +61,29 @@ const vaultByTokensQuery = gql`
   }
 `;
 
+async function getVaultInfoFromContract(vaultAddress: string, jsonProvider: JsonRpcProvider): Promise<IchiVault> {
+  const vault: IchiVault = {
+    id: vaultAddress,
+    tokenA: '',
+    tokenB: '',
+    allowTokenA: false,
+    allowTokenB: false,
+  };
+  const vaultContract = getIchiVaultContract(vaultAddress, jsonProvider);
+  vault.tokenA = await vaultContract.token0();
+  vault.tokenB = await vaultContract.token1();
+  vault.allowTokenA = await vaultContract.allowToken0();
+  vault.allowTokenB = await vaultContract.allowToken1();
+
+  return vault;
+}
+
 // eslint-disable-next-line import/prefer-default-export
 export async function getIchiVaultInfo(
   chainId: SupportedChainId,
   dex: SupportedDex,
   vaultAddress: string,
+  jsonProvider?: JsonRpcProvider,
 ): Promise<VaultQueryData['ichiVault']> {
   const key = `${chainId + vaultAddress}-info`;
 
@@ -67,12 +91,21 @@ export async function getIchiVaultInfo(
 
   const url = urls[chainId]![dex];
   if (!url) throw new Error(`Unsupported DEX ${dex} on chain ${chainId}`);
-
-  promises[key] = request<VaultQueryData, { vaultAddress: string }>(url, vaultQuery, {
-    vaultAddress,
-  })
-    .then(({ ichiVault }) => ichiVault)
-    .finally(() => setTimeout(() => delete promises[key], 2 * 60 * 100 /* 2 mins */));
+  if (url === 'none' && jsonProvider) {
+    promises[key] = getVaultInfoFromContract(vaultAddress, jsonProvider);
+  } else {
+    promises[key] = request<VaultQueryData, { vaultAddress: string }>(url, vaultQuery, {
+      vaultAddress,
+    })
+      .then(({ ichiVault }) => ichiVault)
+      .catch((err) => {
+        console.error(err);
+        if (jsonProvider) {
+          promises[key] = getVaultInfoFromContract(vaultAddress, jsonProvider);
+        }
+      })
+      .finally(() => setTimeout(() => delete promises[key], 2 * 60 * 100 /* 2 mins */));
+  }
 
   // eslint-disable-next-line no-return-await
   return await promises[key];
@@ -86,6 +119,7 @@ export async function getVaultsByTokens(
 ): Promise<VaultsByTokensQueryData['ichiVaults']> {
   const url = urls[chainId]![dex];
   if (!url) throw new Error(`Unsupported DEX ${dex} on chain ${chainId}`);
+  if (url === 'none') throw new Error(`Function not available for DEX ${dex} on chain ${chainId}`);
 
   let addressTokenA = depositTokenAddress;
   let addressTokenB = pairedTokenAddress;

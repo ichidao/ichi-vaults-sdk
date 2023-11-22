@@ -401,6 +401,7 @@ const amountsBN: [BigNumber, BigNumber] & {total0: BigNumber, total1: BigNumber}
 | chain      | SupportedChain | - | true
 | dex   | SupportedDex | - | true 
 | vaultAddress   | string | - | true |
+| jsonProvider   | JsonRpcProvider | - | false |
 
 <br/>
 
@@ -453,9 +454,10 @@ if (!vault) {
 ```typescript
 enum SupportedChainId {
   arbitrum = 42161,
+  bsc = 56,
+  eon = 7332,
   mainnet = 1,
   polygon = 137,
-  bsc = 56,
 }
 ```
 
@@ -463,13 +465,14 @@ enum SupportedChainId {
 
 ```typescript
 enum SupportedDex {
-  UniswapV3,
-  Retro,
-  Pancakeswap,
-  Ramses,
-  Thena,
-  Quickswap,
-  Horiza,
+  Ascent = 'Ascent',
+  Horiza = 'Horiza',
+  Pancakeswap = 'PancakeSwap',
+  Quickswap = 'QuickSwap',
+  Ramses = 'Ramses',
+  Retro = 'Retro',
+  Thena = 'Thena',
+  UniswapV3 = 'Uniswap V3',
 }
 ```
 

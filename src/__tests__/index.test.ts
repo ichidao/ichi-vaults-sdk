@@ -99,7 +99,7 @@ describe('Vault', () => {
     const maxDeposit0 = await getMaxDepositAmount(0, vault.address, provider, vault.dex);
     const maxDeposit1 = await getMaxDepositAmount(1, vault.address, provider, vault.dex);
 
-    const vaultFromQuery = await getIchiVaultInfo(vault.chainId, vault.dex, vault.address);
+    const vaultFromQuery = await getIchiVaultInfo(vault.chainId, vault.dex, vault.address, provider);
     if (!vaultFromQuery) throw new Error(`Vault not found [${vault.chainId}, ${vault.address}]`);
     const token0Decimals = await getTokenDecimals(vaultFromQuery.tokenA, provider);
     const token1Decimals = await getTokenDecimals(vaultFromQuery.tokenB, provider);
@@ -173,7 +173,7 @@ describe('Vault', () => {
 
 describe('GraphQL', () => {
   it('GetIchiVaultInfo', async () => {
-    const a = await getIchiVaultInfo(vault.chainId, vault.dex, vault.address);
+    const a = await getIchiVaultInfo(vault.chainId, vault.dex, vault.address, provider);
     expect(a).toBeTruthy();
   });
   it('Get vaults by tokens', async () => {

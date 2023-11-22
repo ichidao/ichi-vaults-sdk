@@ -7,19 +7,21 @@ export type SignerOrProvider = Signer | Provider;
 
 export enum SupportedChainId {
   arbitrum = 42161,
+  bsc = 56,
+  eon = 7332,
   mainnet = 1,
   polygon = 137,
-  bsc = 56,
 }
 
 export enum SupportedDex {
-  UniswapV3,
-  Retro,
-  Pancakeswap,
-  Ramses,
-  Thena,
-  Quickswap,
-  Horiza,
+  Ascent = 'Ascent',
+  Horiza = 'Horiza',
+  Pancakeswap = 'PancakeSwap',
+  Quickswap = 'QuickSwap',
+  Ramses = 'Ramses',
+  Retro = 'Retro',
+  Thena = 'Thena',
+  UniswapV3 = 'Uniswap V3',
 }
 
 export const ichiVaultDecimals = 18;

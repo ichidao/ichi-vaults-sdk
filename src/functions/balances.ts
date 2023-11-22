@@ -49,7 +49,7 @@ export async function getUserBalance(
   if (!Object.values(SupportedChainId).includes(chainId)) {
     throw new Error(`Unsupported chainId: ${chainId ?? 'undefined'}`);
   }
-  const vault = await getIchiVaultInfo(chainId, dex, vaultAddress);
+  const vault = await getIchiVaultInfo(chainId, dex, vaultAddress, jsonProvider);
   if (!vault) throw new Error(`Vault not found [${chainId}, ${vaultAddress}]`);
 
   const vaultContract = getIchiVaultContract(vaultAddress, jsonProvider);
@@ -81,7 +81,7 @@ export async function getTotalAmounts(
   if (!Object.values(SupportedChainId).includes(chainId)) {
     throw new Error(`Unsupported chainId: ${chainId ?? 'undefined'}`);
   }
-  const vault = await getIchiVaultInfo(chainId, dex, vaultAddress);
+  const vault = await getIchiVaultInfo(chainId, dex, vaultAddress, jsonProvider);
   if (!vault) throw new Error(`Vault not found [${chainId}, ${vaultAddress}]`);
 
   const vaultContract = getIchiVaultContract(vaultAddress, jsonProvider);
@@ -125,7 +125,7 @@ export async function getTotalSupply(
   if (!Object.values(SupportedChainId).includes(chainId)) {
     throw new Error(`Unsupported chainId: ${chainId ?? 'undefined'}`);
   }
-  const vault = await getIchiVaultInfo(chainId, dex, vaultAddress);
+  const vault = await getIchiVaultInfo(chainId, dex, vaultAddress, jsonProvider);
   if (!vault) throw new Error(`Vault not found [${chainId}, ${vaultAddress}]`);
 
   const vaultContract = getIchiVaultContract(vaultAddress, jsonProvider);
@@ -161,7 +161,7 @@ export async function getUserAmounts(
     throw new Error(`Unsupported chainId: ${chainId}`);
   }
   const vaultContract = getIchiVaultContract(vaultAddress, jsonProvider);
-  const vault = await getIchiVaultInfo(chainId, dex, vaultAddress);
+  const vault = await getIchiVaultInfo(chainId, dex, vaultAddress, jsonProvider);
   if (!vault) throw new Error(`Vault not found [${chainId}, ${vaultAddress}]`);
 
   const totalAmountsBN = await getTotalAmounts(vaultAddress, jsonProvider, dex, true);
