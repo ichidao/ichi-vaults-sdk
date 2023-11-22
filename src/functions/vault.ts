@@ -1,7 +1,7 @@
 // eslint-disable-next-line import/no-unresolved
 import { request, gql } from 'graphql-request';
-import { SupportedDex, SupportedChainId, IchiVault } from '../types';
 import { JsonRpcProvider } from '@ethersproject/providers';
+import { SupportedDex, SupportedChainId, IchiVault } from '../types';
 // eslint-disable-next-line import/no-cycle
 import { VaultQueryData, VaultsByTokensQueryData } from '../types/vaultQueryData';
 import { getIchiVaultContract } from '../contracts';
@@ -61,17 +61,14 @@ const vaultByTokensQuery = gql`
   }
 `;
 
-async function getVaultInfoFromContract(
-  vaultAddress: string,
-  jsonProvider: JsonRpcProvider,
-): Promise<IchiVault> {
-  let vault: IchiVault = {
+async function getVaultInfoFromContract(vaultAddress: string, jsonProvider: JsonRpcProvider): Promise<IchiVault> {
+  const vault: IchiVault = {
     id: vaultAddress,
     tokenA: '',
     tokenB: '',
     allowTokenA: false,
     allowTokenB: false,
-  }
+  };
   const vaultContract = getIchiVaultContract(vaultAddress, jsonProvider);
   vault.tokenA = await vaultContract.token0();
   vault.tokenB = await vaultContract.token1();
@@ -97,14 +94,13 @@ export async function getIchiVaultInfo(
   if (url === 'none' && jsonProvider) {
     promises[key] = getVaultInfoFromContract(vaultAddress, jsonProvider);
   } else {
-
     promises[key] = request<VaultQueryData, { vaultAddress: string }>(url, vaultQuery, {
       vaultAddress,
     })
       .then(({ ichiVault }) => ichiVault)
-      .catch((err) =>{
+      .catch((err) => {
         console.error(err);
-        if (jsonProvider){
+        if (jsonProvider) {
           promises[key] = getVaultInfoFromContract(vaultAddress, jsonProvider);
         }
       })
