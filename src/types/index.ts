@@ -9,6 +9,7 @@ export enum SupportedChainId {
   arbitrum = 42161,
   bsc = 56,
   eon = 7332,
+  hedera_testnet = 296,
   mainnet = 1,
   polygon = 137,
 }
@@ -20,6 +21,7 @@ export enum SupportedDex {
   Quickswap = 'QuickSwap',
   Ramses = 'Ramses',
   Retro = 'Retro',
+  SaucerSwap = 'SaucerSwap',
   Thena = 'Thena',
   UniswapV3 = 'Uniswap V3',
 }

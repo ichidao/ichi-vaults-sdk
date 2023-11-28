@@ -71,6 +71,13 @@ const addressConfig: Record<SupportedChainId, Config> = {
       vaultDeployerAddress: '0xB9200A707f11357D3B1cBDEbd51c8dDA84960Bde',
     },
   },
+  [SupportedChainId.hedera_testnet]: {
+    [SupportedDex.SaucerSwap]: {
+      factoryAddress: '0x1F91CE23502473C501EA498DbC7CA1Eef9Bbc4B6',
+      depositGuardAddress: '0x848E529c32e6CA4Ab998b0208a8481e85BD9616a',
+      vaultDeployerAddress: '0xEc7428cB95cD92e7556172FfBe735c6D48f6DEB7',
+    },
+  },
 };
 
 export default addressConfig;
