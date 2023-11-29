@@ -73,7 +73,7 @@ const vault = {
 const iface = new ethers.utils.Interface(ICHIVAULT_ABI);
 const amount0 = '0';
 const amount1 = '0.5';
-const sharesToWithdraw = '0.01';
+const sharesToWithdraw = '1e-12';
 const bigAmount = '1000';
 
 describe('Vault', () => {

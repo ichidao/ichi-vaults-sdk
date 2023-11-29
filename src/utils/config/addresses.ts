@@ -74,7 +74,7 @@ const addressConfig: Record<SupportedChainId, Config> = {
   [SupportedChainId.hedera_testnet]: {
     [SupportedDex.SaucerSwap]: {
       factoryAddress: '0x1F91CE23502473C501EA498DbC7CA1Eef9Bbc4B6',
-      depositGuardAddress: '0x848E529c32e6CA4Ab998b0208a8481e85BD9616a',
+      depositGuardAddress: '0x0B0C5E6c39195301D8922C89b873836b206A0d1e',
       vaultDeployerAddress: '0xEc7428cB95cD92e7556172FfBe735c6D48f6DEB7',
     },
   },
