@@ -173,8 +173,8 @@ export async function deposit(
     BigNumber.from(0),
     accountAddress,
     {
-      gasLimit: 5e6 // the deposit via guard tx should never exceed 5e6
-    }
+      gasLimit: 5e6, // the deposit via guard tx should never exceed 5e6
+    },
   );
 
   // reduce the estimated LP amount by an acceptable slippage %, for example 1%

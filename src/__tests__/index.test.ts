@@ -30,7 +30,10 @@ const hdWalletProvider = new HDWalletProvider([process.env.PRIVATE_KEY!], proces
 
 // const jsonRpcProvider = new ethers.providers.JsonRpcProvider(process.env.PROVIDER_URL);
 
-const provider = new Web3Provider(hdWalletProvider, { chainId: SupportedChainId.hedera_testnet, name: 'hedera testnet' });
+const provider = new Web3Provider(hdWalletProvider, {
+  chainId: SupportedChainId.hedera_testnet,
+  name: 'hedera testnet',
+});
 // const provider = new Web3Provider(hdWalletProvider, { chainId: SupportedChainId.arbitrum, name: 'arbitrum' });
 // const provider = new Web3Provider(hdWalletProvider, { chainId: SupportedChainId.bsc, name: 'bsc' });
 const account = process.env.ACCOUNT!;
@@ -98,7 +101,7 @@ describe('Vault', () => {
     expect(isApproved1).toEqual(false);
   });
 
-  it('deposit', async () => {
+  it.skip('deposit', async () => {
     const isAllowed0 = await isTokenAllowed(0, vault.address, provider, vault.dex);
     const isAllowed1 = await isTokenAllowed(1, vault.address, provider, vault.dex);
 

@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 /* eslint-disable no-shadow */
 import { Signer } from '@ethersproject/abstract-signer';
 import { Provider } from '@ethersproject/providers';
