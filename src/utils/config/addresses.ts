@@ -78,6 +78,13 @@ const addressConfig: Record<SupportedChainId, Config> = {
       vaultDeployerAddress: '0xEc7428cB95cD92e7556172FfBe735c6D48f6DEB7',
     },
   },
+  [SupportedChainId.zksync_era_testnet]: {
+    [SupportedDex.Velocore]: {
+      factoryAddress: '0x0227f2b783b610107349da9b9DF516b8d476aB4F',
+      depositGuardAddress: '0x7570c7b58c68d95F0663f89C228B7b13d05c15e6',
+      vaultDeployerAddress: '0x451Efff92a3a1471b7af9DDc1369D9D157E6475A',
+    },
+  },
 };
 
 export default addressConfig;

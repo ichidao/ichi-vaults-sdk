@@ -31,8 +31,8 @@ const hdWalletProvider = new HDWalletProvider([process.env.PRIVATE_KEY!], proces
 // const jsonRpcProvider = new ethers.providers.JsonRpcProvider(process.env.PROVIDER_URL);
 
 const provider = new Web3Provider(hdWalletProvider, {
-  chainId: SupportedChainId.hedera_testnet,
-  name: 'hedera testnet',
+  chainId: SupportedChainId.zksync_era_testnet,
+  name: 'zkSync Era Testnet',
 });
 // const provider = new Web3Provider(hdWalletProvider, { chainId: SupportedChainId.arbitrum, name: 'arbitrum' });
 // const provider = new Web3Provider(hdWalletProvider, { chainId: SupportedChainId.bsc, name: 'bsc' });
@@ -62,21 +62,27 @@ const account = process.env.ACCOUNT!;
 //   dex: SupportedDex.Quickswap,
 // };
 
+// const vault = {
+//   address: '0x1abee930ed0fed631c7b5166b7686baa2ee9d69a', // SAUSE-WHBAR  vault
+//   chainId: SupportedChainId.hedera_testnet,
+//   dex: SupportedDex.SaucerSwap,
+// };
+
+const vault = {
+  address: '0xFc01f90423f72156c1b4c62DaeDdb042f5f687bb', // WETH-USDC  vault
+  chainId: SupportedChainId.zksync_era_testnet,
+  dex: SupportedDex.Velocore,
+};
+
 const tokens = {
   pairedToken: '0xB5C064F955D8e7F38fE0460C556a72987494eE17',
   depositToken: '0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270',
 };
 
-const vault = {
-  address: '0x1abee930ed0fed631c7b5166b7686baa2ee9d69a', // SAUSE-WHBAR  vault
-  chainId: SupportedChainId.hedera_testnet,
-  dex: SupportedDex.SaucerSwap,
-};
-
 const iface = new ethers.utils.Interface(ICHIVAULT_ABI);
-const amount0 = '0';
-const amount1 = '0.5';
-const sharesToWithdraw = '1e-12';
+const amount0 = '0.00001';
+const amount1 = '0';
+const sharesToWithdraw = '0.05';
 const bigAmount = '1000';
 
 describe('Vault', () => {
@@ -89,16 +95,16 @@ describe('Vault', () => {
   });
 
   it.skip('approve', async () => {
-    let approve1: ethers.ContractTransaction | null = null;
-    approve1 = await approveDepositToken(account, 1, vault.address, provider, vault.dex, amount1);
-    await approve1.wait();
-    const isApproved1 = await isDepositTokenApproved(account, 1, amount1, vault.address, provider, vault.dex);
-    expect(isApproved1).toEqual(true);
+    let approve: ethers.ContractTransaction | null = null;
+    approve = await approveDepositToken(account, 0, vault.address, provider, vault.dex, amount0);
+    await approve.wait();
+    const isApproved = await isDepositTokenApproved(account, 0, amount0, vault.address, provider, vault.dex);
+    expect(isApproved).toEqual(true);
   });
 
   it('isDepositTokenApproved', async () => {
-    const isApproved1 = await isDepositTokenApproved(account, 1, bigAmount, vault.address, provider, vault.dex);
-    expect(isApproved1).toEqual(false);
+    const isApproved = await isDepositTokenApproved(account, 0, bigAmount, vault.address, provider, vault.dex);
+    expect(isApproved).toEqual(false);
   });
 
   it.skip('deposit', async () => {
@@ -147,15 +153,13 @@ describe('Vault', () => {
   it('getTotalAmounts', async () => {
     const amounts = await getTotalAmounts(vault.address, provider, vault.dex);
 
-    // expect(Number(amounts.total0)).toBeGreaterThan(0);
-    expect(Number(amounts.total1)).toBeGreaterThan(0);
+    expect(Number(amounts.total0)).toBeGreaterThan(0);
   });
 
   it('getUserAmounts', async () => {
     const amounts = await getUserAmounts(account, vault.address, provider, vault.dex);
 
-    // expect(Number(amounts.amount0)).toBeGreaterThan(0);
-    expect(Number(amounts.amount1)).toBeGreaterThan(0);
+    expect(Number(amounts.amount0)).toBeGreaterThan(0);
   });
 
   it.skip('withdraw:deposited', async () => {
