@@ -38,6 +38,9 @@ const urls: Record<SupportedChainId, dexGraph> = {
   [SupportedChainId.hedera_testnet]: {
     [SupportedDex.SaucerSwap]: 'none',
   },
+  [SupportedChainId.zksync_era_testnet]: {
+    [SupportedDex.Velocore]: 'none',
+  },
 };
 
 const vaultQuery = gql`

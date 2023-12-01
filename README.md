@@ -459,6 +459,7 @@ enum SupportedChainId {
   hedera_testnet = 296,
   mainnet = 1,
   polygon = 137,
+  zksync_era_testnet = 280,
 }
 ```
 
@@ -475,6 +476,7 @@ enum SupportedDex {
   SaucerSwap = 'SaucerSwap',
   Thena = 'Thena',
   UniswapV3 = 'Uniswap V3',
+  Velocore = 'Velocore',
 }
 ```
 
