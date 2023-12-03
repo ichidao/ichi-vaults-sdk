@@ -101,7 +101,7 @@ export async function getIchiVaultInfo(
     promises[key] = getVaultInfoFromContract(vaultAddress, jsonProvider);
   } else {
     promises[key] = request<VaultQueryData, { vaultAddress: string }>(url, vaultQuery, {
-      vaultAddress,
+      vaultAddress: vaultAddress.toLowerCase(),
     })
       .then(({ ichiVault }) => ichiVault)
       .catch((err) => {
