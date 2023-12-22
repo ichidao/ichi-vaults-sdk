@@ -39,7 +39,7 @@ const urls: Record<SupportedChainId, dexGraph> = {
     [SupportedDex.SaucerSwap]: 'none',
   },
   [SupportedChainId.zksync_era_testnet]: {
-    [SupportedDex.Velocore]: 'none',
+    [SupportedDex.Velocore]: 'https://api.thegraph.com/subgraphs/name/ichi-org/era-testnet-v1-velocore',
   },
 };
 
