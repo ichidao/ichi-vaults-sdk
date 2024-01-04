@@ -22,6 +22,8 @@ const urls: Record<SupportedChainId, dexGraph> = {
   },
   [SupportedChainId.mainnet]: {
     [SupportedDex.UniswapV3]: 'https://api.thegraph.com/subgraphs/name/ichi-org/mainnet-v1',
+    [SupportedDex.Blueprint]: 'https://api.thegraph.com/subgraphs/name/ichi-org/mainnet-v1-blueprint',
+    [SupportedDex.Pancakeswap]: 'https://api.thegraph.com/subgraphs/name/ichi-org/mainnet-v1-pancakeswap',
   },
   [SupportedChainId.polygon]: {
     [SupportedDex.UniswapV3]: 'https://api.thegraph.com/subgraphs/name/ichi-org/polygon-v1',
@@ -29,6 +31,7 @@ const urls: Record<SupportedChainId, dexGraph> = {
     [SupportedDex.Quickswap]: 'https://api.thegraph.com/subgraphs/name/ichi-org/polygon-v1-quickswap',
   },
   [SupportedChainId.bsc]: {
+    [SupportedDex.UniswapV3]: 'https://api.thegraph.com/subgraphs/name/ichi-org/bnb-v1',
     [SupportedDex.Pancakeswap]: 'https://api.thegraph.com/subgraphs/name/ichi-org/bnb-v1-pancakeswap',
     [SupportedDex.Thena]: 'https://api.thegraph.com/subgraphs/name/ichi-org/bnb-v1-thena',
   },
@@ -37,6 +40,9 @@ const urls: Record<SupportedChainId, dexGraph> = {
   },
   [SupportedChainId.hedera_testnet]: {
     [SupportedDex.SaucerSwap]: 'none',
+  },
+  [SupportedChainId.zksync_era]: {
+    [SupportedDex.Pancakeswap]: 'https://api.studio.thegraph.com/query/61136/zksync-v1-pancakeswap/version/latest',
   },
   [SupportedChainId.zksync_era_testnet]: {
     [SupportedDex.Velocore]: 'https://api.thegraph.com/subgraphs/name/ichi-org/era-testnet-v1-velocore',
