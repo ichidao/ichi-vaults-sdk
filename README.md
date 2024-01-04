@@ -459,6 +459,7 @@ enum SupportedChainId {
   hedera_testnet = 296,
   mainnet = 1,
   polygon = 137,
+  zksync_era = 324,
   zksync_era_testnet = 280,
 }
 ```
@@ -468,6 +469,7 @@ enum SupportedChainId {
 ```typescript
 enum SupportedDex {
   Ascent = 'Ascent',
+  Blueprint = 'Blueprint',
   Horiza = 'Horiza',
   Pancakeswap = 'PancakeSwap',
   Quickswap = 'QuickSwap',

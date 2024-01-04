@@ -14,10 +14,12 @@ export enum SupportedChainId {
   mainnet = 1,
   polygon = 137,
   zksync_era_testnet = 280,
+  zksync_era = 324,
 }
 
 export enum SupportedDex {
   Ascent = 'Ascent',
+  Blueprint = 'Blueprint',
   Horiza = 'Horiza',
   Pancakeswap = 'PancakeSwap',
   Quickswap = 'QuickSwap',
