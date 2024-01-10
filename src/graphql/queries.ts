@@ -1,3 +1,4 @@
+// eslint-disable-next-line import/no-unresolved
 import { gql } from 'graphql-request';
 
 export const vaultQuery = gql`
@@ -27,10 +28,10 @@ export const vaultByTokensQuery = gql`
 export const rebalancesQuery = gql`
   query ($vaultAddress: String!, $createdAtTimestamp_gt: String!) {
     vaultRebalances(where: { vault: $vaultAddress, createdAtTimestamp_gt: $createdAtTimestamp_gt }) {
-        feeAmount0
-        feeAmount1
-        createdAtTimestamp
-        vault
+      feeAmount0
+      feeAmount1
+      createdAtTimestamp
+      vault
     }
   }
 `;

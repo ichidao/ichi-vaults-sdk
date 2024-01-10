@@ -1,3 +1,4 @@
+/* eslint-disable no-redeclare */
 /* eslint-disable import/prefer-default-export */
 
 import { JsonRpcProvider } from '@ethersproject/providers';
@@ -42,13 +43,17 @@ export async function getFeesCollected(
   const token0Decimals = await getTokenDecimals(vault.tokenA, jsonProvider);
   const token1Decimals = await getTokenDecimals(vault.tokenB, jsonProvider);
 
-  const numOfDays = typeof rawOrDays === 'boolean' ? days : rawOrDays
+  const numOfDays = typeof rawOrDays === 'boolean' ? days : rawOrDays;
   const rebalances = await getRebalances(vaultAddress, jsonProvider, dex, numOfDays);
   if (!rebalances) throw new Error(`Error getting vault rebalances on ${chainId} for ${vaultAddress}`);
-  console.log({rebalances});
+  console.log({ rebalances });
 
-  const amount0BN = rebalances.map((r) => (BigNumber.from(r.feeAmount0))).reduce((total, curr) => total.add(curr), BigNumber.from(0));
-  const amount1BN = rebalances.map((r) => (BigNumber.from(r.feeAmount1))).reduce((total, curr) => total.add(curr), BigNumber.from(0));
+  const amount0BN = rebalances
+    .map((r) => BigNumber.from(r.feeAmount0))
+    .reduce((total, curr) => total.add(curr), BigNumber.from(0));
+  const amount1BN = rebalances
+    .map((r) => BigNumber.from(r.feeAmount1))
+    .reduce((total, curr) => total.add(curr), BigNumber.from(0));
 
   const feeAmountsBN = {
     total0: amount0BN,
@@ -57,14 +62,14 @@ export async function getFeesCollected(
     1: amount1BN,
   } as TotalAmountsBN;
 
-  if (typeof rawOrDays  !== 'boolean') {
+  if (typeof rawOrDays !== 'boolean') {
     const feeAmounts = {
       total0: formatBigInt(feeAmountsBN.total0, token0Decimals),
       total1: formatBigInt(feeAmountsBN.total1, token1Decimals),
       0: formatBigInt(feeAmountsBN.total0, token0Decimals),
       1: formatBigInt(feeAmountsBN.total1, token1Decimals),
     } as TotalAmounts;
-    console.log({feeAmounts});
+    console.log({ feeAmounts });
     return feeAmounts;
   }
 

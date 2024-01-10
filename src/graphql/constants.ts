@@ -1,3 +1,4 @@
+/* eslint-disable import/prefer-default-export */
 import { SupportedDex, SupportedChainId } from '../types';
 
 type PartialRecord<K extends keyof any, T> = {

@@ -1,5 +1,5 @@
 // eslint-disable-next-line import/no-unresolved
-import { request, gql } from 'graphql-request';
+import { request } from 'graphql-request';
 import { JsonRpcProvider } from '@ethersproject/providers';
 import { SupportedDex, SupportedChainId, IchiVault } from '../types';
 // eslint-disable-next-line import/no-cycle
