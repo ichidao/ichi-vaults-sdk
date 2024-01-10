@@ -11,6 +11,7 @@ export enum SupportedChainId {
   bsc = 56,
   eon = 7332,
   hedera_testnet = 296,
+  linea = 59144,
   mainnet = 1,
   polygon = 137,
   zksync_era_testnet = 280,
@@ -21,6 +22,7 @@ export enum SupportedDex {
   Ascent = 'Ascent',
   Blueprint = 'Blueprint',
   Horiza = 'Horiza',
+  Lynex = 'Lynex',
   Pancakeswap = 'PancakeSwap',
   Quickswap = 'QuickSwap',
   Ramses = 'Ramses',
@@ -44,4 +46,11 @@ export interface IchiVault {
   tokenB: string;
   allowTokenA: boolean;
   allowTokenB: boolean;
+}
+
+export interface Rebalance {
+  feeAmount0: string;
+  feeAmount1: string;
+  createdAtTimestamp: string;
+  vault: string;
 }

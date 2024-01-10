@@ -93,6 +93,13 @@ const addressConfig: Record<SupportedChainId, Config> = {
       vaultDeployerAddress: '0xEc7428cB95cD92e7556172FfBe735c6D48f6DEB7',
     },
   },
+  [SupportedChainId.linea]: {
+    [SupportedDex.Lynex]: {
+      factoryAddress: '0x0248b992ac2a75294b05286E9DD3A2bD3C9CFE4B',
+      depositGuardAddress: '0x57C9d919AEA56171506cfb62B60ce76be0A079DF',
+      vaultDeployerAddress: '0x75178e0a2829B73E3AE4C21eE64F4B684085392a',
+    },
+  },
   [SupportedChainId.zksync_era]: {
     [SupportedDex.Pancakeswap]: {
       factoryAddress: '0x8a76c26E0089111989C14EF56b9733aa38B94148',
