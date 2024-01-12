@@ -6,7 +6,7 @@ import { JsonRpcProvider } from '@ethersproject/providers';
 import { SupportedDex, SupportedChainId } from '../types';
 // eslint-disable-next-line import/no-cycle
 import { RebalancesQueryData } from '../types/vaultQueryData';
-import { urls } from '../graphql/constants';
+import { graphUrls } from '../graphql/constants';
 import { rebalancesQuery } from '../graphql/queries';
 
 const promises: Record<string, Promise<any>> = {};
@@ -30,7 +30,7 @@ export async function getRebalances(
   const key = `${chainId + vaultAddress}-rebalances`;
   if (Object.prototype.hasOwnProperty.call(promises, key)) return promises[key];
 
-  const url = urls[chainId as SupportedChainId]![dex];
+  const url = graphUrls[chainId as SupportedChainId]![dex];
   if (!url) throw new Error(`Unsupported DEX ${dex} on chain ${chainId}`);
 
   const currTimestamp = Date.now();

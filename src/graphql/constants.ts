@@ -7,11 +7,12 @@ type PartialRecord<K extends keyof any, T> = {
 type dexGraph = PartialRecord<SupportedDex, string>;
 
 // 'none' indicates that graph is not enabled on that chain
-export const urls: Record<SupportedChainId, dexGraph> = {
+export const graphUrls: Record<SupportedChainId, dexGraph> = {
   [SupportedChainId.arbitrum]: {
     [SupportedDex.UniswapV3]: 'https://api.thegraph.com/subgraphs/name/ichi-org/arbitrum-v1',
     [SupportedDex.Ramses]: 'https://api.thegraph.com/subgraphs/name/ichi-org/arbitrum-v1-ramses',
     [SupportedDex.Horiza]: 'https://api.thegraph.com/subgraphs/name/ichi-org/arbitrum-v1-horiza',
+    [SupportedDex.Sushiswap]: 'https://api.thegraph.com/subgraphs/name/ichi-org/arbitrum-v1-sushiswap',
   },
   [SupportedChainId.mainnet]: {
     [SupportedDex.UniswapV3]: 'https://api.thegraph.com/subgraphs/name/ichi-org/mainnet-v1',
@@ -39,6 +40,7 @@ export const urls: Record<SupportedChainId, dexGraph> = {
   },
   [SupportedChainId.zksync_era]: {
     [SupportedDex.Pancakeswap]: 'https://api.studio.thegraph.com/query/61136/zksync-v1-pancakeswap/version/latest',
+    [SupportedDex.Velocore]: 'https://api.studio.thegraph.com/query/61136/zksync-v1-velocore/version/latest',
   },
   [SupportedChainId.zksync_era_testnet]: {
     [SupportedDex.Velocore]: 'https://api.thegraph.com/subgraphs/name/ichi-org/era-testnet-v1-velocore',
