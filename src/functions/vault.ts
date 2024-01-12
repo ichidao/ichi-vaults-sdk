@@ -5,7 +5,7 @@ import { SupportedDex, SupportedChainId, IchiVault } from '../types';
 // eslint-disable-next-line import/no-cycle
 import { VaultQueryData, VaultsByTokensQueryData } from '../types/vaultQueryData';
 import { getIchiVaultContract } from '../contracts';
-import { urls } from '../graphql/constants';
+import { graphUrls } from '../graphql/constants';
 import { vaultByTokensQuery, vaultQuery } from '../graphql/queries';
 
 const promises: Record<string, Promise<any>> = {};
@@ -38,7 +38,7 @@ export async function getIchiVaultInfo(
 
   if (Object.prototype.hasOwnProperty.call(promises, key)) return promises[key];
 
-  const url = urls[chainId]![dex];
+  const url = graphUrls[chainId]![dex];
   if (!url) throw new Error(`Unsupported DEX ${dex} on chain ${chainId}`);
   if (url === 'none' && jsonProvider) {
     promises[key] = getVaultInfoFromContract(vaultAddress, jsonProvider);
@@ -66,7 +66,7 @@ export async function getVaultsByTokens(
   depositTokenAddress: string,
   pairedTokenAddress: string,
 ): Promise<VaultsByTokensQueryData['ichiVaults']> {
-  const url = urls[chainId]![dex];
+  const url = graphUrls[chainId]![dex];
   if (!url) throw new Error(`Unsupported DEX ${dex} on chain ${chainId}`);
   if (url === 'none') throw new Error(`Function not available for DEX ${dex} on chain ${chainId}`);
 
