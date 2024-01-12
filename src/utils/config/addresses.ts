@@ -113,7 +113,7 @@ const addressConfig: Record<SupportedChainId, Config> = {
     },
     [SupportedDex.Velocore]: {
       factoryAddress: '0x1Cd7f4a2E9e7EFb23E27CFB9eF3a2F3CFAf27675',
-      depositGuardAddress: '0xBA2300A904eA5bEb98Dfc5FeC99a1dB7ed11f7a1',
+      depositGuardAddress: '0x01292A32a0b8F8f56fBb8DB90d3756a0EF06C666',
       vaultDeployerAddress: '0x12C1F03a443A5B893870ea6cBDb2362f666275Da',
     },
   },
