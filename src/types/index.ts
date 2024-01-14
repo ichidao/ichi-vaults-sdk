@@ -49,7 +49,7 @@ export interface IchiVault {
   allowTokenB: boolean;
 }
 
-export interface Rebalance {
+export interface Fees {
   feeAmount0: string;
   feeAmount1: string;
   createdAtTimestamp: string;

@@ -19,8 +19,9 @@ This sdk contains collection of functions to interact with IchiVault's smart con
         * [`getUserAmounts()`](#8-getUserAmounts)
         * [`getTotalSupply()`](#9-getTotalSupply)
         * [`getTotalAmounts()`](#10-getTotalAmounts)
-        * [`getIchiVaultInfo()`](#11-getIchiVaultInfo)
-        * [`getVaultsByTokens()`](#12-getVaultsByTokens)
+        * [`getFeesCollected()`](#11-getTotalAmounts)
+        * [`getIchiVaultInfo()`](#12-getIchiVaultInfo)
+        * [`getVaultsByTokens()`](#13-getVaultsByTokens)
 
 ## Installation
 Install with
@@ -394,7 +395,63 @@ const amountsBN: [BigNumber, BigNumber] & {total0: BigNumber, total1: BigNumber}
 )
 ```
 
-#### 11. `getIchiVaultInfo()`
+#### 11. `getFeesCollected()`
+
+| param | type |  default | required
+| -------- | -------- | -------- | --------
+| vaultAddress   | string | - | true |
+| jsonProvider      | [JsonRpcProvider](https://github.com/ethers-io/ethers.js/blob/f97b92bbb1bde22fcc44100af78d7f31602863ab/packages/providers/src.ts/json-rpc-provider.ts#L393) | - | true
+| dex   | SupportedDex | - | true 
+| rawOrDays   | true or number | undefined | false | 
+| days   | number | undefined | false | 
+
+<br/>
+
+```typescript
+import { Web3Provider } from '@ethersproject/providers';
+import { getFeesCollected, SupportedDex } from '@ichidao/ichi-vaults-sdk';
+
+const web3Provider = new Web3Provider(YOUR_WEB3_PROVIDER);
+const vaultAddress = "0x3ac9...a5f132";
+const dex = SupportedDex.UniswapV3;
+const days = 7;
+
+const amounts: [string, string] & {total0: string, total1: string} = await getFeesCollected(
+    vaultAddress, 
+    web3Provider
+    dex,
+)
+
+// - or - 
+
+const amountsBN: [BigNumber, BigNumber] & {total0: BigNumber, total1: BigNumber} = await getFeesCollected(
+    vaultAddress, 
+    web3Provider
+    dex,
+    true
+)
+
+// - or - 
+
+const amounts: [string, string] & {total0: string, total1: string} = await getFeesCollected(
+    vaultAddress, 
+    web3Provider
+    dex,
+    days
+)
+
+// - or - 
+
+const amountsBN: [BigNumber, BigNumber] & {total0: BigNumber, total1: BigNumber} = await getFeesCollected(
+    vaultAddress, 
+    web3Provider
+    dex,
+    true,
+    days
+)
+```
+
+#### 12. `getIchiVaultInfo()`
 
 | param | type |  default | required
 | -------- | -------- | -------- | --------
@@ -419,7 +476,7 @@ if (vaultInfo) {
 }
 ```
 
-#### 12. `getVaultsByTokens()`
+#### 13. `getVaultsByTokens()`
 
 | param | type |  default | required
 | -------- | -------- | -------- | --------

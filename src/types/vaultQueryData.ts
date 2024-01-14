@@ -1,5 +1,5 @@
 // eslint-disable-next-line import/no-cycle
-import { IchiVault, Rebalance } from '..';
+import { IchiVault, Fees } from '..';
 
 export interface VaultQueryData {
   ichiVault: IchiVault;
@@ -10,5 +10,8 @@ export interface VaultsByTokensQueryData {
 }
 
 export interface RebalancesQueryData {
-  vaultRebalances: Rebalance[];
+  vaultRebalances: Fees[];
+}
+export interface CollectFeesQueryData {
+  vaultCollectFees: Fees[];
 }

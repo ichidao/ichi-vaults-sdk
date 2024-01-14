@@ -6,7 +6,7 @@ import { BigNumber } from '@ethersproject/bignumber';
 import { SupportedChainId, SupportedDex, TotalAmounts, TotalAmountsBN } from '../types';
 // eslint-disable-next-line import/no-cycle
 import { getIchiVaultInfo } from './vault';
-import { getRebalances } from './rebalances';
+import { getCollectedFees, getRebalances } from './fees';
 import { getTokenDecimals } from './balances';
 import formatBigInt from '../utils/formatBigInt';
 
@@ -46,14 +46,19 @@ export async function getFeesCollected(
   const numOfDays = typeof rawOrDays === 'boolean' ? days : rawOrDays;
   const rebalances = await getRebalances(vaultAddress, jsonProvider, dex, numOfDays);
   if (!rebalances) throw new Error(`Error getting vault rebalances on ${chainId} for ${vaultAddress}`);
-  console.log({ rebalances });
+  const collectedFees = await getCollectedFees(vaultAddress, jsonProvider, dex, numOfDays);
+  if (!collectedFees) throw new Error(`Error getting vault collected fees on ${chainId} for ${vaultAddress}`);
 
   const amount0BN = rebalances
     .map((r) => BigNumber.from(r.feeAmount0))
-    .reduce((total, curr) => total.add(curr), BigNumber.from(0));
+    .reduce((total, curr) => total.add(curr), BigNumber.from(0))
+    .add(collectedFees.map((f) => BigNumber.from(f.feeAmount0))
+    .reduce((total, curr) => total.add(curr), BigNumber.from(0)));
   const amount1BN = rebalances
     .map((r) => BigNumber.from(r.feeAmount1))
-    .reduce((total, curr) => total.add(curr), BigNumber.from(0));
+    .reduce((total, curr) => total.add(curr), BigNumber.from(0))
+    .add(collectedFees.map((f) => BigNumber.from(f.feeAmount1))
+    .reduce((total, curr) => total.add(curr), BigNumber.from(0)));
 
   const feeAmountsBN = {
     total0: amount0BN,
@@ -69,7 +74,6 @@ export async function getFeesCollected(
       0: formatBigInt(feeAmountsBN.total0, token0Decimals),
       1: formatBigInt(feeAmountsBN.total1, token1Decimals),
     } as TotalAmounts;
-    console.log({ feeAmounts });
     return feeAmounts;
   }
 
