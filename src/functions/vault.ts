@@ -38,7 +38,7 @@ export async function getIchiVaultInfo(
 
   if (Object.prototype.hasOwnProperty.call(promises, key)) return promises[key];
 
-  const url = graphUrls[chainId]![dex];
+  const url = graphUrls[chainId]![dex]?.url;
   if (!url) throw new Error(`Unsupported DEX ${dex} on chain ${chainId}`);
   if (url === 'none' && jsonProvider) {
     promises[key] = getVaultInfoFromContract(vaultAddress, jsonProvider);
@@ -66,7 +66,7 @@ export async function getVaultsByTokens(
   depositTokenAddress: string,
   pairedTokenAddress: string,
 ): Promise<VaultsByTokensQueryData['ichiVaults']> {
-  const url = graphUrls[chainId]![dex];
+  const url = graphUrls[chainId]![dex]?.url;
   if (!url) throw new Error(`Unsupported DEX ${dex} on chain ${chainId}`);
   if (url === 'none') throw new Error(`Function not available for DEX ${dex} on chain ${chainId}`);
 

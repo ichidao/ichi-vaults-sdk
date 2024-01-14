@@ -52,13 +52,19 @@ export async function getFeesCollected(
   const amount0BN = rebalances
     .map((r) => BigNumber.from(r.feeAmount0))
     .reduce((total, curr) => total.add(curr), BigNumber.from(0))
-    .add(collectedFees.map((f) => BigNumber.from(f.feeAmount0))
-    .reduce((total, curr) => total.add(curr), BigNumber.from(0)));
+    .add(
+      collectedFees
+        .map((f) => BigNumber.from(f.feeAmount0))
+        .reduce((total, curr) => total.add(curr), BigNumber.from(0)),
+    );
   const amount1BN = rebalances
     .map((r) => BigNumber.from(r.feeAmount1))
     .reduce((total, curr) => total.add(curr), BigNumber.from(0))
-    .add(collectedFees.map((f) => BigNumber.from(f.feeAmount1))
-    .reduce((total, curr) => total.add(curr), BigNumber.from(0)));
+    .add(
+      collectedFees
+        .map((f) => BigNumber.from(f.feeAmount1))
+        .reduce((total, curr) => total.add(curr), BigNumber.from(0)),
+    );
 
   const feeAmountsBN = {
     total0: amount0BN,

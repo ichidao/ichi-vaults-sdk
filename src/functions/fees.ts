@@ -3,7 +3,7 @@
 // eslint-disable-next-line import/no-unresolved
 import { request } from 'graphql-request';
 import { JsonRpcProvider } from '@ethersproject/providers';
-import { SupportedDex, SupportedChainId } from '../types';
+import { SupportedDex, SupportedChainId, Fees } from '../types';
 // eslint-disable-next-line import/no-cycle
 import { CollectFeesQueryData, RebalancesQueryData } from '../types/vaultQueryData';
 import { graphUrls } from '../graphql/constants';
@@ -30,7 +30,7 @@ export async function getRebalances(
   const key = `${chainId + vaultAddress}-rebalances`;
   if (Object.prototype.hasOwnProperty.call(promises, key)) return promises[key];
 
-  const url = graphUrls[chainId as SupportedChainId]![dex];
+  const url = graphUrls[chainId as SupportedChainId]![dex]?.url;
   if (!url) throw new Error(`Unsupported DEX ${dex} on chain ${chainId}`);
 
   const currTimestamp = Date.now();
@@ -52,9 +52,6 @@ export async function getRebalances(
       .then(({ vaultRebalances }) => vaultRebalances)
       .catch((err) => {
         console.error(err);
-        if (jsonProvider) {
-          // promises[key] = getVaultInfoFromContract(vaultAddress, jsonProvider);
-        }
       })
       .finally(() => setTimeout(() => delete promises[key], 2 * 60 * 100 /* 2 mins */));
   }
@@ -78,8 +75,12 @@ export async function getCollectedFees(
   const key = `${chainId + vaultAddress}-collect-fees`;
   if (Object.prototype.hasOwnProperty.call(promises, key)) return promises[key];
 
-  const url = graphUrls[chainId as SupportedChainId]![dex];
+  const url = graphUrls[chainId as SupportedChainId]![dex]?.url;
   if (!url) throw new Error(`Unsupported DEX ${dex} on chain ${chainId}`);
+  const supportsCollectFees = graphUrls[chainId as SupportedChainId]![dex]?.supportsCollectFees;
+  if (!supportsCollectFees) {
+    return [] as unknown as Promise<Fees[]>;
+  }
 
   const currTimestamp = Date.now();
   const startTimestamp = days
@@ -100,9 +101,6 @@ export async function getCollectedFees(
       .then(({ vaultCollectFees }) => vaultCollectFees)
       .catch((err) => {
         console.error(err);
-        if (jsonProvider) {
-          // promises[key] = getVaultInfoFromContract(vaultAddress, jsonProvider);
-        }
       })
       .finally(() => setTimeout(() => delete promises[key], 2 * 60 * 100 /* 2 mins */));
   }
