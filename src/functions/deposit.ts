@@ -52,7 +52,7 @@ export async function isDepositTokenApproved(
   const token = vault[tokenIdx === 0 ? 'tokenA' : 'tokenB'];
 
   const tokenContract = getERC20Contract(token, signer);
-  const depositGuardAddress = addressConfig[chainId as SupportedChainId]![dex]?.depositGuardAddress ?? '';
+  const depositGuardAddress = addressConfig[chainId as SupportedChainId]![dex]?.depositGuard.address ?? '';
   const currentAllowanceBN = await tokenContract.allowance(accountAddress, depositGuardAddress);
   const tokenDecimals = await tokenContract.decimals();
 
@@ -91,7 +91,7 @@ export async function approveDepositToken(
       : parseBigInt(amount, +tokenDecimals || 18)
     : MaxUint256;
 
-  const depositGuardAddress = addressConfig[chainId as SupportedChainId]![dex]?.depositGuardAddress ?? '';
+  const depositGuardAddress = addressConfig[chainId as SupportedChainId]![dex]?.depositGuard.address ?? '';
   const gasLimit =
     overrides?.gasLimit ?? calculateGasMargin(await tokenContract.estimateGas.approve(depositGuardAddress, amountBN));
 
@@ -161,7 +161,7 @@ export async function deposit(
   }
 
   // obtain Deposit Guard contract
-  const depositGuardAddress = addressConfig[chainId as SupportedChainId]![dex]?.depositGuardAddress ?? '';
+  const depositGuardAddress = addressConfig[chainId as SupportedChainId]![dex]?.depositGuard.address ?? '';
   const depositGuardContract = getDepositGuardContract(depositGuardAddress, signer);
 
   // the first call: get estimated LP amount
