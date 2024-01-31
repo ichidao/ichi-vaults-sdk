@@ -25,24 +25,30 @@ export const vaultByTokensQuery = gql`
   }
 `;
 
-export const rebalancesQuery = gql`
+export const rebalancesQuery = (page: number) => gql`
   query ($vaultAddress: String!, $createdAtTimestamp_gt: String!) {
-    vaultRebalances(where: { vault: $vaultAddress, createdAtTimestamp_gt: $createdAtTimestamp_gt }) {
+    vaultRebalances(first:1000, skip: ${
+      page * 1000
+    }, where: { vault: $vaultAddress, createdAtTimestamp_gt: $createdAtTimestamp_gt }) {
       feeAmount0
       feeAmount1
       createdAtTimestamp
       vault
+      sqrtPrice
     }
   }
 `;
 
-export const vaultCollectFeesQuery = gql`
+export const vaultCollectFeesQuery = (page: number) => gql`
   query ($vaultAddress: String!, $createdAtTimestamp_gt: String!) {
-    vaultCollectFees(where: { vault: $vaultAddress, createdAtTimestamp_gt: $createdAtTimestamp_gt }) {
+    vaultCollectFees(first: 1000, skip: ${
+      page * 1000
+    }, where: { vault: $vaultAddress, createdAtTimestamp_gt: $createdAtTimestamp_gt }) {
       feeAmount0
       feeAmount1
       createdAtTimestamp
       vault
+      sqrtPrice
     }
   }
 `;

@@ -1,4 +1,5 @@
 /* eslint-disable camelcase */
+/* eslint-disable no-await-in-loop */
 /* eslint-disable radix */
 // eslint-disable-next-line import/no-unresolved
 import { request } from 'graphql-request';
@@ -8,12 +9,9 @@ import { SupportedDex, SupportedChainId, Fees } from '../types';
 import { CollectFeesQueryData, RebalancesQueryData } from '../types/vaultQueryData';
 import { graphUrls } from '../graphql/constants';
 import { rebalancesQuery, vaultCollectFeesQuery } from '../graphql/queries';
+import daysToMilliseconds from '../utils/timestamps';
 
 const promises: Record<string, Promise<any>> = {};
-
-function daysToMilliseconds(days: number): number {
-  return days * 24 * 60 * 60 * 1000;
-}
 
 // eslint-disable-next-line import/prefer-default-export
 export async function getRebalances(
@@ -21,13 +19,13 @@ export async function getRebalances(
   jsonProvider: JsonRpcProvider,
   dex: SupportedDex,
   days?: number,
-): Promise<RebalancesQueryData['vaultRebalances']> {
+): Promise<Fees[]> {
   const { chainId } = await jsonProvider.getNetwork();
   if (!Object.values(SupportedChainId).includes(chainId)) {
     throw new Error(`Unsupported chainId: ${chainId ?? 'undefined'}`);
   }
 
-  const key = `${chainId + vaultAddress}-rebalances`;
+  const key = `${chainId + vaultAddress + days}-rebalances`;
   if (Object.prototype.hasOwnProperty.call(promises, key)) return promises[key];
 
   const url = graphUrls[chainId as SupportedChainId]![dex]?.url;
@@ -41,38 +39,54 @@ export async function getRebalances(
   if (url === 'none' && jsonProvider) {
     throw new Error(`Unsupported function for DEX ${dex} on chain ${chainId}`);
   } else {
-    promises[key] = request<RebalancesQueryData, { vaultAddress: string; createdAtTimestamp_gt: string }>(
-      url,
-      rebalancesQuery,
-      {
-        vaultAddress,
-        createdAtTimestamp_gt: startTimestamp,
-      },
-    )
-      .then(({ vaultRebalances }) => vaultRebalances)
-      .catch((err) => {
-        console.error(err);
-      })
-      .finally(() => setTimeout(() => delete promises[key], 2 * 60 * 100 /* 2 mins */));
-  }
+    const rebalances = [] as Fees[];
+    let endOfData = false;
+    let page = 0;
+    while (!endOfData) {
+      const result = await request<RebalancesQueryData, { vaultAddress: string; createdAtTimestamp_gt: string }>(
+        url,
+        rebalancesQuery(page),
+        {
+          vaultAddress,
+          createdAtTimestamp_gt: startTimestamp,
+        },
+      )
+        .then(({ vaultRebalances }) => vaultRebalances)
+        .catch((err) => {
+          console.error(err);
+        });
+      if (result) {
+        rebalances.push(...result);
+        page += 1;
+        if (result.length < 1000) {
+          endOfData = true;
+        }
+      } else {
+        endOfData = true;
+      }
+    }
 
-  // eslint-disable-next-line no-return-await
-  return await promises[key];
+    promises[key] = new Promise((resolve) => resolve(rebalances)).finally(() =>
+      setTimeout(() => delete promises[key], 2 * 60 * 100 /* 2 mins */),
+    );
+
+    return rebalances;
+  }
 }
 
 // eslint-disable-next-line import/prefer-default-export
-export async function getCollectedFees(
+export async function getFeesCollectedEvents(
   vaultAddress: string,
   jsonProvider: JsonRpcProvider,
   dex: SupportedDex,
   days?: number,
-): Promise<CollectFeesQueryData['vaultCollectFees']> {
+): Promise<Fees[]> {
   const { chainId } = await jsonProvider.getNetwork();
   if (!Object.values(SupportedChainId).includes(chainId)) {
     throw new Error(`Unsupported chainId: ${chainId ?? 'undefined'}`);
   }
 
-  const key = `${chainId + vaultAddress}-collect-fees`;
+  const key = `${chainId + vaultAddress + days}-collect-fees`;
   if (Object.prototype.hasOwnProperty.call(promises, key)) return promises[key];
 
   const url = graphUrls[chainId as SupportedChainId]![dex]?.url;
@@ -90,21 +104,36 @@ export async function getCollectedFees(
   if (url === 'none' && jsonProvider) {
     throw new Error(`Unsupported function for DEX ${dex} on chain ${chainId}`);
   } else {
-    promises[key] = request<CollectFeesQueryData, { vaultAddress: string; createdAtTimestamp_gt: string }>(
-      url,
-      vaultCollectFeesQuery,
-      {
-        vaultAddress,
-        createdAtTimestamp_gt: startTimestamp,
-      },
-    )
-      .then(({ vaultCollectFees }) => vaultCollectFees)
-      .catch((err) => {
-        console.error(err);
-      })
-      .finally(() => setTimeout(() => delete promises[key], 2 * 60 * 100 /* 2 mins */));
-  }
+    const otherFees = [] as Fees[];
+    let endOfData = false;
+    let page = 0;
+    while (!endOfData) {
+      const result = await request<CollectFeesQueryData, { vaultAddress: string; createdAtTimestamp_gt: string }>(
+        url,
+        vaultCollectFeesQuery(page),
+        {
+          vaultAddress,
+          createdAtTimestamp_gt: startTimestamp,
+        },
+      )
+        .then(({ vaultCollectFees }) => vaultCollectFees)
+        .catch((err) => {
+          console.error(err);
+        });
+      if (result) {
+        otherFees.push(...result);
+        page += 1;
+        if (result.length < 1000) {
+          endOfData = true;
+        }
+      } else {
+        endOfData = true;
+      }
+    }
+    promises[key] = new Promise((resolve) => resolve(otherFees)).finally(() =>
+      setTimeout(() => delete promises[key], 2 * 60 * 100 /* 2 mins */),
+    );
 
-  // eslint-disable-next-line no-return-await
-  return await promises[key];
+    return otherFees;
+  }
 }

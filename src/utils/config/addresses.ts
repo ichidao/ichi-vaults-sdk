@@ -9,6 +9,7 @@ export type SupportedDexConfig = {
     version: number;
   };
   vaultDeployerAddress: string;
+  isAlgebra: boolean;
 };
 
 export type Config = { [key in SupportedDex]?: SupportedDexConfig };
@@ -22,6 +23,7 @@ const addressConfig: Record<SupportedChainId, Config> = {
         version: 1,
       },
       vaultDeployerAddress: '0x508C3daa571854247726ba26949f182086Ff89B0',
+      isAlgebra: false,
     },
     [SupportedDex.Ramses]: {
       factoryAddress: '0xedAc86bc526557c422AB1F6BF848bF0da9fB44A6',
@@ -30,6 +32,7 @@ const addressConfig: Record<SupportedChainId, Config> = {
         version: 1,
       },
       vaultDeployerAddress: '0x508C3daa571854247726ba26949f182086Ff89B0',
+      isAlgebra: false,
     },
     [SupportedDex.Horiza]: {
       factoryAddress: '0x1Cc05B01f2e52ae3bb29F7A0059Fe112C60aA3f4',
@@ -38,6 +41,7 @@ const addressConfig: Record<SupportedChainId, Config> = {
         version: 1,
       },
       vaultDeployerAddress: '0x508C3daa571854247726ba26949f182086Ff89B0',
+      isAlgebra: false,
     },
     [SupportedDex.Sushiswap]: {
       factoryAddress: '0xbA4c7b5eFD44Aa60da0440D0427555bdBE50e6BC',
@@ -45,6 +49,7 @@ const addressConfig: Record<SupportedChainId, Config> = {
         address: '0xB77463Eba7f1bD5F37FCA35fdF9306B09bAa7379',
         version: 1,
       },
+      isAlgebra: false,
       vaultDeployerAddress: '0x508C3daa571854247726ba26949f182086Ff89B0',
     },
   },
@@ -56,6 +61,7 @@ const addressConfig: Record<SupportedChainId, Config> = {
         version: 1,
       },
       vaultDeployerAddress: '0x0768A75F616B98ee0937673bD83B7aBF142236Ea',
+      isAlgebra: false,
     },
     [SupportedDex.Retro]: {
       factoryAddress: '0xb2f44D8545315cDd0bAaB4AC7233218b932a5dA7',
@@ -64,6 +70,7 @@ const addressConfig: Record<SupportedChainId, Config> = {
         version: 1,
       },
       vaultDeployerAddress: '0x0768A75F616B98ee0937673bD83B7aBF142236Ea',
+      isAlgebra: false,
     },
     [SupportedDex.Quickswap]: {
       factoryAddress: '0x11700544C577Cb543a498B27B4F0f7018BDb6E8a',
@@ -72,6 +79,7 @@ const addressConfig: Record<SupportedChainId, Config> = {
         version: 1,
       },
       vaultDeployerAddress: '0x0768A75F616B98ee0937673bD83B7aBF142236Ea',
+      isAlgebra: true,
     },
   },
   [SupportedChainId.mainnet]: {
@@ -82,6 +90,7 @@ const addressConfig: Record<SupportedChainId, Config> = {
         version: 1,
       },
       vaultDeployerAddress: '0xfF7B5E167c9877f2b9f65D19d9c8c9aa651Fe19F',
+      isAlgebra: false,
     },
     [SupportedDex.Blueprint]: {
       factoryAddress: '0xEAeC81F0eD4F622D4b389672d9859166C0832b3E',
@@ -90,6 +99,7 @@ const addressConfig: Record<SupportedChainId, Config> = {
         version: 1,
       },
       vaultDeployerAddress: '0xfF7B5E167c9877f2b9f65D19d9c8c9aa651Fe19F',
+      isAlgebra: false,
     },
     [SupportedDex.Pancakeswap]: {
       factoryAddress: '0x8Dd50926e12BD71904bCCc6D86DFA55D42715094',
@@ -98,6 +108,7 @@ const addressConfig: Record<SupportedChainId, Config> = {
         version: 1,
       },
       vaultDeployerAddress: '0xfF7B5E167c9877f2b9f65D19d9c8c9aa651Fe19F',
+      isAlgebra: false,
     },
   },
   [SupportedChainId.bsc]: {
@@ -108,6 +119,7 @@ const addressConfig: Record<SupportedChainId, Config> = {
         version: 1,
       },
       vaultDeployerAddress: '0x05cC3CA6E768a68A7f86b09e3ceE754437bd5f12',
+      isAlgebra: false,
     },
     [SupportedDex.Pancakeswap]: {
       factoryAddress: '0x131c03ca881B7cC66d7a5120A9273ebf675C241D',
@@ -116,6 +128,7 @@ const addressConfig: Record<SupportedChainId, Config> = {
         version: 1,
       },
       vaultDeployerAddress: '0x05cC3CA6E768a68A7f86b09e3ceE754437bd5f12',
+      isAlgebra: false,
     },
     [SupportedDex.Thena]: {
       factoryAddress: '0xAc93148e93d1C49D89b1166BFd74942E80F5D501',
@@ -124,6 +137,7 @@ const addressConfig: Record<SupportedChainId, Config> = {
         version: 1,
       },
       vaultDeployerAddress: '0x05cC3CA6E768a68A7f86b09e3ceE754437bd5f12',
+      isAlgebra: true,
     },
   },
   [SupportedChainId.eon]: {
@@ -134,6 +148,7 @@ const addressConfig: Record<SupportedChainId, Config> = {
         version: 1,
       },
       vaultDeployerAddress: '0xB9200A707f11357D3B1cBDEbd51c8dDA84960Bde',
+      isAlgebra: false,
     },
   },
   [SupportedChainId.hedera_testnet]: {
@@ -144,6 +159,7 @@ const addressConfig: Record<SupportedChainId, Config> = {
         version: 2,
       },
       vaultDeployerAddress: '0xEc7428cB95cD92e7556172FfBe735c6D48f6DEB7',
+      isAlgebra: false,
     },
   },
   [SupportedChainId.linea]: {
@@ -154,6 +170,7 @@ const addressConfig: Record<SupportedChainId, Config> = {
         version: 2,
       },
       vaultDeployerAddress: '0x75178e0a2829B73E3AE4C21eE64F4B684085392a',
+      isAlgebra: true,
     },
   },
   [SupportedChainId.zksync_era]: {
@@ -163,6 +180,7 @@ const addressConfig: Record<SupportedChainId, Config> = {
         address: '0x5997487384CDae95E1AED6eAab1bb827180E1154',
         version: 1,
       },
+      isAlgebra: false,
       vaultDeployerAddress: '0x12C1F03a443A5B893870ea6cBDb2362f666275Da',
     },
     [SupportedDex.Velocore]: {
@@ -172,6 +190,7 @@ const addressConfig: Record<SupportedChainId, Config> = {
         version: 2,
       },
       vaultDeployerAddress: '0x12C1F03a443A5B893870ea6cBDb2362f666275Da',
+      isAlgebra: true,
     },
   },
   [SupportedChainId.zksync_era_testnet]: {
@@ -182,6 +201,7 @@ const addressConfig: Record<SupportedChainId, Config> = {
         version: 1,
       },
       vaultDeployerAddress: '0x451Efff92a3a1471b7af9DDc1369D9D157E6475A',
+      isAlgebra: true,
     },
   },
 };

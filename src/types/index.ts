@@ -54,4 +54,12 @@ export interface Fees {
   feeAmount1: string;
   createdAtTimestamp: string;
   vault: string;
+  sqrtPrice: string;
 }
+
+export type FeesInfo = {
+  timePeriod: number;
+  feeAmount0: string;
+  feeAmount1: string;
+  pctAPR: number;
+};

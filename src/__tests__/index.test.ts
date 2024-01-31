@@ -22,65 +22,33 @@ import {
   getUserBalance,
   getTokenDecimals,
   getVaultsByTokens,
+  getFeesCollected,
+  getFeesCollectedInfo,
 } from '../index';
 import formatBigInt from '../utils/formatBigInt';
 import parseBigInt from '../utils/parseBigInt';
 
 const hdWalletProvider = new HDWalletProvider([process.env.PRIVATE_KEY!], process.env.PROVIDER_URL!, 0, 1);
 
-// const jsonRpcProvider = new ethers.providers.JsonRpcProvider(process.env.PROVIDER_URL);
-
 const provider = new Web3Provider(hdWalletProvider, {
-  chainId: SupportedChainId.zksync_era_testnet,
-  name: 'zkSync Era Testnet',
+  chainId: SupportedChainId.polygon,
+  name: 'Polygon',
 });
-// const provider = new Web3Provider(hdWalletProvider, { chainId: SupportedChainId.arbitrum, name: 'arbitrum' });
-// const provider = new Web3Provider(hdWalletProvider, { chainId: SupportedChainId.bsc, name: 'bsc' });
 const account = process.env.ACCOUNT!;
 
-// const vault = {
-//   address: '0x3ac9b3db3350a515c702ba19a001d099d4a5f132', // USDC-wETH vault (not inverted)
-//   chainId: SupportedChainId.polygon,
-//   dex: SupportedDex.UniswapV3,
-// };
-
-// const vault = {
-//   address: '0x0146204ddca2646a915bd0df74b47498acb4ab3d', // WETH-RAM  vault
-//   chainId: SupportedChainId.arbitrum,
-//   dex: SupportedDex.Ramses,
-// };
-
-// const vault = {
-//   address: '0x4fff5696f74c85fd617385842c58d3fb4b29654d', // ETH-THE  vault
-//   chainId: SupportedChainId.bsc,
-//   dex: SupportedDex.Thena,
-// };
-
-// const vault = {
-//   address: '0x74b706767f18a360c0083854ab42c1b96e076229', // WMATIC-QUICK  vault
-//   chainId: SupportedChainId.polygon,
-//   dex: SupportedDex.Quickswap,
-// };
-
-// const vault = {
-//   address: '0x1abee930ed0fed631c7b5166b7686baa2ee9d69a', // SAUSE-WHBAR  vault
-//   chainId: SupportedChainId.hedera_testnet,
-//   dex: SupportedDex.SaucerSwap,
-// };
-
 const vault = {
-  address: '0xFc01f90423f72156c1b4c62DaeDdb042f5f687bb', // WETH-USDC  vault
-  chainId: SupportedChainId.zksync_era_testnet,
-  dex: SupportedDex.Velocore,
+  address: '0x74b706767f18a360c0083854ab42c1b96e076229', //  vault (not inverted)
+  chainId: SupportedChainId.polygon,
+  dex: SupportedDex.Quickswap,
 };
 
 const tokens = {
-  pairedToken: '0xB5C064F955D8e7F38fE0460C556a72987494eE17',
-  depositToken: '0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270',
+  pairedToken: '0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619',
+  depositToken: '0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174',
 };
 
 const iface = new ethers.utils.Interface(ICHIVAULT_ABI);
-const amount0 = '0.00001';
+const amount0 = '1.5';
 const amount1 = '0';
 const sharesToWithdraw = '0.05';
 const bigAmount = '1000';
@@ -115,7 +83,8 @@ describe('Vault', () => {
     const maxDeposit1 = await getMaxDepositAmount(1, vault.address, provider, vault.dex);
 
     const vaultFromQuery = await getIchiVaultInfo(vault.chainId, vault.dex, vault.address, provider);
-    if (!vaultFromQuery) throw new Error(`Vault not found [${vault.chainId}, ${vault.address}]`);
+    if (!vaultFromQuery)
+      throw new Error(`Vault ${vault.address} not found on chain ${vault.chainId} and dex ${vault.dex}]`);
     const token0Decimals = await getTokenDecimals(vaultFromQuery.tokenA, provider);
     const token1Decimals = await getTokenDecimals(vaultFromQuery.tokenB, provider);
 
@@ -151,15 +120,27 @@ describe('Vault', () => {
   });
 
   it('getTotalAmounts', async () => {
-    const amounts = await getTotalAmounts(vault.address, provider, vault.dex);
+    const totalAmounts = await getTotalAmounts(vault.address, provider, vault.dex);
 
-    expect(Number(amounts.total0)).toBeGreaterThan(0);
+    expect(Number(totalAmounts.total0)).toBeGreaterThan(0);
   });
 
   it('getUserAmounts', async () => {
     const amounts = await getUserAmounts(account, vault.address, provider, vault.dex);
 
     expect(Number(amounts.amount0)).toBeGreaterThan(0);
+  });
+
+  it('getFeesCollected_All', async () => {
+    const amounts = await getFeesCollected(vault.address, provider, vault.dex);
+
+    expect(Number(amounts[0])).toBeGreaterThanOrEqual(0);
+  });
+
+  it('getFeesCollectedInfo', async () => {
+    const dataPoints = await getFeesCollectedInfo(vault.address, provider, vault.dex, [100, 800]);
+
+    expect(Number(dataPoints[0].pctAPR)).toBeGreaterThanOrEqual(0);
   });
 
   it.skip('withdraw:deposited', async () => {
@@ -189,7 +170,7 @@ describe('GraphQL', () => {
     const a = await getIchiVaultInfo(vault.chainId, vault.dex, vault.address, provider);
     expect(a).toBeTruthy();
   });
-  it.skip('Get vaults by tokens', async () => {
+  it('Get vaults by tokens', async () => {
     const a = await getVaultsByTokens(vault.chainId, vault.dex, tokens.depositToken, tokens.pairedToken);
     expect(a).toBeTruthy();
   });
