@@ -73,7 +73,7 @@ export async function getVaultsByTokens(
   let addressTokenA = depositTokenAddress;
   let addressTokenB = pairedTokenAddress;
 
-  const key1 = `${addressTokenA}-${addressTokenB}`;
+  const key1 = `${addressTokenA}-${addressTokenB}-${chainId}`;
   if (Object.prototype.hasOwnProperty.call(promises, key1)) return promises[key1];
 
   promises[key1] = request<VaultsByTokensQueryData, { addressTokenA: string; addressTokenB: string }>(
@@ -92,7 +92,7 @@ export async function getVaultsByTokens(
   addressTokenA = pairedTokenAddress;
   addressTokenB = depositTokenAddress;
 
-  const key2 = `${addressTokenA}-${addressTokenB}`;
+  const key2 = `${addressTokenA}-${addressTokenB}-${chainId}`;
   if (Object.prototype.hasOwnProperty.call(promises, key2)) return promises[key2];
 
   promises[key2] = request<VaultsByTokensQueryData, { addressTokenA: string; addressTokenB: string }>(

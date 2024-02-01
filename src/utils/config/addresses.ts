@@ -151,6 +151,17 @@ const addressConfig: Record<SupportedChainId, Config> = {
       isAlgebra: false,
     },
   },
+  [SupportedChainId.fantom]: {
+    [SupportedDex.Equalizer]: {
+      factoryAddress: '0x932E1908461De58b0891E5022431dc995Cb95C5E',
+      depositGuard: {
+        address: '0xb62399d23d1c81f08eA445A42d7F15cC12090A71',
+        version: 2,
+      },
+      vaultDeployerAddress: '0xE495eFdf1d19668a27042D30ee22AC3C58b6fB6c',
+      isAlgebra: false,
+    },
+  },
   [SupportedChainId.hedera_testnet]: {
     [SupportedDex.SaucerSwap]: {
       factoryAddress: '0x1F91CE23502473C501EA498DbC7CA1Eef9Bbc4B6',
