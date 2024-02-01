@@ -19,7 +19,7 @@ This sdk contains collection of functions to interact with IchiVault's smart con
         * [`getUserAmounts()`](#8-getUserAmounts)
         * [`getTotalSupply()`](#9-getTotalSupply)
         * [`getTotalAmounts()`](#10-getTotalAmounts)
-        * [`getFeesCollected()`](#11-getTotalAmounts)
+        * [`getFeesCollected()`](#11-getFeesCollected)
         * [`getIchiVaultInfo()`](#12-getIchiVaultInfo)
         * [`getVaultsByTokens()`](#13-getVaultsByTokens)
 

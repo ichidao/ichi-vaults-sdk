@@ -142,6 +142,7 @@ async function getVaultTvl(
   return tvl;
 }
 
+
 export async function getFeesCollected(
   vaultAddress: string,
   jsonProvider: JsonRpcProvider,
@@ -178,6 +179,7 @@ export async function getFeesCollected(
   const numOfDays = typeof rawOrDays === 'boolean' ? days : rawOrDays;
   const rebalances = await getRebalances(vaultAddress, jsonProvider, dex, numOfDays);
   if (!rebalances) throw new Error(`Error getting vault rebalances on ${chainId} for ${vaultAddress}`);
+
   const collectedFees = await getFeesCollectedEvents(vaultAddress, jsonProvider, dex, numOfDays);
   if (!collectedFees) throw new Error(`Error getting vault collected fees on ${chainId} for ${vaultAddress}`);
 

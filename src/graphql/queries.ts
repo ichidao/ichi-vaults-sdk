@@ -52,3 +52,14 @@ export const vaultCollectFeesQuery = (page: number) => gql`
     }
   }
 `;
+
+export const vaultCollectFeesQuery = gql`
+  query ($vaultAddress: String!, $createdAtTimestamp_gt: String!) {
+    vaultCollectFees(where: { vault: $vaultAddress, createdAtTimestamp_gt: $createdAtTimestamp_gt }) {
+      feeAmount0
+      feeAmount1
+      createdAtTimestamp
+      vault
+    }
+  }
+`;
