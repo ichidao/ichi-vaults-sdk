@@ -551,6 +551,7 @@ enum SupportedChainId {
   arbitrum = 42161,
   bsc = 56,
   eon = 7332,
+  fantom = 250,
   hedera_testnet = 296,
   linea = 59144,
   mainnet = 1,
@@ -566,6 +567,7 @@ enum SupportedChainId {
 enum SupportedDex {
   Ascent = 'Ascent',
   Blueprint = 'Blueprint',
+  Equalizer = 'Equalizer',
   Horiza = 'Horiza',
   Lynex = 'Lynex',
   Pancakeswap = 'PancakeSwap',
