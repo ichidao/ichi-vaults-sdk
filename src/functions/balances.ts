@@ -50,7 +50,7 @@ export async function getUserBalance(
     throw new Error(`Unsupported chainId: ${chainId ?? 'undefined'}`);
   }
   const vault = await getIchiVaultInfo(chainId, dex, vaultAddress, jsonProvider);
-  if (!vault) throw new Error(`Vault not found [${chainId}, ${vaultAddress}]`);
+  if (!vault) throw new Error(`Vault ${vaultAddress} not found on chain ${chainId} and dex ${dex}`);
 
   const vaultContract = getIchiVaultContract(vaultAddress, jsonProvider);
   const shares = await vaultContract.balanceOf(accountAddress);
@@ -82,7 +82,7 @@ export async function getTotalAmounts(
     throw new Error(`Unsupported chainId: ${chainId ?? 'undefined'}`);
   }
   const vault = await getIchiVaultInfo(chainId, dex, vaultAddress, jsonProvider);
-  if (!vault) throw new Error(`Vault not found [${chainId}, ${vaultAddress}]`);
+  if (!vault) throw new Error(`Vault ${vaultAddress} not found on chain ${chainId} and dex ${dex}`);
 
   const vaultContract = getIchiVaultContract(vaultAddress, jsonProvider);
   const totalAmountsBN = await vaultContract.getTotalAmounts();
@@ -126,7 +126,7 @@ export async function getTotalSupply(
     throw new Error(`Unsupported chainId: ${chainId ?? 'undefined'}`);
   }
   const vault = await getIchiVaultInfo(chainId, dex, vaultAddress, jsonProvider);
-  if (!vault) throw new Error(`Vault not found [${chainId}, ${vaultAddress}]`);
+  if (!vault) throw new Error(`Vault ${vaultAddress} not found on chain ${chainId} and dex ${dex}`);
 
   const vaultContract = getIchiVaultContract(vaultAddress, jsonProvider);
   const totalSupply = await vaultContract.totalSupply();
@@ -162,7 +162,7 @@ export async function getUserAmounts(
   }
   const vaultContract = getIchiVaultContract(vaultAddress, jsonProvider);
   const vault = await getIchiVaultInfo(chainId, dex, vaultAddress, jsonProvider);
-  if (!vault) throw new Error(`Vault not found [${chainId}, ${vaultAddress}]`);
+  if (!vault) throw new Error(`Vault ${vaultAddress} not found on chain ${chainId} and dex ${dex}`);
 
   const totalAmountsBN = await getTotalAmounts(vaultAddress, jsonProvider, dex, true);
   const totalSupplyBN = await vaultContract.totalSupply();

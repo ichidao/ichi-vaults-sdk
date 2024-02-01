@@ -10,6 +10,7 @@ export enum SupportedChainId {
   arbitrum = 42161,
   bsc = 56,
   eon = 7332,
+  fantom = 250,
   hedera_testnet = 296,
   linea = 59144,
   mainnet = 1,
@@ -21,6 +22,7 @@ export enum SupportedChainId {
 export enum SupportedDex {
   Ascent = 'Ascent',
   Blueprint = 'Blueprint',
+  Equalizer = 'Equalizer',
   Horiza = 'Horiza',
   Lynex = 'Lynex',
   Pancakeswap = 'PancakeSwap',
@@ -54,4 +56,12 @@ export interface Fees {
   feeAmount1: string;
   createdAtTimestamp: string;
   vault: string;
+  sqrtPrice: string;
 }
+
+export type FeesInfo = {
+  timePeriod: number;
+  feeAmount0: string;
+  feeAmount1: string;
+  pctAPR: number;
+};

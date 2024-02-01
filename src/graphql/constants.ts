@@ -72,6 +72,12 @@ export const graphUrls: Record<SupportedChainId, dexGraph> = {
   [SupportedChainId.eon]: {
     [SupportedDex.Ascent]: { url: 'none', supportsCollectFees: false },
   },
+  [SupportedChainId.fantom]: {
+    [SupportedDex.Equalizer]: { 
+      url: 'https://api.thegraph.com/subgraphs/name/ichi-org/fantom-v1-equalizer', 
+      supportsCollectFees: true, 
+    },
+  },
   [SupportedChainId.hedera_testnet]: {
     [SupportedDex.SaucerSwap]: { url: 'none', supportsCollectFees: false },
   },

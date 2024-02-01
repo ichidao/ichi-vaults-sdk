@@ -28,7 +28,7 @@ export async function withdraw(
 
   const vaultContract = getIchiVaultContract(vaultAddress, signer);
   const vault = await getIchiVaultInfo(chainId, dex, vaultAddress, jsonProvider);
-  if (!vault) throw new Error(`Vault not found [${chainId}, ${vaultAddress}]`);
+  if (!vault) throw new Error(`Vault ${vaultAddress} not found on chain ${chainId} and dex ${dex}`);
 
   const params: Parameters<typeof vaultContract.withdraw> = [
     shares instanceof BigNumber ? shares : parseBigInt(shares, 18),

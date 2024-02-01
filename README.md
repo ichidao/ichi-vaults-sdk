@@ -451,7 +451,45 @@ const amountsBN: [BigNumber, BigNumber] & {total0: BigNumber, total1: BigNumber}
 )
 ```
 
-#### 12. `getIchiVaultInfo()`
+#### 12. `getFeesCollectedInfo()`
+
+| param | type |  default | required
+| -------- | -------- | -------- | --------
+| vaultAddress   | string | - | true |
+| jsonProvider      | [JsonRpcProvider](https://github.com/ethers-io/ethers.js/blob/f97b92bbb1bde22fcc44100af78d7f31602863ab/packages/providers/src.ts/json-rpc-provider.ts#L393) | - | true
+| dex   | SupportedDex | - | true 
+| forDays   | number[] | undefined | false | 
+
+<br/>
+If forDays is not specified, returns FeesInfo for time periods of 1, 7, and 30 days.
+<br/>
+
+```typescript
+import { Web3Provider } from '@ethersproject/providers';
+import { getFeesCollectedInfo, SupportedDex } from '@ichidao/ichi-vaults-sdk';
+
+const web3Provider = new Web3Provider(YOUR_WEB3_PROVIDER);
+const vaultAddress = "0x3ac9...a5f132";
+const dex = SupportedDex.UniswapV3;
+const days = [2, 5, 14, 60];
+
+const feesInfo: FeesInfo[] = await getFeesCollectedInfo(
+    vaultAddress, 
+    web3Provider
+    dex,
+)
+
+// - or - 
+
+const feesInfo: FeesInfo[] = await getFeesCollectedInfo(
+    vaultAddress, 
+    web3Provider
+    dex,
+    days,
+)
+```
+
+#### 13. `getIchiVaultInfo()`
 
 | param | type |  default | required
 | -------- | -------- | -------- | --------
@@ -476,7 +514,7 @@ if (vaultInfo) {
 }
 ```
 
-#### 13. `getVaultsByTokens()`
+#### 14. `getVaultsByTokens()`
 
 | param | type |  default | required
 | -------- | -------- | -------- | --------
@@ -513,6 +551,7 @@ enum SupportedChainId {
   arbitrum = 42161,
   bsc = 56,
   eon = 7332,
+  fantom = 250,
   hedera_testnet = 296,
   linea = 59144,
   mainnet = 1,
@@ -528,6 +567,7 @@ enum SupportedChainId {
 enum SupportedDex {
   Ascent = 'Ascent',
   Blueprint = 'Blueprint',
+  Equalizer = 'Equalizer',
   Horiza = 'Horiza',
   Lynex = 'Lynex',
   Pancakeswap = 'PancakeSwap',
@@ -551,5 +591,16 @@ interface IchiVault {
   tokenB: string; // token1 address
   allowTokenA: boolean;
   allowTokenB: boolean;
+}
+```
+
+### FeesInfo
+
+```typescript
+type FeesInfo  = {
+  timePeriod: number; // in days
+  feeAmount0: string; // in token0
+  feeAmount1: string; // in token1
+  pctAPR: number; // percents 0 to 100%
 }
 ```
