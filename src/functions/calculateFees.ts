@@ -142,7 +142,6 @@ async function getVaultTvl(
   return tvl;
 }
 
-
 export async function getFeesCollected(
   vaultAddress: string,
   jsonProvider: JsonRpcProvider,

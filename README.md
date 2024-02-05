@@ -20,8 +20,9 @@ This sdk contains collection of functions to interact with IchiVault's smart con
         * [`getTotalSupply()`](#9-getTotalSupply)
         * [`getTotalAmounts()`](#10-getTotalAmounts)
         * [`getFeesCollected()`](#11-getFeesCollected)
-        * [`getIchiVaultInfo()`](#12-getIchiVaultInfo)
-        * [`getVaultsByTokens()`](#13-getVaultsByTokens)
+        * [`getFeesCollectedInfo()`](#12-getFeesCollectedInfo)
+        * [`getIchiVaultInfo()`](#13-getIchiVaultInfo)
+        * [`getVaultsByTokens()`](#14-getVaultsByTokens)
 
 ## Installation
 Install with
@@ -44,8 +45,8 @@ npm install @ichidao/ichi-vaults-sdk
 | tokenIdx           | 0 \| 1 | - | true
 | vaultAddress   | string | - | true |
 | jsonProvider      | [JsonRpcProvider](https://github.com/ethers-io/ethers.js/blob/f97b92bbb1bde22fcc44100af78d7f31602863ab/packages/providers/src.ts/json-rpc-provider.ts#L393) | - | true
-| dex   | SupportedDex | - | true | 
-| amount   | string \| number | undefined | false | 
+| dex   | SupportedDex | - | true |
+| amount   | string \| number | undefined | false |
 | overrides         | [Overrides](https://github.com/ethers-io/ethers.js/blob/f97b92bbb1bde22fcc44100af78d7f31602863ab/packages/contracts/lib/index.d.ts#L7)  | undefined | false
 
 <br/>
@@ -61,17 +62,17 @@ const amount = 100
 const dex = SupportedDex.UniswapV3
 
 const txnDetails = await approveDepositToken(
-    accountAddress, 
+    accountAddress,
     0, // token idx can be 0 or 1
-    vaultAddress, 
+    vaultAddress,
     web3Provider,
     dex,
     amount // (optional)
 );
 
-await txnDetails.wait(); 
+await txnDetails.wait();
 
-// can now deposit token0 
+// can now deposit token0
 // ...
 ```
 
@@ -82,10 +83,10 @@ await txnDetails.wait();
 | accountAddress   | string | - | true
 | amount0           | string \| number | - | true
 | amount1           | string \| number | - | true
-| vaultAddress   | string | - | true 
+| vaultAddress   | string | - | true
 | jsonProvider      | [JsonRpcProvider](https://github.com/ethers-io/ethers.js/blob/f97b92bbb1bde22fcc44100af78d7f31602863ab/packages/providers/src.ts/json-rpc-provider.ts#L393) | - | true
-| dex   | SupportedDex | - | true 
-| percentSlippage   | number | 1 | false 
+| dex   | SupportedDex | - | true
+| percentSlippage   | number | 1 | false
 | overrides         | [Overrides](https://github.com/ethers-io/ethers.js/blob/f97b92bbb1bde22fcc44100af78d7f31602863ab/packages/contracts/lib/index.d.ts#L7)  | undefined | false
 
 <br/>
@@ -100,13 +101,13 @@ const dex = SupportedDex.UniswapV3
 const accountAddress = "0xaaaa...aaaaaa"
 
 const amount0 = 100
-const amount1 = 0 
- 
+const amount1 = 0
+
 const txnDetails = await deposit(
     accountAddress,
     amount0, // can be 0 when only depositing amount1
     amount1, // can be 0 when only depositing amount0
-    vaultAddress, 
+    vaultAddress,
     web3Provider,
     dex,
     1 // acceptable slippage (percents)
@@ -119,9 +120,9 @@ const txnDetails = await deposit(
 | -------- | -------- | -------- | --------
 | accountAddress   | string | - | true
 | shares           | string \| number | - | true
-| vaultAddress   | string | - | true 
+| vaultAddress   | string | - | true
 | jsonProvider      | [JsonRpcProvider](https://github.com/ethers-io/ethers.js/blob/f97b92bbb1bde22fcc44100af78d7f31602863ab/packages/providers/src.ts/json-rpc-provider.ts#L393) | - | true
-| dex   | SupportedDex | - | true 
+| dex   | SupportedDex | - | true
 | overrides         | [Overrides](https://github.com/ethers-io/ethers.js/blob/f97b92bbb1bde22fcc44100af78d7f31602863ab/packages/contracts/lib/index.d.ts#L7)  | undefined | false
 
 <br/>
@@ -137,7 +138,7 @@ const accountAddress = "0xaaaa...aaaaaa"
 
 const totalUserShares: string = await getUserBalance(
     accountAddress,
-    vaultAddress, 
+    vaultAddress,
     web3Provider
     dex,
 )
@@ -146,8 +147,8 @@ let shares = Number(totalUserShare) * 0.5 // 50% of user deshare balance
 
 const txnDetails = await withdraw(
     accountAddress,
-    shares, 
-    vaultAddress, 
+    shares,
+    vaultAddress,
     web3Provider,
     dex
 )
@@ -180,7 +181,7 @@ const isToken0Approved: boolean = await isDepositTokenApproved(
     accountAddress,
     0, // token idx can be 0 or 1
     amount,
-    vaultAddress, 
+    vaultAddress,
     web3Provider,
     dex
 )
@@ -193,7 +194,7 @@ const isToken0Approved: boolean = await isDepositTokenApproved(
 | tokenIdx           | 0 \| 1 | - | true
 | vaultAddress   | string | - | true |
 | jsonProvider      | [JsonRpcProvider](https://github.com/ethers-io/ethers.js/blob/f97b92bbb1bde22fcc44100af78d7f31602863ab/packages/providers/src.ts/json-rpc-provider.ts#L393) | - | true
-| dex   | SupportedDex | - | true | 
+| dex   | SupportedDex | - | true |
 
 <br/>
 
@@ -207,7 +208,7 @@ const dex = SupportedDex.UniswapV3
 
 const isAllowed = await isTokenAllowed(
     0, // token idx can be 0 or 1
-    vaultAddress, 
+    vaultAddress,
     web3Provider,
     dex
 )
@@ -221,7 +222,7 @@ const isAllowed = await isTokenAllowed(
 | tokenIdx           | 0 \| 1 | - | true
 | vaultAddress   | string | - | true |
 | jsonProvider      | [JsonRpcProvider](https://github.com/ethers-io/ethers.js/blob/f97b92bbb1bde22fcc44100af78d7f31602863ab/packages/providers/src.ts/json-rpc-provider.ts#L393) | - | true
-| dex   | SupportedDex | - | true | 
+| dex   | SupportedDex | - | true |
 
 <br/>
 
@@ -235,7 +236,7 @@ const dex = SupportedDex.UniswapV3
 
 const maxAmount = await getMaxDepositAmount(
     0, // token idx can be 0 or 1
-    vaultAddress, 
+    vaultAddress,
     web3Provider,
     dex
 )
@@ -249,8 +250,8 @@ const maxAmount = await getMaxDepositAmount(
 | accountAddress   | string | - | true |
 | vaultAddress   | string | - | true |
 | jsonProvider      | [JsonRpcProvider](https://github.com/ethers-io/ethers.js/blob/f97b92bbb1bde22fcc44100af78d7f31602863ab/packages/providers/src.ts/json-rpc-provider.ts#L393) | - | true
-| dex   | SupportedDex | - | true 
-| raw   | true | undefined | false | 
+| dex   | SupportedDex | - | true
+| raw   | true | undefined | false |
 
 <br/>
 
@@ -265,16 +266,16 @@ const accountAddress = "0xaaaa...aaaaaa"
 
 const shares: string = await getUserBalance(
     accountAddress,
-    vaultAddress, 
+    vaultAddress,
     web3Provider
     dex
 )
 
-// - or - 
+// - or -
 
 const sharesBN: BigNumber = await getUserBalance(
     accountAddress,
-    vaultAddress, 
+    vaultAddress,
     web3Provider
     dex,
     true
@@ -288,8 +289,8 @@ const sharesBN: BigNumber = await getUserBalance(
 | accountAddress   | string | - | true |
 | vaultAddress   | string | - | true |
 | jsonProvider      | [JsonRpcProvider](https://github.com/ethers-io/ethers.js/blob/f97b92bbb1bde22fcc44100af78d7f31602863ab/packages/providers/src.ts/json-rpc-provider.ts#L393) | - | true
-| dex   | SupportedDex | - | true 
-| raw   | true | undefined | false | 
+| dex   | SupportedDex | - | true
+| raw   | true | undefined | false |
 
 <br/>
 
@@ -304,16 +305,16 @@ const accountAddress = "0xaaaa...aaaaaa"
 
 const amounts: [string, string] & {amount0: string, amount1: string} = await getUserAmounts(
     accountAddress,
-    vaultAddress, 
+    vaultAddress,
     web3Provider
     dex,
 )
 
-// - or - 
+// - or -
 
 const amountsBN: [BigNumber, BigNumber] & {amount0: BigNumber, amount1: BigNumber} = await getUserAmounts(
     accountAddress,
-    vaultAddress, 
+    vaultAddress,
     web3Provider
     dex,
     true
@@ -326,8 +327,8 @@ const amountsBN: [BigNumber, BigNumber] & {amount0: BigNumber, amount1: BigNumbe
 | -------- | -------- | -------- | --------
 | vaultAddress   | string | - | true |
 | jsonProvider      | [JsonRpcProvider](https://github.com/ethers-io/ethers.js/blob/f97b92bbb1bde22fcc44100af78d7f31602863ab/packages/providers/src.ts/json-rpc-provider.ts#L393) | - | true
-| dex   | SupportedDex | - | true 
-| raw   | true | undefined | false | 
+| dex   | SupportedDex | - | true
+| raw   | true | undefined | false |
 
 <br/>
 
@@ -341,16 +342,16 @@ const dex = SupportedDex.UniswapV3
 
 const shares: string = await getTotalSupply(
     accountAddress,
-    vaultAddress, 
+    vaultAddress,
     web3Provider
     dex,
 )
 
-// - or - 
+// - or -
 
 const sharesBN: BigNumber = await getTotalSupply(
     accountAddress,
-    vaultAddress, 
+    vaultAddress,
     web3Provider
     dex,
     true
@@ -363,8 +364,8 @@ const sharesBN: BigNumber = await getTotalSupply(
 | -------- | -------- | -------- | --------
 | vaultAddress   | string | - | true |
 | jsonProvider      | [JsonRpcProvider](https://github.com/ethers-io/ethers.js/blob/f97b92bbb1bde22fcc44100af78d7f31602863ab/packages/providers/src.ts/json-rpc-provider.ts#L393) | - | true
-| dex   | SupportedDex | - | true 
-| raw   | true | undefined | false | 
+| dex   | SupportedDex | - | true
+| raw   | true | undefined | false |
 
 <br/>
 
@@ -379,16 +380,16 @@ const accountAddress = "0xaaaa...aaaaaa"
 
 const amounts: [string, string] & {total0: string, total1: string} = await getTotalAmounts(
     accountAddress,
-    vaultAddress, 
+    vaultAddress,
     web3Provider
     dex,
 )
 
-// - or - 
+// - or -
 
 const amountsBN: [BigNumber, BigNumber] & {total0: BigNumber, total1: BigNumber} = await getTotalAmounts(
     accountAddress,
-    vaultAddress, 
+    vaultAddress,
     web3Provider
     dex,
     true
@@ -401,9 +402,9 @@ const amountsBN: [BigNumber, BigNumber] & {total0: BigNumber, total1: BigNumber}
 | -------- | -------- | -------- | --------
 | vaultAddress   | string | - | true |
 | jsonProvider      | [JsonRpcProvider](https://github.com/ethers-io/ethers.js/blob/f97b92bbb1bde22fcc44100af78d7f31602863ab/packages/providers/src.ts/json-rpc-provider.ts#L393) | - | true
-| dex   | SupportedDex | - | true 
-| rawOrDays   | true or number | undefined | false | 
-| days   | number | undefined | false | 
+| dex   | SupportedDex | - | true
+| rawOrDays   | true or number | undefined | false |
+| days   | number | undefined | false |
 
 <br/>
 
@@ -417,33 +418,33 @@ const dex = SupportedDex.UniswapV3;
 const days = 7;
 
 const amounts: [string, string] & {total0: string, total1: string} = await getFeesCollected(
-    vaultAddress, 
+    vaultAddress,
     web3Provider
     dex,
 )
 
-// - or - 
+// - or -
 
 const amountsBN: [BigNumber, BigNumber] & {total0: BigNumber, total1: BigNumber} = await getFeesCollected(
-    vaultAddress, 
+    vaultAddress,
     web3Provider
     dex,
     true
 )
 
-// - or - 
+// - or -
 
 const amounts: [string, string] & {total0: string, total1: string} = await getFeesCollected(
-    vaultAddress, 
+    vaultAddress,
     web3Provider
     dex,
     days
 )
 
-// - or - 
+// - or -
 
 const amountsBN: [BigNumber, BigNumber] & {total0: BigNumber, total1: BigNumber} = await getFeesCollected(
-    vaultAddress, 
+    vaultAddress,
     web3Provider
     dex,
     true,
@@ -457,8 +458,8 @@ const amountsBN: [BigNumber, BigNumber] & {total0: BigNumber, total1: BigNumber}
 | -------- | -------- | -------- | --------
 | vaultAddress   | string | - | true |
 | jsonProvider      | [JsonRpcProvider](https://github.com/ethers-io/ethers.js/blob/f97b92bbb1bde22fcc44100af78d7f31602863ab/packages/providers/src.ts/json-rpc-provider.ts#L393) | - | true
-| dex   | SupportedDex | - | true 
-| forDays   | number[] | undefined | false | 
+| dex   | SupportedDex | - | true
+| forDays   | number[] | undefined | false |
 
 <br/>
 If forDays is not specified, returns FeesInfo for time periods of 1, 7, and 30 days.
@@ -474,15 +475,15 @@ const dex = SupportedDex.UniswapV3;
 const days = [2, 5, 14, 60];
 
 const feesInfo: FeesInfo[] = await getFeesCollectedInfo(
-    vaultAddress, 
+    vaultAddress,
     web3Provider
     dex,
 )
 
-// - or - 
+// - or -
 
 const feesInfo: FeesInfo[] = await getFeesCollectedInfo(
-    vaultAddress, 
+    vaultAddress,
     web3Provider
     dex,
     days,
@@ -494,7 +495,7 @@ const feesInfo: FeesInfo[] = await getFeesCollectedInfo(
 | param | type |  default | required
 | -------- | -------- | -------- | --------
 | chain      | SupportedChain | - | true
-| dex   | SupportedDex | - | true 
+| dex   | SupportedDex | - | true
 | vaultAddress   | string | - | true |
 | jsonProvider   | JsonRpcProvider | - | false |
 
@@ -519,7 +520,7 @@ if (vaultInfo) {
 | param | type |  default | required
 | -------- | -------- | -------- | --------
 | chain      | SupportedChain | - | true
-| dex   | SupportedDex | - | true 
+| dex   | SupportedDex | - | true
 | depositTokenAddress   | string | - | true |
 | pairedTokenAddress   | string | - | true |
 
@@ -601,6 +602,6 @@ type FeesInfo  = {
   timePeriod: number; // in days
   feeAmount0: string; // in token0
   feeAmount1: string; // in token1
-  pctAPR: number; // percents 0 to 100%
+  pctAPR: number; // yearly APR based on the timePeriod
 }
 ```
