@@ -21,8 +21,9 @@ This sdk contains collection of functions to interact with IchiVault's smart con
         * [`getTotalAmounts()`](#10-getTotalAmounts)
         * [`getFeesCollected()`](#11-getFeesCollected)
         * [`getFeesCollectedInfo()`](#12-getFeesCollectedInfo)
-        * [`getIchiVaultInfo()`](#13-getIchiVaultInfo)
-        * [`getVaultsByTokens()`](#14-getVaultsByTokens)
+        * [`getAverageDepositTokenRatios()`](#13-getAverageDepositTokenRatios)
+        * [`getIchiVaultInfo()`](#14-getIchiVaultInfo)
+        * [`getVaultsByTokens()`](#15-getVaultsByTokens)
 
 ## Installation
 Install with
@@ -490,7 +491,43 @@ const feesInfo: FeesInfo[] = await getFeesCollectedInfo(
 )
 ```
 
-#### 13. `getIchiVaultInfo()`
+#### 13. `getAverageDepositTokenRatios()`
+
+| param | type |  default | required
+| -------- | -------- | -------- | --------
+| vaultAddress   | string | - | true |
+| jsonProvider      | [JsonRpcProvider](https://github.com/ethers-io/ethers.js/blob/f97b92bbb1bde22fcc44100af78d7f31602863ab/packages/providers/src.ts/json-rpc-provider.ts#L393) | - | true
+| dex   | SupportedDex | - | true
+| timeIntervals   | number[] | [1, 7, 30] | false |
+
+<br/>
+
+```typescript
+import { Web3Provider } from '@ethersproject/providers';
+import { getFeesCollectedInfo, SupportedDex } from '@ichidao/ichi-vaults-sdk';
+
+const web3Provider = new Web3Provider(YOUR_WEB3_PROVIDER);
+const vaultAddress = "0x3ac9...a5f132";
+const dex = SupportedDex.UniswapV3;
+const days = [2, 5, 14, 60];
+
+const averageDtr: AverageDepositTokenRatio[] = await getAverageDepositTokenRatios(
+    vaultAddress,
+    web3Provider
+    dex,
+)
+
+// - or -
+
+const averageDtr: AverageDepositTokenRatio[] = await getAverageDepositTokenRatios(
+    vaultAddress,
+    web3Provider
+    dex,
+    days,
+)
+```
+
+#### 14. `getIchiVaultInfo()`
 
 | param | type |  default | required
 | -------- | -------- | -------- | --------
@@ -515,7 +552,7 @@ if (vaultInfo) {
 }
 ```
 
-#### 14. `getVaultsByTokens()`
+#### 15. `getVaultsByTokens()`
 
 | param | type |  default | required
 | -------- | -------- | -------- | --------

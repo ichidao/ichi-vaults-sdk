@@ -54,6 +54,18 @@ export interface IchiVault {
 export interface Fees {
   feeAmount0: string;
   feeAmount1: string;
+  totalAmount0: string;
+  totalAmount1: string;
+  createdAtTimestamp: string;
+  vault: string;
+  sqrtPrice: string;
+}
+
+export interface VaultTransactionEvent {
+  totalAmount0: string;
+  totalAmount1: string;
+  totalAmount0BeforeEvent: string;
+  totalAmount1BeforeEvent: string;
   createdAtTimestamp: string;
   vault: string;
   sqrtPrice: string;
@@ -64,4 +76,14 @@ export type FeesInfo = {
   feeAmount0: string;
   feeAmount1: string;
   pctAPR: number;
+};
+
+export type DepositTokenRatio = {
+  atTimestamp: string;
+  percent: number;
+};
+
+export type AverageDepositTokenRatio = {
+  timePeriod: number; // in days
+  percent: number;
 };

@@ -5,4 +5,5 @@ export * from './functions/deposit';
 export * from './functions/withdraw';
 export * from './functions/vault';
 export * from './functions/calculateFees';
+export * from './functions/calculateDtr';
 export * from './types/index';
