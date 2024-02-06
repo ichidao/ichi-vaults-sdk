@@ -6,23 +6,38 @@ import { BigNumber } from '@ethersproject/bignumber';
 import { Fees, FeesInfo, SupportedChainId, SupportedDex, TotalAmounts, TotalAmountsBN } from '../types';
 // eslint-disable-next-line import/no-cycle
 import { getIchiVaultInfo } from './vault';
-import { getFeesCollectedEvents, getRebalances } from './fees';
-import { getTokenDecimals, getTotalAmounts } from './balances';
+import { getFeesCollectedEvents, getRebalances } from './vaultEvents';
+import { getTokenDecimals } from './balances';
 import formatBigInt from '../utils/formatBigInt';
 import daysToMilliseconds from '../utils/timestamps';
 import { isTokenAllowed } from './deposit';
 import getPrice from '../utils/getPrice';
-import { getAlgebraPoolContract, getIchiVaultContract, getUniswapV3PoolContract } from '../contracts';
-import addressConfig from '../utils/config/addresses';
+import { getVaultTvl } from './priceFromPool';
 
 function getCollectedTokenAmountBN(ind: 0 | 1, feesDataset: Fees[]): BigNumber {
-  // const filteredDataset = feesDataset.filter((f) => f.createdAtTimestamp> now-days)
   const amounts =
     ind === 0
       ? feesDataset.map((r) => BigNumber.from(r.feeAmount0))
       : feesDataset.map((r) => BigNumber.from(r.feeAmount1));
   const amountBN = amounts.reduce((total, curr) => total.add(curr), BigNumber.from(0));
   return amountBN;
+}
+
+export function getTotalAmountsAtFeeCollectionEvent(
+  objFees: Fees,
+  isVaultInverted: boolean,
+  token0Decimals: number,
+  token1Decimals: number,
+): [number, number] {
+  const price0 = !isVaultInverted
+    ? 1
+    : getPrice(isVaultInverted, BigNumber.from(objFees.sqrtPrice), token0Decimals, token1Decimals);
+  const price1 = isVaultInverted
+    ? 1
+    : getPrice(isVaultInverted, BigNumber.from(objFees.sqrtPrice), token0Decimals, token1Decimals);
+  const amount0 = Number(formatBigInt(BigNumber.from(objFees.totalAmount0), token0Decimals)) * price0;
+  const amount1 = Number(formatBigInt(BigNumber.from(objFees.totalAmount1), token1Decimals)) * price1;
+  return [amount0, amount1];
 }
 
 function getFeesAmountInBaseTokens(
@@ -53,93 +68,6 @@ function getTotalFeesAmountInBaseTokens(
     0,
   );
   return amount;
-}
-
-async function getSqrtPriceFromPool(
-  vaultAddress: string,
-  jsonProvider: JsonRpcProvider,
-  dex: SupportedDex,
-): Promise<BigNumber> {
-  const { chainId } = await jsonProvider.getNetwork();
-
-  if (!Object.values(SupportedChainId).includes(chainId)) {
-    throw new Error(`Unsupported chainId: ${chainId ?? 'undefined'}`);
-  }
-
-  const vault = await getIchiVaultInfo(chainId, dex, vaultAddress, jsonProvider);
-  if (!vault) throw new Error(`Vault ${vaultAddress} not found on chain ${chainId} and dex ${dex}`);
-  try {
-    const vaultContract = getIchiVaultContract(vaultAddress, jsonProvider);
-    const poolAddress: string = await vaultContract.pool();
-
-    if (addressConfig[chainId as SupportedChainId]![dex]?.isAlgebra) {
-      const poolContract = getAlgebraPoolContract(poolAddress, jsonProvider);
-      const globalState = await poolContract.globalState();
-      return globalState.price;
-    } else {
-      const poolContract = getUniswapV3PoolContract(poolAddress, jsonProvider);
-      const slot0 = await poolContract.slot0();
-      return slot0[0];
-    }
-  } catch (e) {
-    console.error(`Could not get price from vault ${vaultAddress} `);
-    throw e;
-  }
-}
-
-async function getCurrPrice(
-  vaultAddress: string,
-  jsonProvider: JsonRpcProvider,
-  dex: SupportedDex,
-  isVaultInverted: boolean,
-  token0decimals: number,
-  token1decimals: number,
-): Promise<number> {
-  const { chainId } = await jsonProvider.getNetwork();
-
-  if (!Object.values(SupportedChainId).includes(chainId)) {
-    throw new Error(`Unsupported chainId: ${chainId ?? 'undefined'}`);
-  }
-
-  const vault = await getIchiVaultInfo(chainId, dex, vaultAddress, jsonProvider);
-  if (!vault) throw new Error(`Vault ${vaultAddress} not found on chain ${chainId} and dex ${dex}`);
-  try {
-    const sqrtPrice = await getSqrtPriceFromPool(vaultAddress, jsonProvider, dex);
-    const depositTokenDecimals = isVaultInverted ? token1decimals : token0decimals;
-    const scarseTokenDecimals = isVaultInverted ? token0decimals : token1decimals;
-    const price = getPrice(isVaultInverted, sqrtPrice, depositTokenDecimals, scarseTokenDecimals, 15);
-
-    return price;
-  } catch (e) {
-    console.error(`Could not get price from vault ${vaultAddress} `);
-    throw e;
-  }
-}
-
-async function getVaultTvl(
-  vaultAddress: string,
-  jsonProvider: JsonRpcProvider,
-  dex: SupportedDex,
-  isVaultInverted: boolean,
-  token0decimals: number,
-  token1decimals: number,
-): Promise<number> {
-  const { chainId } = await jsonProvider.getNetwork();
-
-  if (!Object.values(SupportedChainId).includes(chainId)) {
-    throw new Error(`Unsupported chainId: ${chainId ?? 'undefined'}`);
-  }
-
-  const vault = await getIchiVaultInfo(chainId, dex, vaultAddress, jsonProvider);
-  if (!vault) throw new Error(`Vault ${vaultAddress} not found on chain ${chainId} and dex ${dex}`);
-
-  const totalAmounts = await getTotalAmounts(vaultAddress, jsonProvider, dex);
-  const price = await getCurrPrice(vaultAddress, jsonProvider, dex, isVaultInverted, token0decimals, token1decimals);
-  const tvl = !isVaultInverted
-    ? Number(totalAmounts.total0) + Number(totalAmounts.total1) * price
-    : Number(totalAmounts.total1) + Number(totalAmounts.total0) * price;
-
-  return tvl;
 }
 
 export async function getFeesCollected(
