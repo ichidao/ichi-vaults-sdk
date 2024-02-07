@@ -10,6 +10,7 @@ import formatBigInt from '../utils/formatBigInt';
 // eslint-disable-next-line import/no-cycle
 import { getIchiVaultInfo } from './vault';
 import addressConfig from '../utils/config/addresses';
+import amountWithSlippage from '../utils/amountWithSlippage';
 
 export async function isTokenAllowed(
   tokenIdx: 0 | 1,
@@ -133,7 +134,10 @@ export async function deposit(
   const signer = jsonProvider.getSigner(accountAddress);
   const vault = await getIchiVaultInfo(chainId, dex, vaultAddress, jsonProvider);
   if (!vault) throw new Error(`Vault ${vaultAddress} not found on chain ${chainId} and dex ${dex}`);
-  const vaultDeployerAddress = addressConfig[chainId as SupportedChainId]![dex]?.vaultDeployerAddress ?? '';
+  const vaultDeployerAddress = addressConfig[chainId as SupportedChainId]![dex]?.vaultDeployerAddress;
+  if (!vaultDeployerAddress) {
+    throw new Error(`Vault deployer not found for vault ${vaultAddress} on chain ${chainId} and dex ${dex}`);
+  }
 
   const token0 = vault.tokenA;
   const token1 = vault.tokenB;
@@ -202,6 +206,112 @@ export async function deposit(
     lpAmount,
     accountAddress,
     {
+      ...overrides,
+      gasLimit,
+    },
+  );
+
+  return tx;
+}
+
+export async function depositNativeToken(
+  accountAddress: string,
+  amount0: string | number | BigNumber,
+  amount1: string | number | BigNumber,
+  vaultAddress: string,
+  jsonProvider: JsonRpcProvider,
+  dex: SupportedDex,
+  percentSlippage = 1,
+  overrides?: Overrides,
+): Promise<ContractTransaction> {
+  const { chainId } = await jsonProvider.getNetwork();
+  if (!Object.values(SupportedChainId).includes(chainId)) {
+    throw new Error(`Unsupported chainId: ${chainId}`);
+  }
+  if (addressConfig[chainId as SupportedChainId][dex]?.depositGuard.version !== 2) {
+    throw new Error(`Unsupported function for vault ${vaultAddress} on chain ${chainId} and dex ${dex}`);
+  }
+  const signer = jsonProvider.getSigner(accountAddress);
+  const vault = await getIchiVaultInfo(chainId, dex, vaultAddress, jsonProvider);
+  if (!vault) throw new Error(`Vault ${vaultAddress} not found on chain ${chainId} and dex ${dex}`);
+  const vaultDeployerAddress = addressConfig[chainId as SupportedChainId]![dex]?.vaultDeployerAddress;
+  if (!vaultDeployerAddress) {
+    throw new Error(`Vault deployer not found for vault ${vaultAddress} on chain ${chainId} and dex ${dex}`);
+  }
+
+  const token0 = vault.tokenA;
+  const token1 = vault.tokenB;
+  const isToken0Allowed = vault.allowTokenA;
+  const isToken1Allowed = vault.allowTokenB;
+  const token0Contract = getERC20Contract(token0, signer);
+  const token1Contract = getERC20Contract(token1, signer);
+  const token0Decimals = await token0Contract.decimals();
+  const token1Decimals = await token1Contract.decimals();
+  const amount0BN = amount0 instanceof BigNumber ? amount0 : parseBigInt(amount0, +token0Decimals);
+  const amount1BN = amount1 instanceof BigNumber ? amount1 : parseBigInt(amount1, +token1Decimals);
+  if (!isToken0Allowed && amount0BN > BigNumber.from(0)) {
+    throw new Error(`Deposit of token0 is not allowed: ${chainId}, ${vaultAddress}`);
+  }
+  if (!isToken1Allowed && amount1BN > BigNumber.from(0)) {
+    throw new Error(`Deposit of token1 is not allowed: ${chainId}, ${vaultAddress}`);
+  }
+  let depositAmount = amount0BN;
+  let depositToken = token0;
+  if (amount1BN > BigNumber.from(0)) {
+    depositAmount = amount1BN;
+    depositToken = token1;
+  }
+
+  // obtain Deposit Guard contract
+  const depositGuardAddress = addressConfig[chainId as SupportedChainId]![dex]?.depositGuard.address;
+  if (!depositGuardAddress) {
+    throw new Error(`Deposit Guard not found for vault ${vaultAddress} on chain ${chainId} and dex ${dex}`);
+  }
+  const depositGuardContract = getDepositGuardContract(depositGuardAddress, signer);
+  const wrappedNative = await depositGuardContract.WRAPPED_NATIVE();
+  if (wrappedNative !== depositToken) {
+    throw new Error('Deposit token is not wrapped native token');
+  }
+
+  // the first call: get estimated LP amount
+  let lpAmount = await depositGuardContract.callStatic.forwardNativeDepositToICHIVault(
+    vaultAddress,
+    vaultDeployerAddress,
+    BigNumber.from(0),
+    accountAddress,
+    {
+      value: depositAmount,
+      gasLimit: 5e6, // the deposit via guard tx should never exceed 5e6
+    },
+  );
+
+  // reduce the estimated LP amount by an acceptable slippage %, for example 1%
+  if (percentSlippage < 0.01) throw new Error('Slippage parameter is less than 0.01%.');
+  if (percentSlippage > 100) throw new Error('Slippage parameter is more than 100%.');
+  lpAmount = amountWithSlippage(lpAmount, percentSlippage);
+
+  const gasLimit =
+    overrides?.gasLimit ??
+    calculateGasMargin(
+      await depositGuardContract.estimateGas.forwardNativeDepositToICHIVault(
+        vaultAddress,
+        vaultDeployerAddress,
+        lpAmount,
+        accountAddress,
+        {
+          value: depositAmount,
+        },
+      ),
+    );
+
+  // the second call: actual deposit transaction
+  const tx = await depositGuardContract.forwardNativeDepositToICHIVault(
+    vaultAddress,
+    vaultDeployerAddress,
+    lpAmount,
+    accountAddress,
+    {
+      value: depositAmount,
       ...overrides,
       gasLimit,
     },

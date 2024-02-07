@@ -164,12 +164,12 @@ const addressConfig: Record<SupportedChainId, Config> = {
   },
   [SupportedChainId.hedera_testnet]: {
     [SupportedDex.SaucerSwap]: {
-      factoryAddress: '0x1F91CE23502473C501EA498DbC7CA1Eef9Bbc4B6',
+      factoryAddress: '0x1B0ef045830466171D617dD0F1142aD699A4Cd63',
       depositGuard: {
-        address: '0x16Dd62dB239DF67786F0AB7596C445aCDe81a16F',
+        address: '0x967768f830d44Cd14695D27de3B7D8826023bD7b',
         version: 2,
       },
-      vaultDeployerAddress: '0xEc7428cB95cD92e7556172FfBe735c6D48f6DEB7',
+      vaultDeployerAddress: '0xAAC397840fC57F6bE1e3d40496E0823Ff15e1C6D',
       isAlgebra: false,
     },
   },
