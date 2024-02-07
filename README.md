@@ -11,19 +11,24 @@ This sdk contains collection of functions to interact with IchiVault's smart con
      * [__Vault Functions__](#Vault)
         * [`approveDepositToken()`](#1-approveDepositToken)
         * [`deposit()`](#2-depositLP)
-        * [`withdraw()`](#3-withdraw)
-        * [`isDepositTokenApproved()`](#4-isDepositTokenApproved)
-        * [`isTokenAllowed()`](#5-isTokenAllowed)
-        * [`getMaxDepositAmount()`](#6-getMaxDepositAmount)
-        * [`getUserBalance()`](#7-getUserBalance)
-        * [`getUserAmounts()`](#8-getUserAmounts)
-        * [`getTotalSupply()`](#9-getTotalSupply)
-        * [`getTotalAmounts()`](#10-getTotalAmounts)
-        * [`getFeesCollected()`](#11-getFeesCollected)
-        * [`getFeesCollectedInfo()`](#12-getFeesCollectedInfo)
-        * [`getAverageDepositTokenRatios()`](#13-getAverageDepositTokenRatios)
-        * [`getIchiVaultInfo()`](#14-getIchiVaultInfo)
-        * [`getVaultsByTokens()`](#15-getVaultsByTokens)
+        * [`depositNativeToken()`](#3-depositLP)
+        * [`approveVaultToken()`](#4-approveDepositToken)
+        * [`isVaultTokenApproved()`](#5-approveDepositToken)
+        * [`withdraw()`](#6-withdraw)
+        * [`withdrawWithSlippage()`](#7-withdraw)
+        * [`withdrawNativeToken()`](#8-withdraw)
+        * [`isDepositTokenApproved()`](#9-isDepositTokenApproved)
+        * [`isTokenAllowed()`](#10-isTokenAllowed)
+        * [`getMaxDepositAmount()`](#11-getMaxDepositAmount)
+        * [`getUserBalance()`](#12-getUserBalance)
+        * [`getUserAmounts()`](#13-getUserAmounts)
+        * [`getTotalSupply()`](#14-getTotalSupply)
+        * [`getTotalAmounts()`](#15-getTotalAmounts)
+        * [`getFeesCollected()`](#16-getFeesCollected)
+        * [`getFeesCollectedInfo()`](#17-getFeesCollectedInfo)
+        * [`getAverageDepositTokenRatios()`](#18-getAverageDepositTokenRatios)
+        * [`getIchiVaultInfo()`](#19-getIchiVaultInfo)
+        * [`getVaultsByTokens()`](#20-getVaultsByTokens)
 
 ## Installation
 Install with
@@ -115,7 +120,113 @@ const txnDetails = await deposit(
 )
 ```
 
-#### 3. `withdraw()`
+#### 3. `depositNativeToken()`
+
+| param | type |  default | required
+| -------- | -------- | -------- | --------
+| accountAddress   | string | - | true
+| amount0           | string \| number | - | true
+| amount1           | string \| number | - | true
+| vaultAddress   | string | - | true
+| jsonProvider      | [JsonRpcProvider](https://github.com/ethers-io/ethers.js/blob/f97b92bbb1bde22fcc44100af78d7f31602863ab/packages/providers/src.ts/json-rpc-provider.ts#L393) | - | true
+| dex   | SupportedDex | - | true
+| percentSlippage   | number | 1 | false
+| overrides         | [Overrides](https://github.com/ethers-io/ethers.js/blob/f97b92bbb1bde22fcc44100af78d7f31602863ab/packages/contracts/lib/index.d.ts#L7)  | undefined | false
+
+<br/>
+
+```typescript
+import { Web3Provider } from '@ethersproject/providers';
+import { deposit, SupportedDex } from '@ichidao/ichi-vaults-sdk';
+
+const web3Provider = new Web3Provider(YOUR_WEB3_PROVIDER);
+const vaultAddress = "0x3ac9...a5f132"
+const dex = SupportedDex.UniswapV3
+const accountAddress = "0xaaaa...aaaaaa"
+
+const amount0 = 100
+const amount1 = 0
+
+const txnDetails = await depositNativeToken(
+    accountAddress,
+    amount0, // can be 0 when only depositing amount1
+    amount1, // can be 0 when only depositing amount0
+    vaultAddress,
+    web3Provider,
+    dex,
+    1 // acceptable slippage (percents)
+)
+```
+
+#### 4. `approveVaultToken()`
+
+| param | type |  default | required
+| -------- | -------- | -------- | --------
+| accountAddress   | string | - | true
+| vaultAddress   | string | - | true |
+| jsonProvider      | [JsonRpcProvider](https://github.com/ethers-io/ethers.js/blob/f97b92bbb1bde22fcc44100af78d7f31602863ab/packages/providers/src.ts/json-rpc-provider.ts#L393) | - | true
+| dex   | SupportedDex | - | true |
+| shares   | string \| number | undefined | false |
+| overrides         | [Overrides](https://github.com/ethers-io/ethers.js/blob/f97b92bbb1bde22fcc44100af78d7f31602863ab/packages/contracts/lib/index.d.ts#L7)  | undefined | false
+
+<br/>
+
+```typescript
+import { Web3Provider } from '@ethersproject/providers';
+import { approveDepositToken, SupportedDex } from '@ichidao/ichi-vaults-sdk';
+
+const web3Provider = new Web3Provider(YOUR_WEB3_PROVIDER);
+const vaultAddress = "0x3ac9...a5f132"
+const accountAddress = "0xaaaa...aaaaaa"
+const amount = 100
+const dex = SupportedDex.UniswapV3
+
+const txnDetails = await approveVaultToken(
+    accountAddress,
+    vaultAddress,
+    web3Provider,
+    dex,
+    amount // (optional)
+);
+
+await txnDetails.wait();
+
+// can now deposit token0
+// ...
+```
+
+#### 5. `isVaultTokenApproved()`
+
+| param | type |  default | required
+| -------- | -------- | -------- | --------
+| accountAddress   | string | - | true
+| shares   | string \| number, | - | true |
+| vaultAddress   | string | - | true |
+| jsonProvider      | [JsonRpcProvider](https://github.com/ethers-io/ethers.js/blob/f97b92bbb1bde22fcc44100af78d7f31602863ab/packages/providers/src.ts/json-rpc-provider.ts#L393) | - | true
+| dex   | SupportedDex | - | true |
+
+<br/>
+
+```typescript
+import { Web3Provider } from '@ethersproject/providers';
+import { isDepositTokenApproved, SupportedDex } from '@ichidao/ichi-vaults-sdk';
+
+const web3Provider = new Web3Provider(YOUR_WEB3_PROVIDER);
+const vaultAddress = "0x3ac9...a5f132"
+const accountAddress = "0xaaaa...aaaaaa"
+const amount = 100
+const dex = SupportedDex.UniswapV3
+
+const isToken0Approved: boolean = await isDepositTokenApproved(
+    accountAddress,
+    amount,
+    vaultAddress,
+    web3Provider,
+    dex
+)
+```
+
+#### 6. `withdraw()`
 
 | param | type |  default | required
 | -------- | -------- | -------- | --------
@@ -155,7 +266,89 @@ const txnDetails = await withdraw(
 )
 ```
 
-#### 4. `isDepositTokenApproved()`
+#### 7. `withdrawWithSlippage()`
+
+| param | type |  default | required
+| -------- | -------- | -------- | --------
+| accountAddress   | string | - | true
+| shares           | string \| number | - | true
+| vaultAddress   | string | - | true
+| jsonProvider      | [JsonRpcProvider](https://github.com/ethers-io/ethers.js/blob/f97b92bbb1bde22fcc44100af78d7f31602863ab/packages/providers/src.ts/json-rpc-provider.ts#L393) | - | true
+| dex   | SupportedDex | - | true
+| percentSlippage   | number | 1 | false
+| overrides         | [Overrides](https://github.com/ethers-io/ethers.js/blob/f97b92bbb1bde22fcc44100af78d7f31602863ab/packages/contracts/lib/index.d.ts#L7)  | undefined | false
+
+<br/>
+
+```typescript
+import { Web3Provider } from '@ethersproject/providers';
+import { getUserBalance, withdraw, SupportedDex } from '@ichidao/ichi-vaults-sdk';
+
+const web3Provider = new Web3Provider(YOUR_WEB3_PROVIDER);
+const vaultAddress = "0x3ac9...a5f132"
+const dex = SupportedDex.UniswapV3
+const accountAddress = "0xaaaa...aaaaaa"
+
+const totalUserShares: string = await getUserBalance(
+    accountAddress,
+    vaultAddress,
+    web3Provider
+    dex,
+)
+
+let shares = Number(totalUserShare) * 0.5 // 50% of user deshare balance
+
+const txnDetails = await withdraw(
+    accountAddress,
+    shares,
+    vaultAddress,
+    web3Provider,
+    dex
+)
+```
+
+#### 8. `withdrawNativeToken()`
+
+| param | type |  default | required
+| -------- | -------- | -------- | --------
+| accountAddress   | string | - | true
+| shares           | string \| number | - | true
+| vaultAddress   | string | - | true
+| jsonProvider      | [JsonRpcProvider](https://github.com/ethers-io/ethers.js/blob/f97b92bbb1bde22fcc44100af78d7f31602863ab/packages/providers/src.ts/json-rpc-provider.ts#L393) | - | true
+| dex   | SupportedDex | - | true
+| percentSlippage   | number | 1 | false
+| overrides         | [Overrides](https://github.com/ethers-io/ethers.js/blob/f97b92bbb1bde22fcc44100af78d7f31602863ab/packages/contracts/lib/index.d.ts#L7)  | undefined | false
+
+<br/>
+
+```typescript
+import { Web3Provider } from '@ethersproject/providers';
+import { getUserBalance, withdraw, SupportedDex } from '@ichidao/ichi-vaults-sdk';
+
+const web3Provider = new Web3Provider(YOUR_WEB3_PROVIDER);
+const vaultAddress = "0x3ac9...a5f132"
+const dex = SupportedDex.UniswapV3
+const accountAddress = "0xaaaa...aaaaaa"
+
+const totalUserShares: string = await getUserBalance(
+    accountAddress,
+    vaultAddress,
+    web3Provider
+    dex,
+)
+
+let shares = Number(totalUserShare) * 0.5 // 50% of user deshare balance
+
+const txnDetails = await withdraw(
+    accountAddress,
+    shares,
+    vaultAddress,
+    web3Provider,
+    dex
+)
+```
+
+#### 9. `isDepositTokenApproved()`
 
 | param | type |  default | required
 | -------- | -------- | -------- | --------
@@ -188,7 +381,7 @@ const isToken0Approved: boolean = await isDepositTokenApproved(
 )
 ```
 
-#### 5. `isTokenAllowed()`
+#### 10. `isTokenAllowed()`
 
 | param | type |  default | required
 | -------- | -------- | -------- | --------
@@ -216,7 +409,7 @@ const isAllowed = await isTokenAllowed(
 
 ```
 
-#### 6. `getMaxDepositAmount()`
+#### 11. `getMaxDepositAmount()`
 
 | param | type |  default | required
 | -------- | -------- | -------- | --------
@@ -244,7 +437,7 @@ const maxAmount = await getMaxDepositAmount(
 
 ```
 
-#### 7. `getUserBalance()`
+#### 12. `getUserBalance()`
 
 | param | type |  default | required
 | -------- | -------- | -------- | --------
@@ -283,7 +476,7 @@ const sharesBN: BigNumber = await getUserBalance(
 )
 ```
 
-#### 8. `getUserAmounts()`
+#### 13. `getUserAmounts()`
 
 | param | type |  default | required
 | -------- | -------- | -------- | --------
@@ -322,7 +515,7 @@ const amountsBN: [BigNumber, BigNumber] & {amount0: BigNumber, amount1: BigNumbe
 )
 ```
 
-#### 9. `getTotalSupply()`
+#### 14. `getTotalSupply()`
 
 | param | type |  default | required
 | -------- | -------- | -------- | --------
@@ -359,7 +552,7 @@ const sharesBN: BigNumber = await getTotalSupply(
 )
 ```
 
-#### 10. `getTotalAmounts()`
+#### 15. `getTotalAmounts()`
 
 | param | type |  default | required
 | -------- | -------- | -------- | --------
@@ -397,7 +590,7 @@ const amountsBN: [BigNumber, BigNumber] & {total0: BigNumber, total1: BigNumber}
 )
 ```
 
-#### 11. `getFeesCollected()`
+#### 16. `getFeesCollected()`
 
 | param | type |  default | required
 | -------- | -------- | -------- | --------
@@ -453,7 +646,7 @@ const amountsBN: [BigNumber, BigNumber] & {total0: BigNumber, total1: BigNumber}
 )
 ```
 
-#### 12. `getFeesCollectedInfo()`
+#### 17. `getFeesCollectedInfo()`
 
 | param | type |  default | required
 | -------- | -------- | -------- | --------
@@ -491,7 +684,7 @@ const feesInfo: FeesInfo[] = await getFeesCollectedInfo(
 )
 ```
 
-#### 13. `getAverageDepositTokenRatios()`
+#### 18. `getAverageDepositTokenRatios()`
 
 | param | type |  default | required
 | -------- | -------- | -------- | --------
@@ -527,7 +720,7 @@ const averageDtr: AverageDepositTokenRatio[] = await getAverageDepositTokenRatio
 )
 ```
 
-#### 14. `getIchiVaultInfo()`
+#### 19. `getIchiVaultInfo()`
 
 | param | type |  default | required
 | -------- | -------- | -------- | --------
@@ -552,7 +745,7 @@ if (vaultInfo) {
 }
 ```
 
-#### 15. `getVaultsByTokens()`
+#### 20. `getVaultsByTokens()`
 
 | param | type |  default | required
 | -------- | -------- | -------- | --------
