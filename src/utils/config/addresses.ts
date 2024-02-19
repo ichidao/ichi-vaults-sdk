@@ -151,6 +151,17 @@ const addressConfig: Record<SupportedChainId, Config> = {
       isAlgebra: false,
     },
   },
+  [SupportedChainId.evmos]: {
+    [SupportedDex.Forge]: {
+      factoryAddress: '0x7c6389714719c68caac8ae06bae6e878b3605f6d',
+      depositGuard: {
+        address: '0x0248b992ac2a75294b05286E9DD3A2bD3C9CFE4B',
+        version: 2,
+      },
+      vaultDeployerAddress: '0x5BD1EC3Aba15642a25FBA7b49497b4e49Ebf9C83',
+      isAlgebra: false,
+    },
+  },
   [SupportedChainId.fantom]: {
     [SupportedDex.Equalizer]: {
       factoryAddress: '0x932E1908461De58b0891E5022431dc995Cb95C5E',
