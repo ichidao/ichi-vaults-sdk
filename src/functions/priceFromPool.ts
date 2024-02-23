@@ -93,6 +93,7 @@ export async function getCurrentDtr(
 
   const totalAmounts = await getTotalAmounts(vaultAddress, jsonProvider, dex);
   const price = await getCurrPrice(vaultAddress, jsonProvider, dex, isVaultInverted, token0decimals, token1decimals);
+  if ((Number(totalAmounts.total0) + Number(totalAmounts.total1) * price) === 0) return 0;
   const dtr = !isVaultInverted
     ? (Number(totalAmounts.total0) / (Number(totalAmounts.total0) + Number(totalAmounts.total1) * price)) * 100
     : (Number(totalAmounts.total1) / (Number(totalAmounts.total1) + Number(totalAmounts.total0) * price)) * 100;
