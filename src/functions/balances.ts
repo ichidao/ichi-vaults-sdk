@@ -167,7 +167,7 @@ export async function getUserAmounts(
   const totalAmountsBN = await getTotalAmounts(vaultAddress, jsonProvider, dex, true);
   const totalSupplyBN = await vaultContract.totalSupply();
   const userBalanceBN = await getUserBalance(accountAddress, vaultAddress, jsonProvider, dex, true);
-  if (totalSupplyBN !== BigNumber.from(0)) {
+  if (!totalSupplyBN.isZero()) {
     const userAmountsBN = {
       amount0: userBalanceBN.mul(totalAmountsBN[0]).div(totalSupplyBN),
       amount1: userBalanceBN.mul(totalAmountsBN[1]).div(totalSupplyBN),

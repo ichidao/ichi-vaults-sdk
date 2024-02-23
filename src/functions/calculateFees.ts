@@ -177,7 +177,9 @@ export async function getFeesCollectedInfo(
     const totalFeesAmount =
       getTotalFeesAmountInBaseTokens(arrRebalances, token0Decimals, token1Decimals, isVaultInverted) +
       getTotalFeesAmountInBaseTokens(arrOtherFees, token0Decimals, token1Decimals, isVaultInverted);
-    const pct = (((totalFeesAmount / dayPeriod) * 365) / tvl) * 100;
+    const pct = (dayPeriod !== 0 && tvl !== 0) 
+      ? (((totalFeesAmount / dayPeriod) * 365) / tvl) * 100 
+      : 0;
 
     const feesCollectedInfo = {
       timePeriod: dayPeriod,
