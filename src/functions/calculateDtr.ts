@@ -16,7 +16,7 @@ import { getIchiVaultInfo } from './vault';
 import { getDeposits, getFeesCollectedEvents, getRebalances, getWithdraws } from './vaultEvents';
 import { getTokenDecimals } from './balances';
 import formatBigInt from '../utils/formatBigInt';
-import daysToMilliseconds from '../utils/timestamps';
+import { daysToMilliseconds } from '../utils/timestamps';
 import { isTokenAllowed } from './deposit';
 import getPrice from '../utils/getPrice';
 import { getTotalAmountsAtFeeCollectionEvent } from './calculateFees';

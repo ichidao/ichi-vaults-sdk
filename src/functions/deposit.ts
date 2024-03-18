@@ -271,7 +271,14 @@ export async function depositNativeToken(
   const wrappedNative = await depositGuardContract.WRAPPED_NATIVE();
   if (wrappedNative !== depositToken) {
     throw new Error('Deposit token is not wrapped native token');
+    // if (chainId !== SupportedChainId.hedera) {
+    //   throw new Error('Deposit token is not wrapped native token');
+    // }
   }
+
+  // if (chainId === SupportedChainId.hedera){
+  //   depositAmount = depositAmount.mul(BigNumber.from(1e10));
+  // }
 
   // the first call: get estimated LP amount
   let lpAmount = await depositGuardContract.callStatic.forwardNativeDepositToICHIVault(

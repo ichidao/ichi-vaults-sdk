@@ -4,7 +4,7 @@
 // eslint-disable-next-line import/no-unresolved
 import { request } from 'graphql-request';
 import { JsonRpcProvider } from '@ethersproject/providers';
-import { SupportedDex, SupportedChainId, Fees, VaultTransactionEvent } from '../types';
+import { SupportedDex, SupportedChainId, Fees, VaultTransactionEvent, VaultState } from '../types';
 // eslint-disable-next-line import/no-cycle
 import {
   CollectFeesQueryData,
@@ -14,7 +14,8 @@ import {
 } from '../types/vaultQueryData';
 import { graphUrls } from '../graphql/constants';
 import { rebalancesQuery, vaultCollectFeesQuery, vaultDepositsQuery, vaultWithdrawsQuery } from '../graphql/queries';
-import daysToMilliseconds from '../utils/timestamps';
+import { daysToMilliseconds } from '../utils/timestamps';
+import { getIchiVaultInfo } from './vault';
 
 const promises: Record<string, Promise<any>> = {};
 
@@ -258,5 +259,49 @@ export async function getWithdraws(
     );
 
     return withdrawEvents;
+  }
+}
+
+export async function getAllVaultEvents(
+  vaultAddress: string,
+  jsonProvider: JsonRpcProvider,
+  dex: SupportedDex,
+): Promise<VaultState[]> {
+  const { chainId } = await jsonProvider.getNetwork();
+
+  if (!Object.values(SupportedChainId).includes(chainId)) {
+    throw new Error(`Unsupported chainId: ${chainId ?? 'undefined'}`);
+  }
+
+  const vault = await getIchiVaultInfo(chainId, dex, vaultAddress, jsonProvider);
+  if (!vault) throw new Error(`Vault ${vaultAddress} not found on chain ${chainId} and dex ${dex}`);
+
+  const rebalances = (await getRebalances(vaultAddress, jsonProvider, dex)) as VaultState[];
+  if (!rebalances) throw new Error(`Error getting vault rebalances on ${chainId} for ${vaultAddress}`);
+  const collectedFees = (await getFeesCollectedEvents(vaultAddress, jsonProvider, dex)) as VaultState[];
+  if (!collectedFees) throw new Error(`Error getting vault collected fees on ${chainId} for ${vaultAddress}`);
+  const deposits = (await getDeposits(vaultAddress, jsonProvider, dex)) as VaultState[];
+  if (!deposits) throw new Error(`Error getting vault deposits on ${chainId} for ${vaultAddress}`);
+  const withdraws = (await getWithdraws(vaultAddress, jsonProvider, dex)) as VaultState[];
+  if (!withdraws) throw new Error(`Error getting vault withdraws on ${chainId} for ${vaultAddress}`);
+
+  const result = [...deposits, ...withdraws, ...rebalances, ...collectedFees].sort(
+    (a, b) => Number(b.createdAtTimestamp) - Number(a.createdAtTimestamp), // recent events first
+  );
+
+  return result;
+}
+
+export function getVaultStateAt(vaultEvents: VaultState[], daysAgo: number): VaultState | null {
+  if (vaultEvents.length === 0) {
+    return null;
+  }
+  const eventsBefore = vaultEvents.filter(
+    (e) => Number(e.createdAtTimestamp) * 1000 <= Date.now() - daysToMilliseconds(daysAgo),
+  );
+  if (eventsBefore.length > 0) {
+    return eventsBefore[0];
+  } else {
+    return null;
   }
 }

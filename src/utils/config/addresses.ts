@@ -111,6 +111,17 @@ const addressConfig: Record<SupportedChainId, Config> = {
       isAlgebra: false,
     },
   },
+  [SupportedChainId.base]: {
+    [SupportedDex.Equalizer]: {
+      factoryAddress: '0xfBf38920cCbCFF7268Ad714ae5F9Fad6dF607065',
+      depositGuard: {
+        address: '0xBf38e4Ffb0B0Aa075531b38d71d3b18a5f599819',
+        version: 2,
+      },
+      vaultDeployerAddress: '0x7d11De61c219b70428Bb3199F0DD88bA9E76bfEE',
+      isAlgebra: false,
+    },
+  },
   [SupportedChainId.bsc]: {
     [SupportedDex.UniswapV3]: {
       factoryAddress: '0x065356d9f628cDd1bb9F2384E2972CdAC50f51b7',
@@ -138,6 +149,17 @@ const addressConfig: Record<SupportedChainId, Config> = {
       },
       vaultDeployerAddress: '0x05cC3CA6E768a68A7f86b09e3ceE754437bd5f12',
       isAlgebra: true,
+    },
+  },
+  [SupportedChainId.celo]: {
+    [SupportedDex.UniswapV3]: {
+      factoryAddress: '0x9FAb4bdD4E05f5C023CCC85D2071b49791D7418F',
+      depositGuard: {
+        address: '0x62fd1824C810906F449227F1f453528bb54774C2',
+        version: 2,
+      },
+      vaultDeployerAddress: '0xfAcD9c86f7766A5171bb0F9927De808929429A47',
+      isAlgebra: false,
     },
   },
   [SupportedChainId.eon]: {
@@ -173,14 +195,25 @@ const addressConfig: Record<SupportedChainId, Config> = {
       isAlgebra: false,
     },
   },
+  // [SupportedChainId.hedera]: {
+  //   [SupportedDex.SaucerSwap]: {
+  //     factoryAddress: '0xb62399d23d1c81f08ea445a42d7f15cc12090a71',
+  //     depositGuard: {
+  //       address: '0x1B0ef045830466171D617dD0F1142aD699A4Cd63',
+  //       version: 2,
+  //     },
+  //     vaultDeployerAddress: '0x8514B2Fa2889F7A2f46F1AA66b514999F2a7327F',
+  //     isAlgebra: false,
+  //   },
+  // },
   [SupportedChainId.hedera_testnet]: {
     [SupportedDex.SaucerSwap]: {
-      factoryAddress: '0x1B0ef045830466171D617dD0F1142aD699A4Cd63',
+      factoryAddress: '0x3DfD6dd38F055188adCb2332C2926DDA28d318bD',
       depositGuard: {
-        address: '0x967768f830d44Cd14695D27de3B7D8826023bD7b',
+        address: '0x16Dd62dB239DF67786F0AB7596C445aCDe81a16F',
         version: 2,
       },
-      vaultDeployerAddress: '0xAAC397840fC57F6bE1e3d40496E0823Ff15e1C6D',
+      vaultDeployerAddress: '0xEc7428cB95cD92e7556172FfBe735c6D48f6DEB7',
       isAlgebra: false,
     },
   },
@@ -193,6 +226,17 @@ const addressConfig: Record<SupportedChainId, Config> = {
       },
       vaultDeployerAddress: '0x75178e0a2829B73E3AE4C21eE64F4B684085392a',
       isAlgebra: true,
+    },
+  },
+  [SupportedChainId.mantle]: {
+    [SupportedDex.Cleo]: {
+      factoryAddress: '0xbBB97d634460DACCA0d41E249510Bb741ef46ad3',
+      depositGuard: {
+        address: '0xADDA3A15EA71c223a82Af86d4578EF2B076035F1',
+        version: 2,
+      },
+      vaultDeployerAddress: '0xC4183bCcBa1D825A8aC971e13E698368b744F43C',
+      isAlgebra: false,
     },
   },
   [SupportedChainId.zksync_era]: {

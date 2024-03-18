@@ -55,6 +55,9 @@ export const graphUrls: Record<SupportedChainId, dexGraph> = {
       supportsCollectFees: true,
     },
   },
+  [SupportedChainId.base]: {
+    [SupportedDex.Equalizer]: { url: 'none', supportsCollectFees: false },
+  },
   [SupportedChainId.bsc]: {
     [SupportedDex.UniswapV3]: {
       url: 'https://api.thegraph.com/subgraphs/name/ichi-org/bnb-v1',
@@ -66,6 +69,12 @@ export const graphUrls: Record<SupportedChainId, dexGraph> = {
     },
     [SupportedDex.Thena]: {
       url: 'https://api.thegraph.com/subgraphs/name/ichi-org/bnb-v1-thena',
+      supportsCollectFees: true,
+    },
+  },
+  [SupportedChainId.celo]: {
+    [SupportedDex.UniswapV3]: {
+      url: 'https://api.thegraph.com/subgraphs/name/ichi-org/celo-v1',
       supportsCollectFees: true,
     },
   },
@@ -81,11 +90,17 @@ export const graphUrls: Record<SupportedChainId, dexGraph> = {
       supportsCollectFees: true,
     },
   },
+  // [SupportedChainId.hedera]: {
+  //   [SupportedDex.SaucerSwap]: { url: 'none', supportsCollectFees: false },
+  // },
   [SupportedChainId.hedera_testnet]: {
     [SupportedDex.SaucerSwap]: { url: 'none', supportsCollectFees: false },
   },
   [SupportedChainId.linea]: {
     [SupportedDex.Lynex]: { url: 'none', supportsCollectFees: false },
+  },
+  [SupportedChainId.mantle]: {
+    [SupportedDex.Cleo]: { url: 'none', supportsCollectFees: false },
   },
   [SupportedChainId.zksync_era]: {
     [SupportedDex.Pancakeswap]: {

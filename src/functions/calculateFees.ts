@@ -9,7 +9,7 @@ import { getIchiVaultInfo } from './vault';
 import { getFeesCollectedEvents, getRebalances } from './vaultEvents';
 import { getTokenDecimals } from './balances';
 import formatBigInt from '../utils/formatBigInt';
-import daysToMilliseconds from '../utils/timestamps';
+import { daysToMilliseconds } from '../utils/timestamps';
 import { isTokenAllowed } from './deposit';
 import getPrice from '../utils/getPrice';
 import { getVaultTvl } from './priceFromPool';
@@ -177,9 +177,7 @@ export async function getFeesCollectedInfo(
     const totalFeesAmount =
       getTotalFeesAmountInBaseTokens(arrRebalances, token0Decimals, token1Decimals, isVaultInverted) +
       getTotalFeesAmountInBaseTokens(arrOtherFees, token0Decimals, token1Decimals, isVaultInverted);
-    const pct = (dayPeriod !== 0 && tvl !== 0) 
-      ? (((totalFeesAmount / dayPeriod) * 365) / tvl) * 100 
-      : 0;
+    const pct = dayPeriod !== 0 && tvl !== 0 ? (((totalFeesAmount / dayPeriod) * 365) / tvl) * 100 : 0;
 
     const feesCollectedInfo = {
       timePeriod: dayPeriod,
