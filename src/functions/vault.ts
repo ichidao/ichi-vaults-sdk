@@ -111,3 +111,20 @@ export async function getVaultsByTokens(
   // eslint-disable-next-line no-return-await
   return [...arrVaults1, ...arrVaults2];
 }
+
+export async function validateVaultData(
+  vaultAddress: string,
+  jsonProvider: JsonRpcProvider,
+  dex: SupportedDex,
+): Promise<{ chainId: SupportedChainId; vault: IchiVault }> {
+  const { chainId } = await jsonProvider.getNetwork();
+
+  if (!Object.values(SupportedChainId).includes(chainId)) {
+    throw new Error(`Unsupported chainId: ${chainId ?? 'undefined'}`);
+  }
+
+  const vault = await getIchiVaultInfo(chainId, dex, vaultAddress, jsonProvider);
+  if (!vault) throw new Error(`Vault ${vaultAddress} not found on chain ${chainId} and dex ${dex}`);
+
+  return { chainId, vault };
+}

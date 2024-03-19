@@ -27,8 +27,10 @@ This sdk contains collection of functions to interact with IchiVault's smart con
         * [`getFeesCollected()`](#16-getFeesCollected)
         * [`getFeesCollectedInfo()`](#17-getFeesCollectedInfo)
         * [`getAverageDepositTokenRatios()`](#18-getAverageDepositTokenRatios)
-        * [`getIchiVaultInfo()`](#19-getIchiVaultInfo)
-        * [`getVaultsByTokens()`](#20-getVaultsByTokens)
+        * [`getLpApr()`](#19-getLpApr)
+        * [`getLpPriceChange()`](#20-getLpPriceChange)
+        * [`getIchiVaultInfo()`](#21-getIchiVaultInfo)
+        * [`getVaultsByTokens()`](#22-getVaultsByTokens)
 
 ## Installation
 Install with
@@ -720,7 +722,79 @@ const averageDtr: AverageDepositTokenRatio[] = await getAverageDepositTokenRatio
 )
 ```
 
-#### 19. `getIchiVaultInfo()`
+#### 19. `getLpApr()`
+
+| param | type |  default | required
+| -------- | -------- | -------- | --------
+| vaultAddress   | string | - | true |
+| jsonProvider      | [JsonRpcProvider](https://github.com/ethers-io/ethers.js/blob/f97b92bbb1bde22fcc44100af78d7f31602863ab/packages/providers/src.ts/json-rpc-provider.ts#L393) | - | true
+| dex   | SupportedDex | - | true
+| timeIntervals   | number[] | [1, 7, 30] | false |
+
+<br/>
+
+```typescript
+import { Web3Provider } from '@ethersproject/providers';
+import { getLpApr, SupportedDex, VaultApr } from '@ichidao/ichi-vaults-sdk';
+
+const web3Provider = new Web3Provider(YOUR_WEB3_PROVIDER);
+const vaultAddress = "0x3ac9...a5f132";
+const dex = SupportedDex.UniswapV3;
+const days = [2, 5, 14, 60];
+
+const averageDtr: VaultApr[] = await getLpApr(
+    vaultAddress,
+    web3Provider
+    dex,
+)
+
+// - or -
+
+const averageDtr: VaultApr[] = await getLpApr(
+    vaultAddress,
+    web3Provider
+    dex,
+    days,
+)
+```
+
+#### 20. `getAverageDepositTokenRatios()`
+
+| param | type |  default | required
+| -------- | -------- | -------- | --------
+| vaultAddress   | string | - | true |
+| jsonProvider      | [JsonRpcProvider](https://github.com/ethers-io/ethers.js/blob/f97b92bbb1bde22fcc44100af78d7f31602863ab/packages/providers/src.ts/json-rpc-provider.ts#L393) | - | true
+| dex   | SupportedDex | - | true
+| timeIntervals   | number[] | [1, 7, 30] | false |
+
+<br/>
+
+```typescript
+import { Web3Provider } from '@ethersproject/providers';
+import { getFeesCollectedInfo, SupportedDex } from '@ichidao/ichi-vaults-sdk';
+
+const web3Provider = new Web3Provider(YOUR_WEB3_PROVIDER);
+const vaultAddress = "0x3ac9...a5f132";
+const dex = SupportedDex.UniswapV3;
+const days = [2, 5, 14, 60];
+
+const averageDtr: AverageDepositTokenRatio[] = await getAverageDepositTokenRatios(
+    vaultAddress,
+    web3Provider
+    dex,
+)
+
+// - or -
+
+const averageDtr: AverageDepositTokenRatio[] = await getAverageDepositTokenRatios(
+    vaultAddress,
+    web3Provider
+    dex,
+    days,
+)
+```
+
+#### 21. `getIchiVaultInfo()`
 
 | param | type |  default | required
 | -------- | -------- | -------- | --------
@@ -745,7 +819,7 @@ if (vaultInfo) {
 }
 ```
 
-#### 20. `getVaultsByTokens()`
+#### 22. `getVaultsByTokens()`
 
 | param | type |  default | required
 | -------- | -------- | -------- | --------
@@ -780,13 +854,16 @@ if (!vault) {
 ```typescript
 enum SupportedChainId {
   arbitrum = 42161,
+  base = 8453,
   bsc = 56,
+  celo = 42220,
   eon = 7332,
   evmos = 9001,
   fantom = 250,
   hedera_testnet = 296,
   linea = 59144,
   mainnet = 1,
+  mantle = 5000,
   polygon = 137,
   zksync_era = 324,
   zksync_era_testnet = 280,
@@ -799,6 +876,7 @@ enum SupportedChainId {
 enum SupportedDex {
   Ascent = 'Ascent',
   Blueprint = 'Blueprint',
+  Cleo = 'Cleo',
   Equalizer = 'Equalizer',
   Forge = 'Forge',
   Horiza = 'Horiza',
@@ -835,5 +913,32 @@ type FeesInfo  = {
   feeAmount0: string; // in token0
   feeAmount1: string; // in token1
   pctAPR: number; // yearly APR based on the timePeriod
+}
+```
+
+### AverageDepositTokenRatio
+
+```typescript
+type AverageDepositTokenRatio  = {
+  timePeriod: number; // in days
+  percent: number;
+}
+```
+
+### VaultApr
+
+```typescript
+type VaultApr  = {
+  timeInterval: number; // in days
+  apr: number; // percent
+}
+```
+
+### PriceChange
+
+```typescript
+type PriceChange  = {
+  timeInterval: number; // in days
+  priceChange: number; 
 }
 ```

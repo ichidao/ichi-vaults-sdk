@@ -37,6 +37,7 @@ export const rebalancesQuery = (page: number) => gql`
       createdAtTimestamp
       vault
       sqrtPrice
+      totalSupply
     }
   }
 `;
@@ -53,6 +54,7 @@ export const vaultCollectFeesQuery = (page: number) => gql`
       createdAtTimestamp
       vault
       sqrtPrice
+      totalSupply
     }
   }
 `;
@@ -69,6 +71,7 @@ export const vaultDepositsQuery = (page: number) => gql`
       totalAmount0BeforeEvent
       totalAmount1BeforeEvent
       sqrtPrice
+      totalSupply
     }
   }
 `;
@@ -85,6 +88,7 @@ export const vaultWithdrawsQuery = (page: number) => gql`
       totalAmount1BeforeEvent
       vault
       sqrtPrice
+      totalSupply
     }
   }
 `;

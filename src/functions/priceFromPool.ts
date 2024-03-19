@@ -6,7 +6,7 @@ import { BigNumber } from '@ethersproject/bignumber';
 import { SupportedChainId, SupportedDex } from '../types';
 // eslint-disable-next-line import/no-cycle
 import { getIchiVaultInfo } from './vault';
-import { getTotalAmounts } from './balances';
+import { getTotalAmounts, getTotalSupply } from './balances';
 import getPrice from '../utils/getPrice';
 import { getAlgebraPoolContract, getIchiVaultContract, getUniswapV3PoolContract } from '../contracts';
 import addressConfig from '../utils/config/addresses';
@@ -73,34 +73,6 @@ export async function getCurrPrice(
   }
 }
 
-// total amounts at deposit or withdrawal in deposit tokens
-export async function getCurrentDtr(
-  vaultAddress: string,
-  jsonProvider: JsonRpcProvider,
-  dex: SupportedDex,
-  isVaultInverted: boolean,
-  token0decimals: number,
-  token1decimals: number,
-): Promise<number> {
-  const { chainId } = await jsonProvider.getNetwork();
-
-  if (!Object.values(SupportedChainId).includes(chainId)) {
-    throw new Error(`Unsupported chainId: ${chainId ?? 'undefined'}`);
-  }
-
-  const vault = await getIchiVaultInfo(chainId, dex, vaultAddress, jsonProvider);
-  if (!vault) throw new Error(`Vault ${vaultAddress} not found on chain ${chainId} and dex ${dex}`);
-
-  const totalAmounts = await getTotalAmounts(vaultAddress, jsonProvider, dex);
-  const price = await getCurrPrice(vaultAddress, jsonProvider, dex, isVaultInverted, token0decimals, token1decimals);
-  if ((Number(totalAmounts.total0) + Number(totalAmounts.total1) * price) === 0) return 0;
-  const dtr = !isVaultInverted
-    ? (Number(totalAmounts.total0) / (Number(totalAmounts.total0) + Number(totalAmounts.total1) * price)) * 100
-    : (Number(totalAmounts.total1) / (Number(totalAmounts.total1) + Number(totalAmounts.total0) * price)) * 100;
-
-  return dtr;
-}
-
 export async function getVaultTvl(
   vaultAddress: string,
   jsonProvider: JsonRpcProvider,
@@ -125,4 +97,63 @@ export async function getVaultTvl(
     : Number(totalAmounts.total1) + Number(totalAmounts.total0) * price;
 
   return tvl;
+}
+
+// current LP price in pool in deposit tokens
+export async function getCurrLpPrice(
+  vaultAddress: string,
+  jsonProvider: JsonRpcProvider,
+  dex: SupportedDex,
+  isVaultInverted: boolean,
+  token0decimals: number,
+  token1decimals: number,
+): Promise<number> {
+  const { chainId } = await jsonProvider.getNetwork();
+
+  if (!Object.values(SupportedChainId).includes(chainId)) {
+    throw new Error(`Unsupported chainId: ${chainId ?? 'undefined'}`);
+  }
+
+  const vault = await getIchiVaultInfo(chainId, dex, vaultAddress, jsonProvider);
+  if (!vault) throw new Error(`Vault ${vaultAddress} not found on chain ${chainId} and dex ${dex}`);
+  try {
+    const currTvl = await getVaultTvl(vaultAddress, jsonProvider, dex, isVaultInverted, token0decimals, token1decimals);
+    const totalSupply = await getTotalSupply(vaultAddress, jsonProvider, dex);
+    if (Number(totalSupply) === 0) {
+      throw new Error(`Could not get LP price. Vault total supply is 0 for vault ${vaultAddress} on chain ${chainId}`);
+    }
+
+    return currTvl / Number(totalSupply);
+  } catch (e) {
+    console.error(`Could not get LP price from vault ${vaultAddress} `);
+    throw e;
+  }
+}
+
+// total amounts at deposit or withdrawal in deposit tokens
+export async function getCurrentDtr(
+  vaultAddress: string,
+  jsonProvider: JsonRpcProvider,
+  dex: SupportedDex,
+  isVaultInverted: boolean,
+  token0decimals: number,
+  token1decimals: number,
+): Promise<number> {
+  const { chainId } = await jsonProvider.getNetwork();
+
+  if (!Object.values(SupportedChainId).includes(chainId)) {
+    throw new Error(`Unsupported chainId: ${chainId ?? 'undefined'}`);
+  }
+
+  const vault = await getIchiVaultInfo(chainId, dex, vaultAddress, jsonProvider);
+  if (!vault) throw new Error(`Vault ${vaultAddress} not found on chain ${chainId} and dex ${dex}`);
+
+  const totalAmounts = await getTotalAmounts(vaultAddress, jsonProvider, dex);
+  const price = await getCurrPrice(vaultAddress, jsonProvider, dex, isVaultInverted, token0decimals, token1decimals);
+  if (Number(totalAmounts.total0) + Number(totalAmounts.total1) * price === 0) return 0;
+  const dtr = !isVaultInverted
+    ? (Number(totalAmounts.total0) / (Number(totalAmounts.total0) + Number(totalAmounts.total1) * price)) * 100
+    : (Number(totalAmounts.total1) / (Number(totalAmounts.total1) + Number(totalAmounts.total0) * price)) * 100;
+
+  return dtr;
 }

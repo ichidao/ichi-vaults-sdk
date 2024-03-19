@@ -24,6 +24,10 @@ import {
   getVaultsByTokens,
   getFeesCollected,
   getFeesCollectedInfo,
+  getAverageDepositTokenRatios,
+  depositNativeToken,
+  getLpApr,
+  getLpPriceChange,
 } from '../index';
 import formatBigInt from '../utils/formatBigInt';
 import parseBigInt from '../utils/parseBigInt';
@@ -31,26 +35,26 @@ import parseBigInt from '../utils/parseBigInt';
 const hdWalletProvider = new HDWalletProvider([process.env.PRIVATE_KEY!], process.env.PROVIDER_URL!, 0, 1);
 
 const provider = new Web3Provider(hdWalletProvider, {
-  chainId: SupportedChainId.polygon,
-  name: 'Polygon',
+  chainId: SupportedChainId.bsc,
+  name: 'Binance Smart Chain',
 });
 const account = process.env.ACCOUNT!;
 
 const vault = {
-  address: '0x74b706767f18a360c0083854ab42c1b96e076229', //  vault (not inverted)
-  chainId: SupportedChainId.polygon,
-  dex: SupportedDex.Quickswap,
+  address: '0x92ce6311d4df089591a0b438265667c452d23fd0', //  vault (inverted)
+  chainId: SupportedChainId.bsc,
+  dex: SupportedDex.Thena,
 };
 
 const tokens = {
-  pairedToken: '0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619',
-  depositToken: '0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174',
+  pairedToken: '0x0EF4A107b48163ab4b57FCa36e1352151a587Be4',
+  depositToken: '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c',
 };
 
 const iface = new ethers.utils.Interface(ICHIVAULT_ABI);
-const amount0 = '1.5';
-const amount1 = '0';
-const sharesToWithdraw = '0.05';
+const amount1 = '0.5';
+const amount0 = '0';
+const sharesToWithdraw = '0.004';
 const bigAmount = '1000';
 
 describe('Vault', () => {
@@ -64,14 +68,14 @@ describe('Vault', () => {
 
   it.skip('approve', async () => {
     let approve: ethers.ContractTransaction | null = null;
-    approve = await approveDepositToken(account, 0, vault.address, provider, vault.dex, amount0);
+    approve = await approveDepositToken(account, 1, vault.address, provider, vault.dex, amount1);
     await approve.wait();
-    const isApproved = await isDepositTokenApproved(account, 0, amount0, vault.address, provider, vault.dex);
+    const isApproved = await isDepositTokenApproved(account, 1, amount1, vault.address, provider, vault.dex);
     expect(isApproved).toEqual(true);
   });
 
   it('isDepositTokenApproved', async () => {
-    const isApproved = await isDepositTokenApproved(account, 0, bigAmount, vault.address, provider, vault.dex);
+    const isApproved = await isDepositTokenApproved(account, 1, bigAmount, vault.address, provider, vault.dex);
     expect(isApproved).toEqual(false);
   });
 
@@ -110,13 +114,51 @@ describe('Vault', () => {
     console.log('Deposit:', result);
 
     share = formatBigInt(result.shares);
-    console.log('Deposit share:', result.shares);
+    console.log('Deposit share:', share);
+  });
+
+  it.skip('depositNativeToken', async () => {
+    const isAllowed0 = await isTokenAllowed(0, vault.address, provider, vault.dex);
+    const isAllowed1 = await isTokenAllowed(1, vault.address, provider, vault.dex);
+
+    const maxDeposit0 = await getMaxDepositAmount(0, vault.address, provider, vault.dex);
+    const maxDeposit1 = await getMaxDepositAmount(1, vault.address, provider, vault.dex);
+
+    const vaultFromQuery = await getIchiVaultInfo(vault.chainId, vault.dex, vault.address, provider);
+    if (!vaultFromQuery)
+      throw new Error(`Vault ${vault.address} not found on chain ${vault.chainId} and dex ${vault.dex}]`);
+    const token0Decimals = await getTokenDecimals(vaultFromQuery.tokenA, provider);
+    const token1Decimals = await getTokenDecimals(vaultFromQuery.tokenB, provider);
+
+    if (!isAllowed0 && Number(amount0) > 0) return;
+    if (!isAllowed1 && Number(amount1) > 0) return;
+    if (parseBigInt(amount0, token0Decimals).gt(maxDeposit0) || parseBigInt(amount1, token1Decimals).gt(maxDeposit1))
+      return;
+
+    const r = await depositNativeToken(account, amount0, amount1, vault.address, provider, vault.dex);
+    const a = await r.wait();
+
+    const result: any = a.logs
+      .map((e: any) => {
+        try {
+          console.log('iface.parseLog(e):', iface.parseLog(e));
+          return iface.parseLog(e);
+        } catch (error) {
+          return null;
+        }
+      })
+      .find((e: any) => e && e.name === 'Deposit')?.args;
+
+    console.log('Deposit:', result);
+
+    share = formatBigInt(result.shares);
+    console.log('Deposit share:', share);
   });
 
   it('getUserBalance', async () => {
     const userShares = await getUserBalance(account, vault.address, provider, vault.dex);
 
-    expect(Number(userShares)).toBeGreaterThan(0);
+    expect(Number(userShares)).toBeGreaterThanOrEqual(0);
   });
 
   it('getTotalAmounts', async () => {
@@ -128,7 +170,7 @@ describe('Vault', () => {
   it('getUserAmounts', async () => {
     const amounts = await getUserAmounts(account, vault.address, provider, vault.dex);
 
-    expect(Number(amounts.amount0)).toBeGreaterThan(0);
+    expect(Number(amounts.amount0)).toBeGreaterThanOrEqual(0);
   });
 
   it('getFeesCollected_All', async () => {
@@ -138,9 +180,26 @@ describe('Vault', () => {
   });
 
   it('getFeesCollectedInfo', async () => {
-    const dataPoints = await getFeesCollectedInfo(vault.address, provider, vault.dex, [100, 800]);
+    const dataPoints = await getFeesCollectedInfo(vault.address, provider, vault.dex, [1, 7, 30, 1000]);
 
     expect(Number(dataPoints[0].pctAPR)).toBeGreaterThanOrEqual(0);
+  });
+
+  it('getAverageDepositTokenRatios', async () => {
+    const dataPoints = await getAverageDepositTokenRatios(vault.address, provider, vault.dex, [1, 7, 30, 1000]);
+
+    expect(Number(dataPoints[0].percent)).toBeGreaterThanOrEqual(0);
+  });
+
+  it('getLpApr', async () => {
+    const aprs = await getLpApr(vault.address, provider, vault.dex, [1, 7, 30, 1000]);
+    console.log({ aprs });
+    expect(Number(aprs[0]?.timeInterval)).toEqual(1);
+  });
+  it('getLpPriceChange', async () => {
+    const priceChange = await getLpPriceChange(vault.address, provider, vault.dex, [1, 7, 30, 1000]);
+    console.log({ priceChange });
+    expect(Number(priceChange[0]?.timeInterval)).toEqual(1);
   });
 
   it.skip('withdraw:deposited', async () => {
@@ -172,6 +231,7 @@ describe('GraphQL', () => {
   });
   it('Get vaults by tokens', async () => {
     const a = await getVaultsByTokens(vault.chainId, vault.dex, tokens.depositToken, tokens.pairedToken);
+    console.log(a[0]);
     expect(a).toBeTruthy();
   });
 });

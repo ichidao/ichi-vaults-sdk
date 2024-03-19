@@ -8,13 +8,17 @@ export type SignerOrProvider = Signer | Provider;
 
 export enum SupportedChainId {
   arbitrum = 42161,
+  base = 8453,
   bsc = 56,
+  celo = 42220,
   eon = 7332,
   evmos = 9001,
   fantom = 250,
+  // hedera = 295,
   hedera_testnet = 296,
   linea = 59144,
   mainnet = 1,
+  mantle = 5000,
   polygon = 137,
   zksync_era_testnet = 280,
   zksync_era = 324,
@@ -23,6 +27,7 @@ export enum SupportedChainId {
 export enum SupportedDex {
   Ascent = 'Ascent',
   Blueprint = 'Blueprint',
+  Cleo = 'Cleo',
   Equalizer = 'Equalizer',
   Forge = 'Forge',
   Horiza = 'Horiza',
@@ -53,7 +58,16 @@ export interface IchiVault {
   allowTokenB: boolean;
 }
 
-export interface Fees {
+export interface VaultState {
+  totalAmount0: string;
+  totalAmount1: string;
+  createdAtTimestamp: string;
+  vault: string;
+  sqrtPrice: string;
+  totalSupply: string;
+}
+
+export interface Fees extends VaultState {
   feeAmount0: string;
   feeAmount1: string;
   totalAmount0: string;
@@ -61,9 +75,10 @@ export interface Fees {
   createdAtTimestamp: string;
   vault: string;
   sqrtPrice: string;
+  totalSupply: string;
 }
 
-export interface VaultTransactionEvent {
+export interface VaultTransactionEvent extends VaultState {
   totalAmount0: string;
   totalAmount1: string;
   totalAmount0BeforeEvent: string;
@@ -71,6 +86,7 @@ export interface VaultTransactionEvent {
   createdAtTimestamp: string;
   vault: string;
   sqrtPrice: string;
+  totalSupply: string;
 }
 
 export type FeesInfo = {
@@ -88,4 +104,14 @@ export type DepositTokenRatio = {
 export type AverageDepositTokenRatio = {
   timePeriod: number; // in days
   percent: number;
+};
+
+export type VaultApr = {
+  timeInterval: number; // in days
+  apr: number | null; // percent
+};
+
+export type PriceChange = {
+  timeInterval: number; // in days
+  priceChange: number | null;
 };
