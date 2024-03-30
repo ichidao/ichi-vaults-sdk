@@ -56,7 +56,10 @@ export const graphUrls: Record<SupportedChainId, dexGraph> = {
     },
   },
   [SupportedChainId.base]: {
-    [SupportedDex.Equalizer]: { url: 'none', supportsCollectFees: false },
+    [SupportedDex.Equalizer]: {
+      url: 'https://api.studio.thegraph.com/query/61136/base-v1-equalizer/version/latest',
+      supportsCollectFees: true,
+    },
   },
   [SupportedChainId.bsc]: {
     [SupportedDex.UniswapV3]: {
@@ -100,7 +103,16 @@ export const graphUrls: Record<SupportedChainId, dexGraph> = {
     [SupportedDex.Lynex]: { url: 'none', supportsCollectFees: false },
   },
   [SupportedChainId.mantle]: {
-    [SupportedDex.Cleo]: { url: 'none', supportsCollectFees: false },
+    [SupportedDex.Cleo]: {
+      url: 'https://subgraph-api.mantle.xyz/subgraphs/name/ichi-org/mantle-v1-cleo',
+      supportsCollectFees: true, 
+    },
+  },
+  [SupportedChainId.polygon_zkevm]: {
+    [SupportedDex.Pancakeswap]: {
+      url: 'https://api.studio.thegraph.com/query/61136/zkevm-v1-pancakeswap/version/latest',
+      supportsCollectFees: true, 
+    },
   },
   [SupportedChainId.zksync_era]: {
     [SupportedDex.Pancakeswap]: {
