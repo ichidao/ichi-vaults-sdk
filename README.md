@@ -855,6 +855,8 @@ if (!vault) {
 enum SupportedChainId {
   arbitrum = 42161,
   base = 8453,
+  blast = 81457,
+  blast_sepolia_testnet = 168587773,
   bsc = 56,
   celo = 42220,
   eon = 7332,
@@ -879,6 +881,7 @@ enum SupportedDex {
   Blueprint = 'Blueprint',
   Cleo = 'Cleo',
   Equalizer = 'Equalizer',
+  Fenix = 'Fenix',
   Forge = 'Forge',
   Horiza = 'Horiza',
   Lynex = 'Lynex',

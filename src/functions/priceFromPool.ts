@@ -8,7 +8,7 @@ import { SupportedChainId, SupportedDex } from '../types';
 import { getIchiVaultInfo } from './vault';
 import { getTotalAmounts, getTotalSupply } from './balances';
 import getPrice from '../utils/getPrice';
-import { getAlgebraPoolContract, getIchiVaultContract, getUniswapV3PoolContract } from '../contracts';
+import { getAlgebraIntegralPoolContract, getAlgebraPoolContract, getIchiVaultContract, getUniswapV3PoolContract } from '../contracts';
 import addressConfig from '../utils/config/addresses';
 
 export async function getSqrtPriceFromPool(
@@ -29,9 +29,15 @@ export async function getSqrtPriceFromPool(
     const poolAddress: string = await vaultContract.pool();
 
     if (addressConfig[chainId as SupportedChainId]![dex]?.isAlgebra) {
-      const poolContract = getAlgebraPoolContract(poolAddress, jsonProvider);
-      const globalState = await poolContract.globalState();
-      return globalState.price;
+      if (addressConfig[chainId as SupportedChainId]![dex]?.ammVersion === 'algebraIntegral'){
+        const poolContract = getAlgebraIntegralPoolContract(poolAddress, jsonProvider);
+        const globalState = await poolContract.globalState();
+        return globalState[0];
+      } else {
+        const poolContract = getAlgebraPoolContract(poolAddress, jsonProvider);
+        const globalState = await poolContract.globalState();
+        return globalState.price;
+      }
     } else {
       const poolContract = getUniswapV3PoolContract(poolAddress, jsonProvider);
       const slot0 = await poolContract.slot0();

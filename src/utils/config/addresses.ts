@@ -10,6 +10,7 @@ export type SupportedDexConfig = {
   };
   vaultDeployerAddress: string;
   isAlgebra: boolean;
+  ammVersion?: string; 
 };
 
 export type Config = { [key in SupportedDex]?: SupportedDexConfig };
@@ -120,6 +121,29 @@ const addressConfig: Record<SupportedChainId, Config> = {
       },
       vaultDeployerAddress: '0x7d11De61c219b70428Bb3199F0DD88bA9E76bfEE',
       isAlgebra: false,
+    },
+  },
+  [SupportedChainId.blast]: {
+    [SupportedDex.UniswapV3]: {
+      factoryAddress: '0x9FAb4bdD4E05f5C023CCC85D2071b49791D7418F',
+      depositGuard: {
+        address: '0xb62399d23d1c81f08eA445A42d7F15cC12090A71',
+        version: 2,
+      },
+      vaultDeployerAddress: '0xaD7cf2b8ce5eB8b75dA393fc164C4F4502761379',
+      isAlgebra: false,
+    },
+  },
+  [SupportedChainId.blast_sepolia_testnet]: {
+    [SupportedDex.Fenix]: {
+      factoryAddress: '0xA23A224add122F31EeD712E0C074CE0501b4CDC6',
+      depositGuard: {
+        address: '0x138361EA0f91CEcDe6A282089EdfEeB740076724',
+        version: 2,
+      },
+      vaultDeployerAddress: '0x4d999694f53614de3fd6748C0f5c7f0CdC16639b',
+      isAlgebra: true,
+      ammVersion: 'algebraIntegral',
     },
   },
   [SupportedChainId.bsc]: {
