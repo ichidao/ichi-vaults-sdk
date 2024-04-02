@@ -61,6 +61,18 @@ export const graphUrls: Record<SupportedChainId, dexGraph> = {
       supportsCollectFees: true,
     },
   },
+  [SupportedChainId.blast]: {
+    [SupportedDex.UniswapV3]: {
+      url: 'https://api.studio.thegraph.com/query/61136/blast-v1/version/latest',
+      supportsCollectFees: true,
+    },
+  },
+  [SupportedChainId.blast_sepolia_testnet]: {
+    [SupportedDex.Fenix]: {
+      url: 'https://api.studio.thegraph.com/query/61136/blast-sepolia-v1-fenix/version/latest',
+      supportsCollectFees: true,
+    },
+  },
   [SupportedChainId.bsc]: {
     [SupportedDex.UniswapV3]: {
       url: 'https://api.thegraph.com/subgraphs/name/ichi-org/bnb-v1',

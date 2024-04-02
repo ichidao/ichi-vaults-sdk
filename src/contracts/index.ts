@@ -13,19 +13,21 @@ import {
   AlgebraPool__factory,
   UniswapV3Pool,
   AlgebraPool,
+  AlgebraIntegralPool,
+  AlgebraIntegralPool__factory,
 } from '../../abis/types';
 
-function getERC20Contract(address: string, signerOrProvider: SignerOrProvider): ERC20 {
+export function getERC20Contract(address: string, signerOrProvider: SignerOrProvider): ERC20 {
   getAddress(address);
   return ERC20Factory.connect(address, signerOrProvider);
 }
 
-function getDepositGuardContract(address: string, signerOrProvider: SignerOrProvider): DepositGuard {
+export function getDepositGuardContract(address: string, signerOrProvider: SignerOrProvider): DepositGuard {
   getAddress(address);
   return DepositGuard__factory.connect(address, signerOrProvider);
 }
 
-function getIchiVaultContract(address: string, signerOrProvider: SignerOrProvider): IchiVault {
+export function getIchiVaultContract(address: string, signerOrProvider: SignerOrProvider): IchiVault {
   getAddress(address);
   return IchiVault__factory.connect(address, signerOrProvider);
 }
@@ -46,4 +48,11 @@ export function getAlgebraPoolContract(address: string, provider: JsonRpcProvide
     throw e;
   }
 }
-export { getERC20Contract, getDepositGuardContract, getIchiVaultContract };
+export function getAlgebraIntegralPoolContract(address: string, provider: JsonRpcProvider): AlgebraIntegralPool {
+  try {
+    return AlgebraIntegralPool__factory.connect(address, provider);
+  } catch (e) {
+    console.error(`Couldn't create AlgebraIntegralPool contract with address: ${address}`);
+    throw e;
+  }
+}
