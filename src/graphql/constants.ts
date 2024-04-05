@@ -112,7 +112,10 @@ export const graphUrls: Record<SupportedChainId, dexGraph> = {
     [SupportedDex.SaucerSwap]: { url: 'none', supportsCollectFees: false },
   },
   [SupportedChainId.linea]: {
-    [SupportedDex.Lynex]: { url: 'none', supportsCollectFees: false },
+    [SupportedDex.Lynex]: { 
+      url: 'https://api.studio.thegraph.com/query/61136/linea-v1-lynex/version/latest', 
+      supportsCollectFees: true, 
+    },
   },
   [SupportedChainId.mantle]: {
     [SupportedDex.Cleo]: {
@@ -123,6 +126,10 @@ export const graphUrls: Record<SupportedChainId, dexGraph> = {
   [SupportedChainId.polygon_zkevm]: {
     [SupportedDex.Pancakeswap]: {
       url: 'https://api.studio.thegraph.com/query/61136/zkevm-v1-pancakeswap/version/latest',
+      supportsCollectFees: true, 
+    },
+    [SupportedDex.Quickswap]: {
+      url: 'https://api.studio.thegraph.com/query/61136/zkevm-v1-quickswap/version/latest',
       supportsCollectFees: true, 
     },
   },
