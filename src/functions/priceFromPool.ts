@@ -6,9 +6,14 @@ import { BigNumber } from '@ethersproject/bignumber';
 import { SupportedChainId, SupportedDex } from '../types';
 // eslint-disable-next-line import/no-cycle
 import { getIchiVaultInfo } from './vault';
-import { getTotalAmounts, getTotalSupply } from './balances';
+import { getTotalAmounts, getTotalSupply } from './totalBalances';
 import getPrice from '../utils/getPrice';
-import { getAlgebraIntegralPoolContract, getAlgebraPoolContract, getIchiVaultContract, getUniswapV3PoolContract } from '../contracts';
+import {
+  getAlgebraIntegralPoolContract,
+  getAlgebraPoolContract,
+  getIchiVaultContract,
+  getUniswapV3PoolContract,
+} from '../contracts';
 import addressConfig from '../utils/config/addresses';
 
 export async function getSqrtPriceFromPool(
@@ -29,7 +34,7 @@ export async function getSqrtPriceFromPool(
     const poolAddress: string = await vaultContract.pool();
 
     if (addressConfig[chainId as SupportedChainId]![dex]?.isAlgebra) {
-      if (addressConfig[chainId as SupportedChainId]![dex]?.ammVersion === 'algebraIntegral'){
+      if (addressConfig[chainId as SupportedChainId]![dex]?.ammVersion === 'algebraIntegral') {
         const poolContract = getAlgebraIntegralPoolContract(poolAddress, jsonProvider);
         const globalState = await poolContract.globalState();
         return globalState[0];

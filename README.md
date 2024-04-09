@@ -22,15 +22,17 @@ This sdk contains collection of functions to interact with IchiVault's smart con
         * [`getMaxDepositAmount()`](#11-getMaxDepositAmount)
         * [`getUserBalance()`](#12-getUserBalance)
         * [`getUserAmounts()`](#13-getUserAmounts)
-        * [`getTotalSupply()`](#14-getTotalSupply)
-        * [`getTotalAmounts()`](#15-getTotalAmounts)
-        * [`getFeesCollected()`](#16-getFeesCollected)
-        * [`getFeesCollectedInfo()`](#17-getFeesCollectedInfo)
-        * [`getAverageDepositTokenRatios()`](#18-getAverageDepositTokenRatios)
-        * [`getLpApr()`](#19-getLpApr)
-        * [`getLpPriceChange()`](#20-getLpPriceChange)
-        * [`getIchiVaultInfo()`](#21-getIchiVaultInfo)
-        * [`getVaultsByTokens()`](#22-getVaultsByTokens)
+        * [`getAllUserBalances()`](#14-getAllUserBalances)
+        * [`getAllUserAmounts()`](#15-getAllUserAmounts)
+        * [`getTotalSupply()`](#16-getTotalSupply)
+        * [`getTotalAmounts()`](#17-getTotalAmounts)
+        * [`getFeesCollected()`](#18-getFeesCollected)
+        * [`getFeesCollectedInfo()`](#19-getFeesCollectedInfo)
+        * [`getAverageDepositTokenRatios()`](#20-getAverageDepositTokenRatios)
+        * [`getLpApr()`](#21-getLpApr)
+        * [`getLpPriceChange()`](#22-getLpPriceChange)
+        * [`getIchiVaultInfo()`](#23-getIchiVaultInfo)
+        * [`getVaultsByTokens()`](#24-getVaultsByTokens)
 
 ## Installation
 Install with
@@ -517,7 +519,77 @@ const amountsBN: [BigNumber, BigNumber] & {amount0: BigNumber, amount1: BigNumbe
 )
 ```
 
-#### 14. `getTotalSupply()`
+#### 14. `getAllUserBalances()`
+
+| param | type |  default | required
+| -------- | -------- | -------- | --------
+| accountAddress   | string | - | true |
+| jsonProvider      | [JsonRpcProvider](https://github.com/ethers-io/ethers.js/blob/f97b92bbb1bde22fcc44100af78d7f31602863ab/packages/providers/src.ts/json-rpc-provider.ts#L393) | - | true
+| dex   | SupportedDex | - | true
+| raw   | true | undefined | false |
+
+<br/>
+
+```typescript
+import { Web3Provider } from '@ethersproject/providers';
+import { getAllUserBalances, SupportedDex, UserBalanceInVault, UserBalanceInVaultBN } from '@ichidao/ichi-vaults-sdk';
+
+const web3Provider = new Web3Provider(YOUR_WEB3_PROVIDER);
+const dex = SupportedDex.UniswapV3
+const accountAddress = "0xaaaa...aaaaaa"
+
+const userBalancesInVaults: UserBalanceInVault[] = await getAllUserBalances(
+    accountAddress,
+    web3Provider
+    dex
+)
+
+// - or -
+
+const userBalancesInVaultsBN: UserBalanceInVaultBN[] = await getAllUserBalances(
+    accountAddress,
+    web3Provider
+    dex,
+    true
+)
+```
+
+#### 15. `getAllUserAmounts()`
+
+| param | type |  default | required
+| -------- | -------- | -------- | --------
+| accountAddress   | string | - | true |
+| jsonProvider      | [JsonRpcProvider](https://github.com/ethers-io/ethers.js/blob/f97b92bbb1bde22fcc44100af78d7f31602863ab/packages/providers/src.ts/json-rpc-provider.ts#L393) | - | true
+| dex   | SupportedDex | - | true
+| raw   | true | undefined | false |
+
+<br/>
+
+```typescript
+import { Web3Provider } from '@ethersproject/providers';
+import { getAllUserAmounts, SupportedDex, UserAmountsInVault, UserAmountsInVaultBN } from '@ichidao/ichi-vaults-sdk';
+
+const web3Provider = new Web3Provider(YOUR_WEB3_PROVIDER);
+const dex = SupportedDex.UniswapV3
+const accountAddress = "0xaaaa...aaaaaa"
+
+const amounts: UserAmountsInVault[] = await getAllUserAmounts(
+    accountAddress,
+    web3Provider
+    dex,
+)
+
+// - or -
+
+const amountsBN: UserAmountsInVaultBN[] = await getAllUserAmounts(
+    accountAddress,
+    web3Provider
+    dex,
+    true
+)
+```
+
+#### 16. `getTotalSupply()`
 
 | param | type |  default | required
 | -------- | -------- | -------- | --------
@@ -554,7 +626,7 @@ const sharesBN: BigNumber = await getTotalSupply(
 )
 ```
 
-#### 15. `getTotalAmounts()`
+#### 17. `getTotalAmounts()`
 
 | param | type |  default | required
 | -------- | -------- | -------- | --------
@@ -592,7 +664,7 @@ const amountsBN: [BigNumber, BigNumber] & {total0: BigNumber, total1: BigNumber}
 )
 ```
 
-#### 16. `getFeesCollected()`
+#### 18. `getFeesCollected()`
 
 | param | type |  default | required
 | -------- | -------- | -------- | --------
@@ -648,7 +720,7 @@ const amountsBN: [BigNumber, BigNumber] & {total0: BigNumber, total1: BigNumber}
 )
 ```
 
-#### 17. `getFeesCollectedInfo()`
+#### 19. `getFeesCollectedInfo()`
 
 | param | type |  default | required
 | -------- | -------- | -------- | --------
@@ -679,78 +751,6 @@ const feesInfo: FeesInfo[] = await getFeesCollectedInfo(
 // - or -
 
 const feesInfo: FeesInfo[] = await getFeesCollectedInfo(
-    vaultAddress,
-    web3Provider
-    dex,
-    days,
-)
-```
-
-#### 18. `getAverageDepositTokenRatios()`
-
-| param | type |  default | required
-| -------- | -------- | -------- | --------
-| vaultAddress   | string | - | true |
-| jsonProvider      | [JsonRpcProvider](https://github.com/ethers-io/ethers.js/blob/f97b92bbb1bde22fcc44100af78d7f31602863ab/packages/providers/src.ts/json-rpc-provider.ts#L393) | - | true
-| dex   | SupportedDex | - | true
-| timeIntervals   | number[] | [1, 7, 30] | false |
-
-<br/>
-
-```typescript
-import { Web3Provider } from '@ethersproject/providers';
-import { getFeesCollectedInfo, SupportedDex } from '@ichidao/ichi-vaults-sdk';
-
-const web3Provider = new Web3Provider(YOUR_WEB3_PROVIDER);
-const vaultAddress = "0x3ac9...a5f132";
-const dex = SupportedDex.UniswapV3;
-const days = [2, 5, 14, 60];
-
-const averageDtr: AverageDepositTokenRatio[] = await getAverageDepositTokenRatios(
-    vaultAddress,
-    web3Provider
-    dex,
-)
-
-// - or -
-
-const averageDtr: AverageDepositTokenRatio[] = await getAverageDepositTokenRatios(
-    vaultAddress,
-    web3Provider
-    dex,
-    days,
-)
-```
-
-#### 19. `getLpApr()`
-
-| param | type |  default | required
-| -------- | -------- | -------- | --------
-| vaultAddress   | string | - | true |
-| jsonProvider      | [JsonRpcProvider](https://github.com/ethers-io/ethers.js/blob/f97b92bbb1bde22fcc44100af78d7f31602863ab/packages/providers/src.ts/json-rpc-provider.ts#L393) | - | true
-| dex   | SupportedDex | - | true
-| timeIntervals   | number[] | [1, 7, 30] | false |
-
-<br/>
-
-```typescript
-import { Web3Provider } from '@ethersproject/providers';
-import { getLpApr, SupportedDex, VaultApr } from '@ichidao/ichi-vaults-sdk';
-
-const web3Provider = new Web3Provider(YOUR_WEB3_PROVIDER);
-const vaultAddress = "0x3ac9...a5f132";
-const dex = SupportedDex.UniswapV3;
-const days = [2, 5, 14, 60];
-
-const averageDtr: VaultApr[] = await getLpApr(
-    vaultAddress,
-    web3Provider
-    dex,
-)
-
-// - or -
-
-const averageDtr: VaultApr[] = await getLpApr(
     vaultAddress,
     web3Provider
     dex,
@@ -794,7 +794,79 @@ const averageDtr: AverageDepositTokenRatio[] = await getAverageDepositTokenRatio
 )
 ```
 
-#### 21. `getIchiVaultInfo()`
+#### 21. `getLpApr()`
+
+| param | type |  default | required
+| -------- | -------- | -------- | --------
+| vaultAddress   | string | - | true |
+| jsonProvider      | [JsonRpcProvider](https://github.com/ethers-io/ethers.js/blob/f97b92bbb1bde22fcc44100af78d7f31602863ab/packages/providers/src.ts/json-rpc-provider.ts#L393) | - | true
+| dex   | SupportedDex | - | true
+| timeIntervals   | number[] | [1, 7, 30] | false |
+
+<br/>
+
+```typescript
+import { Web3Provider } from '@ethersproject/providers';
+import { getLpApr, SupportedDex, VaultApr } from '@ichidao/ichi-vaults-sdk';
+
+const web3Provider = new Web3Provider(YOUR_WEB3_PROVIDER);
+const vaultAddress = "0x3ac9...a5f132";
+const dex = SupportedDex.UniswapV3;
+const days = [2, 5, 14, 60];
+
+const averageDtr: VaultApr[] = await getLpApr(
+    vaultAddress,
+    web3Provider
+    dex,
+)
+
+// - or -
+
+const averageDtr: VaultApr[] = await getLpApr(
+    vaultAddress,
+    web3Provider
+    dex,
+    days,
+)
+```
+
+#### 22. `getAverageDepositTokenRatios()`
+
+| param | type |  default | required
+| -------- | -------- | -------- | --------
+| vaultAddress   | string | - | true |
+| jsonProvider      | [JsonRpcProvider](https://github.com/ethers-io/ethers.js/blob/f97b92bbb1bde22fcc44100af78d7f31602863ab/packages/providers/src.ts/json-rpc-provider.ts#L393) | - | true
+| dex   | SupportedDex | - | true
+| timeIntervals   | number[] | [1, 7, 30] | false |
+
+<br/>
+
+```typescript
+import { Web3Provider } from '@ethersproject/providers';
+import { getFeesCollectedInfo, SupportedDex } from '@ichidao/ichi-vaults-sdk';
+
+const web3Provider = new Web3Provider(YOUR_WEB3_PROVIDER);
+const vaultAddress = "0x3ac9...a5f132";
+const dex = SupportedDex.UniswapV3;
+const days = [2, 5, 14, 60];
+
+const averageDtr: AverageDepositTokenRatio[] = await getAverageDepositTokenRatios(
+    vaultAddress,
+    web3Provider
+    dex,
+)
+
+// - or -
+
+const averageDtr: AverageDepositTokenRatio[] = await getAverageDepositTokenRatios(
+    vaultAddress,
+    web3Provider
+    dex,
+    days,
+)
+```
+
+#### 23. `getIchiVaultInfo()`
 
 | param | type |  default | required
 | -------- | -------- | -------- | --------
@@ -819,7 +891,7 @@ if (vaultInfo) {
 }
 ```
 
-#### 22. `getVaultsByTokens()`
+#### 24. `getVaultsByTokens()`
 
 | param | type |  default | required
 | -------- | -------- | -------- | --------
@@ -945,4 +1017,53 @@ type PriceChange  = {
   timeInterval: number; // in days
   priceChange: number; 
 }
+```
+
+### UserAmountsBN
+
+```typescript
+type UserAmountsBN = 
+  [BigNumber, BigNumber] & { amount0: BigNumber; amount1: BigNumber };
+```
+
+### UserAmounts
+
+```typescript
+type UserAmounts = [string, string] & { amount0: string; amount1: string };
+```
+
+### UserAmountsInVault
+
+```typescript
+type UserAmountsInVault = {
+  vaultAddress: string;
+  userAmounts: UserAmounts;
+}
+```
+
+### UserAmountsInVaultBN
+
+```typescript
+type UserAmountsInVaultBN = {
+  vaultAddress: string;
+  userAmounts: UserAmountsBN;
+}
+```
+
+### UserBalanceInVault
+
+```typescript
+type UserBalanceInVault = {
+  vaultAddress: string; 
+  shares: string;
+};
+```
+
+### UserBalanceInVaultBN
+
+```typescript
+type UserBalanceInVaultBN = {
+  vaultAddress: string; 
+  shares: BigNumber;
+};
 ```

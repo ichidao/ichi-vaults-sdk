@@ -92,3 +92,18 @@ export const vaultWithdrawsQuery = (page: number) => gql`
     }
   }
 `;
+
+export const userBalancesQuery = gql`
+  query ($accountAddress: String!) {
+    user(id: $accountAddress) {
+      vaultShares {
+        vault {
+          id
+          tokenA
+          tokenB
+        }
+        vaultShareBalance
+      }
+    }
+  }
+`;
