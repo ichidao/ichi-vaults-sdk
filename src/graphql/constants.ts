@@ -112,25 +112,25 @@ export const graphUrls: Record<SupportedChainId, dexGraph> = {
     [SupportedDex.SaucerSwap]: { url: 'none', supportsCollectFees: false },
   },
   [SupportedChainId.linea]: {
-    [SupportedDex.Lynex]: { 
-      url: 'https://api.studio.thegraph.com/query/61136/linea-v1-lynex/version/latest', 
-      supportsCollectFees: true, 
+    [SupportedDex.Lynex]: {
+      url: 'https://api.studio.thegraph.com/query/61136/linea-v1-lynex/version/latest',
+      supportsCollectFees: true,
     },
   },
   [SupportedChainId.mantle]: {
     [SupportedDex.Cleo]: {
       url: 'https://subgraph-api.mantle.xyz/subgraphs/name/ichi-org/mantle-v1-cleo',
-      supportsCollectFees: true, 
+      supportsCollectFees: true,
     },
   },
   [SupportedChainId.polygon_zkevm]: {
     [SupportedDex.Pancakeswap]: {
       url: 'https://api.studio.thegraph.com/query/61136/zkevm-v1-pancakeswap/version/latest',
-      supportsCollectFees: true, 
+      supportsCollectFees: true,
     },
     [SupportedDex.Quickswap]: {
       url: 'https://api.studio.thegraph.com/query/61136/zkevm-v1-quickswap/version/latest',
-      supportsCollectFees: true, 
+      supportsCollectFees: true,
     },
   },
   [SupportedChainId.zksync_era]: {

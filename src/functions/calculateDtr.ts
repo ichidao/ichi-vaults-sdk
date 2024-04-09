@@ -14,7 +14,7 @@ import {
 // eslint-disable-next-line import/no-cycle
 import { getIchiVaultInfo } from './vault';
 import { getDeposits, getFeesCollectedEvents, getRebalances, getWithdraws } from './vaultEvents';
-import { getTokenDecimals } from './balances';
+import { getTokenDecimals } from './totalBalances';
 import formatBigInt from '../utils/formatBigInt';
 import { daysToMilliseconds } from '../utils/timestamps';
 import { isTokenAllowed } from './deposit';

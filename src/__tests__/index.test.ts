@@ -28,6 +28,8 @@ import {
   depositNativeToken,
   getLpApr,
   getLpPriceChange,
+  getAllUserBalances,
+  getAllUserAmounts,
 } from '../index';
 import formatBigInt from '../utils/formatBigInt';
 import parseBigInt from '../utils/parseBigInt';
@@ -41,7 +43,7 @@ const provider = new Web3Provider(hdWalletProvider, {
 const account = process.env.ACCOUNT!;
 
 const vault = {
-  address: '0x92ce6311d4df089591a0b438265667c452d23fd0', //  vault (inverted)
+  address: '0x015eb9b9ce3ab0ddacdab35880171b0078edc02e', //  vault (inverted)
   chainId: SupportedChainId.bsc,
   dex: SupportedDex.Thena,
 };
@@ -159,6 +161,18 @@ describe('Vault', () => {
     const userShares = await getUserBalance(account, vault.address, provider, vault.dex);
 
     expect(Number(userShares)).toBeGreaterThanOrEqual(0);
+  });
+
+  it('getAllUserBalances', async () => {
+    const userShares = await getAllUserBalances(account, provider, vault.dex);
+
+    expect(Number(userShares[0].shares)).toBeGreaterThanOrEqual(0);
+  });
+
+  it('getAllUserAmounts', async () => {
+    const userAmounts = await getAllUserAmounts(account, provider, vault.dex);
+
+    expect(Number(userAmounts[0].userAmounts.amount0)).toBeGreaterThanOrEqual(0);
   });
 
   it('getTotalAmounts', async () => {

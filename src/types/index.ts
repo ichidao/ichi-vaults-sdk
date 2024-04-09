@@ -54,6 +54,16 @@ export type UserAmountsBN = [BigNumber, BigNumber] & { amount0: BigNumber; amoun
 export type TotalAmounts = [string, string] & { total0: string; total1: string };
 export type UserAmounts = [string, string] & { amount0: string; amount1: string };
 
+export type UserAmountsInVault = {
+  vaultAddress: string;
+  userAmounts: UserAmounts;
+};
+
+export type UserAmountsInVaultBN = {
+  vaultAddress: string;
+  userAmounts: UserAmountsBN;
+};
+
 export interface IchiVault {
   id: string;
   tokenA: string;
@@ -61,6 +71,18 @@ export interface IchiVault {
   allowTokenA: boolean;
   allowTokenB: boolean;
 }
+
+type VaultShares = {
+  vault: {
+    id: string;
+    tokenA: string;
+    tokenB: string;
+  };
+  vaultShareBalance: string;
+};
+export type UserBalances = {
+  vaultShares: VaultShares[];
+};
 
 export interface VaultState {
   totalAmount0: string;
@@ -118,4 +140,13 @@ export type VaultApr = {
 export type PriceChange = {
   timeInterval: number; // in days
   priceChange: number | null;
+};
+
+export type UserBalanceInVault = {
+  vaultAddress: string;
+  shares: string;
+};
+export type UserBalanceInVaultBN = {
+  vaultAddress: string;
+  shares: BigNumber;
 };

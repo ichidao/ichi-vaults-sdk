@@ -3,7 +3,7 @@ import { BigNumber } from 'ethers';
 import { PriceChange, SupportedDex, VaultApr, VaultState } from '../types';
 // eslint-disable-next-line import/no-cycle
 import { validateVaultData } from './vault';
-import { getTokenDecimals } from './balances';
+import { getTokenDecimals } from './totalBalances';
 import { getCurrLpPrice } from './priceFromPool';
 import { getAllVaultEvents, getVaultStateAt } from './vaultEvents';
 import { millisecondsToDays } from '../utils/timestamps';

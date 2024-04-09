@@ -10,7 +10,7 @@ export type SupportedDexConfig = {
   };
   vaultDeployerAddress: string;
   isAlgebra: boolean;
-  ammVersion?: string; 
+  ammVersion?: string;
 };
 
 export type Config = { [key in SupportedDex]?: SupportedDexConfig };
