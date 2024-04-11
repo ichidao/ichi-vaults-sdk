@@ -90,10 +90,11 @@ export async function getLpPriceChange(
   const vaultEvents = await getAllVaultEvents(vaultAddress, jsonProvider, dex);
   arrDays.forEach((d) => {
     const objLpPrice = getLpPriceAt(vaultEvents, d, isInv, decimals0, decimals1);
-    if (!objLpPrice?.priceChange) {
+    const prevLpPrice = objLpPrice?.priceChange;
+    if (!prevLpPrice || prevLpPrice === 0) {
       result.push({ timeInterval: d, priceChange: null });
     } else {
-      result.push({ timeInterval: d, priceChange: currLpPrice - objLpPrice.priceChange });
+      result.push({ timeInterval: d, priceChange: (currLpPrice - prevLpPrice) / prevLpPrice * 100 });
     }
   });
   return result;

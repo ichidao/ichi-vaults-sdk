@@ -830,7 +830,7 @@ const averageDtr: VaultApr[] = await getLpApr(
 )
 ```
 
-#### 22. `getAverageDepositTokenRatios()`
+#### 22. `getLpPriceChange()`
 
 | param | type |  default | required
 | -------- | -------- | -------- | --------
@@ -843,14 +843,14 @@ const averageDtr: VaultApr[] = await getLpApr(
 
 ```typescript
 import { Web3Provider } from '@ethersproject/providers';
-import { getFeesCollectedInfo, SupportedDex } from '@ichidao/ichi-vaults-sdk';
+import { getLpPriceChange, SupportedDex } from '@ichidao/ichi-vaults-sdk';
 
 const web3Provider = new Web3Provider(YOUR_WEB3_PROVIDER);
 const vaultAddress = "0x3ac9...a5f132";
 const dex = SupportedDex.UniswapV3;
 const days = [2, 5, 14, 60];
 
-const averageDtr: AverageDepositTokenRatio[] = await getAverageDepositTokenRatios(
+const lpPriceChange: PriceChange[] = await getLpPriceChange(
     vaultAddress,
     web3Provider
     dex,
@@ -858,7 +858,7 @@ const averageDtr: AverageDepositTokenRatio[] = await getAverageDepositTokenRatio
 
 // - or -
 
-const averageDtr: AverageDepositTokenRatio[] = await getAverageDepositTokenRatios(
+const lpPriceChange: PriceChange[] = await getLpPriceChange(
     vaultAddress,
     web3Provider
     dex,
@@ -1015,7 +1015,29 @@ type VaultApr  = {
 ```typescript
 type PriceChange  = {
   timeInterval: number; // in days
-  priceChange: number; 
+  priceChange: number; // percent
+}
+```
+
+### UserAmountsBN
+
+```typescript
+type UserAmountsBN = 
+  [BigNumber, BigNumber] & { amount0: BigNumber; amount1: BigNumber };
+```
+
+### UserAmounts
+
+```typescript
+type UserAmounts = [string, string] & { amount0: string; amount1: string };
+```
+
+### UserAmountsInVault
+
+```typescript
+type UserAmountsInVault = {
+  vaultAddress: string;
+  userAmounts: UserAmounts;
 }
 ```
 
