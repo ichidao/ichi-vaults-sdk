@@ -62,6 +62,10 @@ export const graphUrls: Record<SupportedChainId, dexGraph> = {
     },
   },
   [SupportedChainId.blast]: {
+    [SupportedDex.Fenix]: {
+      url: 'https://api.studio.thegraph.com/query/61136/blast-v1-fenix/version/latest',
+      supportsCollectFees: true,
+    },
     [SupportedDex.UniswapV3]: {
       url: 'https://api.studio.thegraph.com/query/61136/blast-v1/version/latest',
       supportsCollectFees: true,
