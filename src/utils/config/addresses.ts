@@ -284,6 +284,17 @@ const addressConfig: Record<SupportedChainId, Config> = {
       isAlgebra: false,
     },
   },
+  [SupportedChainId.scroll]: {
+    [SupportedDex.UniswapV3]: {
+      factoryAddress: '0x9FAb4bdD4E05f5C023CCC85D2071b49791D7418F',
+      depositGuard: {
+        address: '0xb62399d23d1c81f08eA445A42d7F15cC12090A71',
+        version: 2,
+      },
+      vaultDeployerAddress: '0x596643Ce4fe8b2e72F340584cec02Ab99dA866c1',
+      isAlgebra: false,
+    },
+  },
   [SupportedChainId.zksync_era]: {
     [SupportedDex.Pancakeswap]: {
       factoryAddress: '0x8a76c26E0089111989C14EF56b9733aa38B94148',

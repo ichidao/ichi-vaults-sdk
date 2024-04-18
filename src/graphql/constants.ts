@@ -137,6 +137,12 @@ export const graphUrls: Record<SupportedChainId, dexGraph> = {
       supportsCollectFees: true,
     },
   },
+  [SupportedChainId.scroll]: {
+    [SupportedDex.UniswapV3]: {
+      url: 'https://api.studio.thegraph.com/query/61136/scroll-v1/version/latest',
+      supportsCollectFees: true,
+    },
+  },
   [SupportedChainId.zksync_era]: {
     [SupportedDex.Pancakeswap]: {
       url: 'https://api.studio.thegraph.com/query/61136/zksync-v1-pancakeswap/version/latest',
