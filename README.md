@@ -940,6 +940,7 @@ enum SupportedChainId {
   mantle = 5000,
   polygon = 137,
   polygon_zkevm = 1101,
+  scroll = 534352,
   zksync_era = 324,
   zksync_era_testnet = 280,
 }
