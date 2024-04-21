@@ -136,6 +136,10 @@ export const graphUrls: Record<SupportedChainId, dexGraph> = {
       url: 'https://api.studio.thegraph.com/query/61136/zkevm-v1-quickswap/version/latest',
       supportsCollectFees: true,
     },
+    [SupportedDex.Zero]: {
+      url: 'https://api.studio.thegraph.com/query/61136/zkevm-v1-zero/version/latest',
+      supportsCollectFees: false,
+    },
   },
   [SupportedChainId.scroll]: {
     [SupportedDex.UniswapV3]: {

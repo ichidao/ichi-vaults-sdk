@@ -46,6 +46,7 @@ export enum SupportedDex {
   Thena = 'Thena',
   UniswapV3 = 'Uniswap V3',
   Velocore = 'Velocore',
+  Zero = 'Zero',
 }
 
 export const ichiVaultDecimals = 18;

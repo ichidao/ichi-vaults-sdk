@@ -269,7 +269,7 @@ export async function depositNativeToken(
   }
   const depositGuardContract = getDepositGuardContract(depositGuardAddress, signer);
   const wrappedNative = await depositGuardContract.WRAPPED_NATIVE();
-  if (wrappedNative !== depositToken) {
+  if (wrappedNative.toLowerCase() !== depositToken.toLowerCase()) {
     throw new Error('Deposit token is not wrapped native token');
     // if (chainId !== SupportedChainId.hedera) {
     //   throw new Error('Deposit token is not wrapped native token');
