@@ -935,6 +935,7 @@ enum SupportedChainId {
   evmos = 9001,
   fantom = 250,
   hedera_testnet = 296,
+  kava = 2222,
   linea = 59144,
   mainnet = 1,
   mantle = 5000,
@@ -957,6 +958,7 @@ enum SupportedDex {
   Fenix = 'Fenix',
   Forge = 'Forge',
   Horiza = 'Horiza',
+  Kinetix = 'Kinetix',
   Lynex = 'Lynex',
   Pancakeswap = 'PancakeSwap',
   Quickswap = 'QuickSwap',
@@ -967,6 +969,7 @@ enum SupportedDex {
   Thena = 'Thena',
   UniswapV3 = 'Uniswap V3',
   Velocore = 'Velocore',
+  Zero = 'Zero',
 }
 ```
 

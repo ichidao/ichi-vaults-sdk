@@ -115,6 +115,12 @@ export const graphUrls: Record<SupportedChainId, dexGraph> = {
   [SupportedChainId.hedera_testnet]: {
     [SupportedDex.SaucerSwap]: { url: 'none', supportsCollectFees: false },
   },
+  [SupportedChainId.kava]: {
+    [SupportedDex.Kinetix]: {
+      url: 'https://the-graph.kava.io/subgraphs/name/ichi-org/kava-v1-kinetix',
+      supportsCollectFees: true,
+    },
+  },
   [SupportedChainId.linea]: {
     [SupportedDex.Lynex]: {
       url: 'https://api.studio.thegraph.com/query/61136/linea-v1-lynex/version/latest',
