@@ -251,6 +251,17 @@ const addressConfig: Record<SupportedChainId, Config> = {
       isAlgebra: false,
     },
   },
+  [SupportedChainId.kava]: {
+    [SupportedDex.Kinetix]: {
+      factoryAddress: '0x2d2c72C4dC71AA32D64e5142e336741131A73fc0',
+      depositGuard: {
+        address: '0xADDA3A15EA71c223a82Af86d4578EF2B076035F1',
+        version: 2,
+      },
+      vaultDeployerAddress: '0x75178e0a2829B73E3AE4C21eE64F4B684085392a',
+      isAlgebra: false,
+    },
+  },
   [SupportedChainId.linea]: {
     [SupportedDex.Lynex]: {
       factoryAddress: '0x0248b992ac2a75294b05286E9DD3A2bD3C9CFE4B',
