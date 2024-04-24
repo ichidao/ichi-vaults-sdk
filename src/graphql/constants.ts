@@ -153,6 +153,12 @@ export const graphUrls: Record<SupportedChainId, dexGraph> = {
       supportsCollectFees: true,
     },
   },
+  [SupportedChainId.x_layer_testnet]: {
+    [SupportedDex.XSwap]: {
+      url: 'https://api.studio.thegraph.com/query/61136/xlayer-sepolia-v1-xswap/version/latest',
+      supportsCollectFees: true,
+    },
+  },
   [SupportedChainId.zksync_era]: {
     [SupportedDex.Pancakeswap]: {
       url: 'https://api.studio.thegraph.com/query/61136/zksync-v1-pancakeswap/version/latest',

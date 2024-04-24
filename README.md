@@ -942,6 +942,7 @@ enum SupportedChainId {
   polygon = 137,
   polygon_zkevm = 1101,
   scroll = 534352,
+  x_layer_testnet = 195,
   zksync_era = 324,
   zksync_era_testnet = 280,
 }
@@ -969,6 +970,7 @@ enum SupportedDex {
   Thena = 'Thena',
   UniswapV3 = 'Uniswap V3',
   Velocore = 'Velocore',
+  XSwap = 'XSwap',
   Zero = 'Zero',
 }
 ```
