@@ -324,6 +324,18 @@ const addressConfig: Record<SupportedChainId, Config> = {
       isAlgebra: false,
     },
   },
+  [SupportedChainId.x_layer_testnet]: {
+    [SupportedDex.XSwap]: {
+      factoryAddress: '0xADDA3A15EA71c223a82Af86d4578EF2B076035F1',
+      depositGuard: {
+        address: '0xe573920139a208989d83C57ea48837C6285F2cd3',
+        version: 2,
+      },
+      vaultDeployerAddress: '0x412840Fd29A78428d3dbAeca811414c08b554599',
+      isAlgebra: true,
+      ammVersion: 'algebraIntegral',
+    },
+  },
   [SupportedChainId.zksync_era]: {
     [SupportedDex.Pancakeswap]: {
       factoryAddress: '0x8a76c26E0089111989C14EF56b9733aa38B94148',
