@@ -156,3 +156,11 @@ export type UserBalanceInVaultBN = {
   vaultAddress: string;
   shares: BigNumber;
 };
+
+export type VaultMetrics = {
+  timeInterval: number; // in days
+  lpPriceChange: number | null;
+  lpApr: number | null; // percent
+  avgDtr: number;
+  feeApr: number;
+};

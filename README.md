@@ -31,8 +31,9 @@ This sdk contains collection of functions to interact with IchiVault's smart con
         * [`getAverageDepositTokenRatios()`](#20-getAverageDepositTokenRatios)
         * [`getLpApr()`](#21-getLpApr)
         * [`getLpPriceChange()`](#22-getLpPriceChange)
-        * [`getIchiVaultInfo()`](#23-getIchiVaultInfo)
-        * [`getVaultsByTokens()`](#24-getVaultsByTokens)
+        * [`getVaultMetrics()`](#23-getVaultMetrics)
+        * [`getIchiVaultInfo()`](#24-getIchiVaultInfo)
+        * [`getVaultsByTokens()`](#25-getVaultsByTokens)
 
 ## Installation
 Install with
@@ -866,7 +867,43 @@ const lpPriceChange: PriceChange[] = await getLpPriceChange(
 )
 ```
 
-#### 23. `getIchiVaultInfo()`
+#### 23. `getVaultMetrics()`
+
+| param | type |  default | required
+| -------- | -------- | -------- | --------
+| vaultAddress   | string | - | true |
+| jsonProvider      | [JsonRpcProvider](https://github.com/ethers-io/ethers.js/blob/f97b92bbb1bde22fcc44100af78d7f31602863ab/packages/providers/src.ts/json-rpc-provider.ts#L393) | - | true
+| dex   | SupportedDex | - | true
+| timeIntervals   | number[] | [1, 7, 30] | false |
+
+<br/>
+
+```typescript
+import { Web3Provider } from '@ethersproject/providers';
+import { getVaultMetrics, SupportedDex } from '@ichidao/ichi-vaults-sdk';
+
+const web3Provider = new Web3Provider(YOUR_WEB3_PROVIDER);
+const vaultAddress = "0x3ac9...a5f132";
+const dex = SupportedDex.UniswapV3;
+const days = [2, 5, 14, 60];
+
+const vaultMetrics: VaultMetrics[] = await getVaultMetrics(
+    vaultAddress,
+    web3Provider
+    dex,
+)
+
+// - or -
+
+const vaultMetrics: VaultMetrics[] = await getVaultMetrics(
+    vaultAddress,
+    web3Provider
+    dex,
+    days,
+)
+```
+
+#### 24. `getIchiVaultInfo()`
 
 | param | type |  default | required
 | -------- | -------- | -------- | --------
@@ -891,7 +928,7 @@ if (vaultInfo) {
 }
 ```
 
-#### 24. `getVaultsByTokens()`
+#### 25. `getVaultsByTokens()`
 
 | param | type |  default | required
 | -------- | -------- | -------- | --------
@@ -1022,6 +1059,18 @@ type VaultApr  = {
 type PriceChange  = {
   timeInterval: number; // in days
   priceChange: number; // percent
+}
+```
+
+### VaultMetrics
+
+```typescript
+type VaultMetrics  = {
+  timeInterval: number; // in days
+  lpPriceChange: number | null;
+  lpApr: number | null; // percent
+  avgDtr: number;
+  feeApr: number;
 }
 ```
 

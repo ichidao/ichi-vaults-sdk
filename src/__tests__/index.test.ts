@@ -30,6 +30,7 @@ import {
   getLpPriceChange,
   getAllUserBalances,
   getAllUserAmounts,
+  getVaultMetrics,
 } from '../index';
 import formatBigInt from '../utils/formatBigInt';
 import parseBigInt from '../utils/parseBigInt';
@@ -61,6 +62,12 @@ const bigAmount = '1000';
 
 describe('Vault', () => {
   let share: string | null = null;
+
+  it('getVaultMetrics', async () => {
+    const metrics = await getVaultMetrics(vault.address, provider, vault.dex);
+    console.log({ metrics });
+    expect(Number(metrics[0]?.avgDtr)).toBeGreaterThan(0);
+  });
 
   it('getTotalSupply', async () => {
     const totalSupply = await getTotalSupply(vault.address, provider, vault.dex);
@@ -194,26 +201,26 @@ describe('Vault', () => {
   });
 
   it('getFeesCollectedInfo', async () => {
-    const dataPoints = await getFeesCollectedInfo(vault.address, provider, vault.dex, [1, 7, 30, 1000]);
+    const feeCollected = await getFeesCollectedInfo(vault.address, provider, vault.dex, [1, 7, 30, 1000]);
 
-    expect(Number(dataPoints[0].pctAPR)).toBeGreaterThanOrEqual(0);
+    expect(Number(feeCollected[0].pctAPR)).toBeGreaterThanOrEqual(0);
   });
 
   it('getAverageDepositTokenRatios', async () => {
-    const dataPoints = await getAverageDepositTokenRatios(vault.address, provider, vault.dex, [1, 7, 30, 1000]);
+    const avgDtr = await getAverageDepositTokenRatios(vault.address, provider, vault.dex);
 
-    expect(Number(dataPoints[0].percent)).toBeGreaterThanOrEqual(0);
+    expect(Number(avgDtr[0].percent)).toBeGreaterThanOrEqual(0);
   });
 
   it('getLpApr', async () => {
-    const aprs = await getLpApr(vault.address, provider, vault.dex, [1, 7, 30, 1000]);
-    console.log({ aprs });
-    expect(Number(aprs[0]?.timeInterval)).toEqual(1);
+    const lpAprs = await getLpApr(vault.address, provider, vault.dex);
+
+    expect(Number(lpAprs[0]?.timeInterval)).toEqual(1);
   });
   it('getLpPriceChange', async () => {
-    const priceChange = await getLpPriceChange(vault.address, provider, vault.dex, [1, 7, 30, 1000]);
-    console.log({ priceChange });
-    expect(Number(priceChange[0]?.timeInterval)).toEqual(1);
+    const lpPriceChange = await getLpPriceChange(vault.address, provider, vault.dex);
+
+    expect(Number(lpPriceChange[0]?.timeInterval)).toEqual(1);
   });
 
   it.skip('withdraw:deposited', async () => {
