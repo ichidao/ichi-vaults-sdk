@@ -3,7 +3,7 @@
 
 import { JsonRpcProvider } from '@ethersproject/providers';
 import { BigNumber } from '@ethersproject/bignumber';
-import { Fees, FeesInfo, SupportedChainId, SupportedDex, TotalAmounts, TotalAmountsBN } from '../types';
+import { Fees, FeesInfo, SupportedChainId, SupportedDex, TotalAmounts, TotalAmountsBN, VaultState } from '../types';
 // eslint-disable-next-line import/no-cycle
 import { getIchiVaultInfo } from './vault';
 import { getFeesCollectedEvents, getRebalances } from './vaultEvents';
@@ -24,7 +24,7 @@ function getCollectedTokenAmountBN(ind: 0 | 1, feesDataset: Fees[]): BigNumber {
 }
 
 export function getTotalAmountsAtFeeCollectionEvent(
-  objFees: Fees,
+  objFees: VaultState,
   isVaultInverted: boolean,
   token0Decimals: number,
   token1Decimals: number,
@@ -57,7 +57,7 @@ function getFeesAmountInBaseTokens(
   return amount0 + amount1;
 }
 
-function getTotalFeesAmountInBaseTokens(
+export function getTotalFeesAmountInBaseTokens(
   feesDataset: Fees[],
   t0decimals: number,
   t1decimals: number,

@@ -9,7 +9,7 @@ import { getAllVaultEvents, getVaultStateAt } from './vaultEvents';
 import { millisecondsToDays } from '../utils/timestamps';
 import getPrice from '../utils/getPrice';
 
-function getLpPriceAt(
+export function getLpPriceAt(
   vaultEvents: VaultState[],
   daysAgo: number,
   isVaultInverted: boolean,
@@ -94,7 +94,7 @@ export async function getLpPriceChange(
     if (!prevLpPrice || prevLpPrice === 0) {
       result.push({ timeInterval: d, priceChange: null });
     } else {
-      result.push({ timeInterval: d, priceChange: (currLpPrice - prevLpPrice) / prevLpPrice * 100 });
+      result.push({ timeInterval: d, priceChange: ((currLpPrice - prevLpPrice) / prevLpPrice) * 100 });
     }
   });
   return result;

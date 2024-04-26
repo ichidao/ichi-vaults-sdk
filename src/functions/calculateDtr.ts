@@ -6,9 +6,9 @@ import { BigNumber } from '@ethersproject/bignumber';
 import {
   AverageDepositTokenRatio,
   DepositTokenRatio,
-  Fees,
   SupportedChainId,
   SupportedDex,
+  VaultState,
   VaultTransactionEvent,
 } from '../types';
 // eslint-disable-next-line import/no-cycle
@@ -45,7 +45,7 @@ function getTotalAmountsAtTransactionEvent(
   return [amount0, amount1];
 }
 
-function getDtrAtTransactionEvent(
+export function getDtrAtTransactionEvent(
   objTransactionEvent: VaultTransactionEvent,
   isVaultInverted: boolean,
   token0Decimals: number,
@@ -66,8 +66,8 @@ function getDtrAtTransactionEvent(
   return { atTimestamp: timestamp, percent: dtr };
 }
 
-function getDtrAtFeeCollectionEvent(
-  objFeeCollectionEvent: Fees,
+export function getDtrAtFeeCollectionEvent(
+  objFeeCollectionEvent: VaultState,
   isVaultInverted: boolean,
   token0Decimals: number,
   token1Decimals: number,
@@ -86,7 +86,7 @@ function getDtrAtFeeCollectionEvent(
 }
 
 // time Interval in days
-async function getAllDtrsForTimeInterval(
+export async function getAllDtrsForTimeInterval(
   vaultAddress: string,
   jsonProvider: JsonRpcProvider,
   dex: SupportedDex,
@@ -141,7 +141,7 @@ async function getAllDtrsForTimeInterval(
   return result;
 }
 
-function getAverageDtr(allDtrs: DepositTokenRatio[]): number {
+export function getAverageDtr(allDtrs: DepositTokenRatio[]): number {
   if (allDtrs.length === 0) {
     return 0;
   }
