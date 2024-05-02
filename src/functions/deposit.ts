@@ -11,6 +11,7 @@ import formatBigInt from '../utils/formatBigInt';
 import { getIchiVaultInfo, validateVaultData } from './vault';
 import addressConfig from '../utils/config/addresses';
 import amountWithSlippage from '../utils/amountWithSlippage';
+import getVaultDeployer from './vaultBasics';
 
 export async function isTokenAllowed(
   tokenIdx: 0 | 1,
@@ -134,10 +135,7 @@ export async function deposit(
 ): Promise<ContractTransaction> {
   const { chainId, vault } = await validateVaultData(vaultAddress, jsonProvider, dex);
   const signer = jsonProvider.getSigner(accountAddress);
-  const vaultDeployerAddress = addressConfig[chainId as SupportedChainId]![dex]?.vaultDeployerAddress;
-  if (!vaultDeployerAddress) {
-    throw new Error(`Vault deployer not found for vault ${vaultAddress} on chain ${chainId} and dex ${dex}`);
-  }
+  const vaultDeployerAddress = getVaultDeployer(vaultAddress, chainId, dex);
 
   const token0 = vault.tokenA;
   const token1 = vault.tokenB;
@@ -261,10 +259,7 @@ export async function depositNativeToken(
     throw new Error(`Unsupported function for vault ${vaultAddress} on chain ${chainId} and dex ${dex}`);
   }
   const signer = jsonProvider.getSigner(accountAddress);
-  const vaultDeployerAddress = addressConfig[chainId as SupportedChainId]![dex]?.vaultDeployerAddress;
-  if (!vaultDeployerAddress) {
-    throw new Error(`Vault deployer not found for vault ${vaultAddress} on chain ${chainId} and dex ${dex}`);
-  }
+  const vaultDeployerAddress = getVaultDeployer(vaultAddress, chainId, dex);
 
   const token0 = vault.tokenA;
   const token1 = vault.tokenB;

@@ -1011,6 +1011,7 @@ enum SupportedDex {
   Horiza = 'Horiza',
   Kinetix = 'Kinetix',
   Lynex = 'Lynex',
+  Metavault = 'Metavault',
   Pancakeswap = 'PancakeSwap',
   Quickswap = 'QuickSwap',
   Ramses = 'Ramses',

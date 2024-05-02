@@ -126,6 +126,10 @@ export const graphUrls: Record<SupportedChainId, dexGraph> = {
       url: 'https://api.studio.thegraph.com/query/61136/linea-v1-lynex/version/latest',
       supportsCollectFees: true,
     },
+    [SupportedDex.Metavault]: {
+      url: 'https://api.studio.thegraph.com/query/61136/linea-v1-metavault/version/latest',
+      supportsCollectFees: true,
+    },
   },
   [SupportedChainId.mantle]: {
     [SupportedDex.Cleo]: {
@@ -148,6 +152,10 @@ export const graphUrls: Record<SupportedChainId, dexGraph> = {
     },
   },
   [SupportedChainId.scroll]: {
+    [SupportedDex.Metavault]: {
+      url: 'https://api.studio.thegraph.com/query/61136/scroll-v1-metavault/version/latest',
+      supportsCollectFees: true,
+    },
     [SupportedDex.UniswapV3]: {
       url: 'https://api.studio.thegraph.com/query/61136/scroll-v1/version/latest',
       supportsCollectFees: true,

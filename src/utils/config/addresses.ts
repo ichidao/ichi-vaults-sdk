@@ -272,6 +272,15 @@ const addressConfig: Record<SupportedChainId, Config> = {
       vaultDeployerAddress: '0x75178e0a2829B73E3AE4C21eE64F4B684085392a',
       isAlgebra: true,
     },
+    [SupportedDex.Metavault]: {
+      factoryAddress: '0x2592686212C164C1851dF2f62c5d5EC50600195E',
+      depositGuard: {
+        address: '0x92Bce3972916C2CEDA46c4EEbC9684aC26EFfe5B',
+        version: 2,
+      },
+      vaultDeployerAddress: '0x75178e0a2829B73E3AE4C21eE64F4B684085392a',
+      isAlgebra: false,
+    },
   },
   [SupportedChainId.mantle]: {
     [SupportedDex.Cleo]: {
@@ -318,6 +327,15 @@ const addressConfig: Record<SupportedChainId, Config> = {
       factoryAddress: '0x9FAb4bdD4E05f5C023CCC85D2071b49791D7418F',
       depositGuard: {
         address: '0xb62399d23d1c81f08eA445A42d7F15cC12090A71',
+        version: 2,
+      },
+      vaultDeployerAddress: '0x596643Ce4fe8b2e72F340584cec02Ab99dA866c1',
+      isAlgebra: false,
+    },
+    [SupportedDex.Metavault]: {
+      factoryAddress: '0xb42D5956cDe4386B65C087CfCD16910aB6114F15',
+      depositGuard: {
+        address: '0x131c03ca881B7cC66d7a5120A9273ebf675C241D',
         version: 2,
       },
       vaultDeployerAddress: '0x596643Ce4fe8b2e72F340584cec02Ab99dA866c1',
