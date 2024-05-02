@@ -111,7 +111,7 @@ export async function getAllUserBalances(
     throw new Error(`Unsupported chainId: ${chainId ?? 'undefined'}`);
   }
   const url = graphUrls[chainId as SupportedChainId]![dex]?.url;
-  if (!url) throw new Error(`This function is unsupported for DEX ${dex} on chain ${chainId}`);
+  if (!url || url === 'none') throw new Error(`This function is unsupported for DEX ${dex} on chain ${chainId}`);
 
   let shares: UserBalanceInVault[];
   const key = `${chainId + accountAddress}-balances`;
@@ -236,7 +236,7 @@ export async function getAllUserAmounts(
     throw new Error(`Unsupported chainId: ${chainId}`);
   }
   const url = graphUrls[chainId as SupportedChainId]![dex]?.url;
-  if (!url) throw new Error(`This function is unsupported for DEX ${dex} on chain ${chainId}`);
+  if (!url || url === 'none') throw new Error(`This function is unsupported for DEX ${dex} on chain ${chainId}`);
 
   let shares: UserBalanceInVaultBN[];
   const key = `${chainId + accountAddress}-balances`;

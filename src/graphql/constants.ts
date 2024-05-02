@@ -27,6 +27,12 @@ export const graphUrls: Record<SupportedChainId, dexGraph> = {
       supportsCollectFees: false,
     },
   },
+  [SupportedChainId.arthera_testnet]: {
+    [SupportedDex.Thirdfy]: {
+      url: 'none',
+      supportsCollectFees: false,
+    },
+  },
   [SupportedChainId.mainnet]: {
     [SupportedDex.UniswapV3]: {
       url: 'https://api.thegraph.com/subgraphs/name/ichi-org/mainnet-v1',

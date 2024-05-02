@@ -13,6 +13,7 @@ import { daysToMilliseconds } from '../utils/timestamps';
 import { isTokenAllowed } from './deposit';
 import getPrice from '../utils/getPrice';
 import { getVaultTvl } from './priceFromPool';
+import { graphUrls } from '../graphql/constants';
 
 function getCollectedTokenAmountBN(ind: 0 | 1, feesDataset: Fees[]): BigNumber {
   const amounts =
@@ -100,6 +101,10 @@ export async function getFeesCollected(
 
   const vault = await getIchiVaultInfo(chainId, dex, vaultAddress, jsonProvider);
   if (!vault) throw new Error(`Vault ${vaultAddress} not found on chain ${chainId} and dex ${dex}`);
+  const url = graphUrls[chainId as SupportedChainId]![dex]?.url;
+  if (!url) throw new Error(`Unsupported DEX ${dex} on chain ${chainId}`);
+  if (url === 'none') throw new Error(`Function not available for DEX ${dex} on chain ${chainId}`);
+
   const token0Decimals = await getTokenDecimals(vault.tokenA, jsonProvider);
   const token1Decimals = await getTokenDecimals(vault.tokenB, jsonProvider);
 
@@ -147,6 +152,10 @@ export async function getFeesCollectedInfo(
 
   const vault = await getIchiVaultInfo(chainId, dex, vaultAddress, jsonProvider);
   if (!vault) throw new Error(`Vault ${vaultAddress} not found on chain ${chainId} and dex ${dex}`);
+  const url = graphUrls[chainId as SupportedChainId]![dex]?.url;
+  if (!url) throw new Error(`Unsupported DEX ${dex} on chain ${chainId}`);
+  if (url === 'none') throw new Error(`Function not available for DEX ${dex} on chain ${chainId}`);
+
   const token0Decimals = await getTokenDecimals(vault.tokenA, jsonProvider);
   const token1Decimals = await getTokenDecimals(vault.tokenB, jsonProvider);
   const isVaultInverted = await isTokenAllowed(1, vaultAddress, jsonProvider, dex);

@@ -74,7 +74,6 @@ async function _isVaultTokenApproved(
   const vaultTokenDecimals = ichiVaultDecimals;
 
   const currentAllowance = +formatBigInt(currentAllowanceBN, vaultTokenDecimals);
-  console.log({ currentAllowance });
 
   return currentAllowance !== 0 && currentAllowance >= +(shares ?? 0);
 }
