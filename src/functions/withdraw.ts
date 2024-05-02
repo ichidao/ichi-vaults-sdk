@@ -6,13 +6,14 @@ import { BigNumber } from 'ethers';
 import { MaxUint256 } from '@ethersproject/constants';
 import { getDepositGuardContract, getERC20Contract, getIchiVaultContract } from '../contracts';
 import parseBigInt from '../utils/parseBigInt';
-import { SupportedChainId, SupportedDex, ichiVaultDecimals } from '../types';
+import { IchiVault, SupportedChainId, SupportedDex, ichiVaultDecimals } from '../types';
 import calculateGasMargin from '../types/calculateGasMargin';
 // eslint-disable-next-line import/no-cycle
-import { getIchiVaultInfo } from './vault';
+import { getIchiVaultInfo, validateVaultData } from './vault';
 import addressConfig from '../utils/config/addresses';
 import amountWithSlippage from '../utils/amountWithSlippage';
 import formatBigInt from '../utils/formatBigInt';
+import { getUserBalance } from './userBalances';
 
 export async function approveVaultToken(
   accountAddress: string,
@@ -52,6 +53,31 @@ export async function approveVaultToken(
   return vaultTokenContract.approve(depositGuardAddress, sharesBN, { gasLimit });
 }
 
+// eslint-disable-next-line no-underscore-dangle
+async function _isVaultTokenApproved(
+  accountAddress: string,
+  shares: string | number,
+  vault: IchiVault,
+  chainId: SupportedChainId,
+  jsonProvider: JsonRpcProvider,
+  dex: SupportedDex,
+): Promise<boolean> {
+  const signer = jsonProvider.getSigner(accountAddress);
+
+  const vaultTokenContract = getERC20Contract(vault.id, signer);
+  const depositGuardAddress = addressConfig[chainId as SupportedChainId]![dex]?.depositGuard.address;
+  if (!depositGuardAddress) {
+    throw new Error(`Deposit Guard  for vault ${vault.id} not found on chain ${chainId} and dex ${dex}`);
+  }
+  const currentAllowanceBN = await vaultTokenContract.allowance(accountAddress, depositGuardAddress);
+  const vaultTokenDecimals = ichiVaultDecimals;
+
+  const currentAllowance = +formatBigInt(currentAllowanceBN, vaultTokenDecimals);
+  console.log({ currentAllowance });
+
+  return currentAllowance !== 0 && currentAllowance >= +(shares ?? 0);
+}
+
 export async function isVaultTokenApproved(
   accountAddress: string,
   shares: string | number,
@@ -59,26 +85,8 @@ export async function isVaultTokenApproved(
   jsonProvider: JsonRpcProvider,
   dex: SupportedDex,
 ): Promise<boolean> {
-  const { chainId } = await jsonProvider.getNetwork();
-  if (!Object.values(SupportedChainId).includes(chainId)) {
-    throw new Error(`Unsupported chainId: ${chainId}`);
-  }
-
-  const signer = jsonProvider.getSigner(accountAddress);
-  const vault = await getIchiVaultInfo(chainId, dex, vaultAddress, jsonProvider);
-  if (!vault) throw new Error(`Vault ${vaultAddress} not found on chain ${chainId} and dex ${dex}`);
-
-  const vaultTokenContract = getERC20Contract(vaultAddress, signer);
-  const depositGuardAddress = addressConfig[chainId as SupportedChainId]![dex]?.depositGuard.address;
-  if (!depositGuardAddress) {
-    throw new Error(`Deposit Guard  for vault ${vaultAddress} not found on chain ${chainId} and dex ${dex}`);
-  }
-  const currentAllowanceBN = await vaultTokenContract.allowance(accountAddress, depositGuardAddress);
-  const vaultTokenDecimals = ichiVaultDecimals;
-
-  const currentAllowance = +formatBigInt(currentAllowanceBN, vaultTokenDecimals);
-
-  return currentAllowance !== 0 && currentAllowance >= +(shares ?? 0);
+  const { chainId, vault } = await validateVaultData(vaultAddress, jsonProvider, dex);
+  return _isVaultTokenApproved(accountAddress, shares, vault, chainId, jsonProvider, dex);
 }
 
 export async function withdraw(
@@ -89,25 +97,23 @@ export async function withdraw(
   dex: SupportedDex,
   overrides?: Overrides,
 ): Promise<ContractTransaction> {
-  const { chainId } = await jsonProvider.getNetwork();
-
-  if (!Object.values(SupportedChainId).includes(chainId)) {
-    throw new Error(`Unsupported chainId: ${chainId ?? 'undefined'}`);
-  }
-
+  const { chainId } = await validateVaultData(vaultAddress, jsonProvider, dex);
   const signer = jsonProvider.getSigner(accountAddress);
-
   const vaultContract = getIchiVaultContract(vaultAddress, signer);
-  const vault = await getIchiVaultInfo(chainId, dex, vaultAddress, jsonProvider);
-  if (!vault) throw new Error(`Vault ${vaultAddress} not found on chain ${chainId} and dex ${dex}`);
+
+  const userShares = getUserBalance(accountAddress, vaultAddress, jsonProvider, dex, true);
+  const withdrawShares = shares instanceof BigNumber ? shares : parseBigInt(shares, 18);
+  if ((await userShares).lt(withdrawShares)) {
+    throw new Error(
+      `Withdraw amount exceeds user shares amount in vault ${vaultAddress} on chain ${chainId} and dex ${dex}`,
+    );
+  }
 
   const params: Parameters<typeof vaultContract.withdraw> = [
     shares instanceof BigNumber ? shares : parseBigInt(shares, 18),
     accountAddress,
   ];
-
   const gasLimit = overrides?.gasLimit ?? calculateGasMargin(await vaultContract.estimateGas.withdraw(...params));
-
   params[2] = { ...overrides, gasLimit };
 
   return vaultContract.withdraw(...params);
@@ -122,30 +128,40 @@ export async function withdrawWithSlippage(
   percentSlippage = 1,
   overrides?: Overrides,
 ): Promise<ContractTransaction> {
-  const { chainId } = await jsonProvider.getNetwork();
-  if (!Object.values(SupportedChainId).includes(chainId)) {
-    throw new Error(`Unsupported chainId: ${chainId ?? 'undefined'}`);
-  }
+  const { chainId, vault } = await validateVaultData(vaultAddress, jsonProvider, dex);
   if (addressConfig[chainId as SupportedChainId][dex]?.depositGuard.version !== 2) {
     throw new Error(`Unsupported function for vault ${vaultAddress} on chain ${chainId} and dex ${dex}`);
   }
 
   const signer = jsonProvider.getSigner(accountAddress);
 
-  const vault = await getIchiVaultInfo(chainId, dex, vaultAddress, jsonProvider);
-  if (!vault) throw new Error(`Vault ${vaultAddress} not found on chain ${chainId} and dex ${dex}`);
   const vaultDeployerAddress = addressConfig[chainId as SupportedChainId]![dex]?.vaultDeployerAddress;
   if (!vaultDeployerAddress) {
     throw new Error(`Vault deployer not found for vault ${vaultAddress} on chain ${chainId} and dex ${dex}`);
   }
-
-  const withdrawShares = shares instanceof BigNumber ? shares : parseBigInt(shares, 18);
 
   // obtain Deposit Guard contract
   const depositGuardAddress = addressConfig[chainId as SupportedChainId]![dex]?.depositGuard.address;
   if (!depositGuardAddress) {
     throw new Error(`Deposit Guard  for vault ${vaultAddress} not found on chain ${chainId} and dex ${dex}`);
   }
+
+  const userShares = getUserBalance(accountAddress, vaultAddress, jsonProvider, dex, true);
+  const withdrawShares = shares instanceof BigNumber ? shares : parseBigInt(shares, 18);
+  if ((await userShares).lt(withdrawShares)) {
+    throw new Error(
+      `Withdraw amount exceeds user shares amount in vault ${vaultAddress} on chain ${chainId} and dex ${dex}`,
+    );
+  }
+
+  const strShares = shares instanceof BigNumber ? formatBigInt(shares, ichiVaultDecimals) : shares.toString();
+  const isApproved = await _isVaultTokenApproved(accountAddress, strShares, vault, chainId, jsonProvider, dex);
+  if (!isApproved) {
+    throw new Error(
+      `Vault token transfer is not approved for vault ${vaultAddress} on chain ${chainId} and dex ${dex}`,
+    );
+  }
+
   const depositGuardContract = getDepositGuardContract(depositGuardAddress, signer);
 
   // the first call: get estimated LP amount
@@ -210,24 +226,34 @@ export async function withdrawNativeToken(
   percentSlippage = 1,
   overrides?: Overrides,
 ): Promise<ContractTransaction> {
-  const { chainId } = await jsonProvider.getNetwork();
-  if (!Object.values(SupportedChainId).includes(chainId)) {
-    throw new Error(`Unsupported chainId: ${chainId ?? 'undefined'}`);
-  }
+  const { chainId, vault } = await validateVaultData(vaultAddress, jsonProvider, dex);
+
   if (addressConfig[chainId as SupportedChainId][dex]?.depositGuard.version !== 2) {
     throw new Error(`Unsupported function for vault ${vaultAddress} on chain ${chainId} and dex ${dex}`);
   }
 
   const signer = jsonProvider.getSigner(accountAddress);
 
-  const vault = await getIchiVaultInfo(chainId, dex, vaultAddress, jsonProvider);
-  if (!vault) throw new Error(`Vault ${vaultAddress} not found on chain ${chainId} and dex ${dex}`);
   const vaultDeployerAddress = addressConfig[chainId as SupportedChainId]![dex]?.vaultDeployerAddress;
   if (!vaultDeployerAddress) {
     throw new Error(`Vault deployer not found for vault ${vaultAddress} on chain ${chainId} and dex ${dex}`);
   }
 
+  const userShares = getUserBalance(accountAddress, vaultAddress, jsonProvider, dex, true);
   const withdrawShares = shares instanceof BigNumber ? shares : parseBigInt(shares, 18);
+  if ((await userShares).lt(withdrawShares)) {
+    throw new Error(
+      `Withdraw amount exceeds user shares amount in vault ${vaultAddress} on chain ${chainId} and dex ${dex}`,
+    );
+  }
+
+  const strShares = shares instanceof BigNumber ? formatBigInt(shares, ichiVaultDecimals) : shares.toString();
+  const isApproved = await _isVaultTokenApproved(accountAddress, strShares, vault, chainId, jsonProvider, dex);
+  if (!isApproved) {
+    throw new Error(
+      `Vault token transfer is not approved for vault ${vaultAddress} on chain ${chainId} and dex ${dex}`,
+    );
+  }
 
   // obtain Deposit Guard contract
   const depositGuardAddress = addressConfig[chainId as SupportedChainId]![dex]?.depositGuard.address;
@@ -236,7 +262,10 @@ export async function withdrawNativeToken(
   }
   const depositGuardContract = getDepositGuardContract(depositGuardAddress, signer);
   const wrappedNative = await depositGuardContract.WRAPPED_NATIVE();
-  if (wrappedNative !== vault.tokenA && wrappedNative !== vault.tokenB) {
+  if (
+    wrappedNative.toLowerCase() !== vault.tokenA.toLowerCase() &&
+    wrappedNative.toLowerCase() !== vault.tokenB.toLowerCase()
+  ) {
     throw new Error('None of vault tokens is wrapped native token');
   }
 

@@ -20,7 +20,7 @@ import {
 } from '../types';
 import formatBigInt from '../utils/formatBigInt';
 // eslint-disable-next-line import/no-cycle
-import { getIchiVaultInfo } from './vault';
+import { getIchiVaultInfo, validateVaultData } from './vault';
 import { getTokenDecimals, getTotalAmounts } from './totalBalances';
 import { graphUrls } from '../graphql/constants';
 import { UserBalancesQueryData } from '../types/vaultQueryData';
@@ -28,6 +28,34 @@ import { userBalancesQuery } from '../graphql/queries';
 import parseBigInt from '../utils/parseBigInt';
 
 const promises: Record<string, Promise<any>> = {};
+
+// eslint-disable-next-line no-underscore-dangle
+async function _getUserBalance(
+  accountAddress: string,
+  vaultAddress: string,
+  jsonProvider: JsonRpcProvider,
+): Promise<string>;
+
+// eslint-disable-next-line no-underscore-dangle
+async function _getUserBalance(
+  accountAddress: string,
+  vaultAddress: string,
+  jsonProvider: JsonRpcProvider,
+  raw: true,
+): Promise<BigNumber>;
+
+// eslint-disable-next-line no-underscore-dangle
+async function _getUserBalance(
+  accountAddress: string,
+  vaultAddress: string,
+  jsonProvider: JsonRpcProvider,
+  raw?: true,
+) {
+  const vaultContract = getIchiVaultContract(vaultAddress, jsonProvider);
+  const shares = await vaultContract.balanceOf(accountAddress);
+
+  return raw ? shares : formatBigInt(shares, ichiVaultDecimals);
+}
 
 export async function getUserBalance(
   accountAddress: string,
@@ -51,17 +79,12 @@ export async function getUserBalance(
   dex: SupportedDex,
   raw?: true,
 ) {
-  const { chainId } = await jsonProvider.getNetwork();
-  if (!Object.values(SupportedChainId).includes(chainId)) {
-    throw new Error(`Unsupported chainId: ${chainId ?? 'undefined'}`);
-  }
-  const vault = await getIchiVaultInfo(chainId, dex, vaultAddress, jsonProvider);
-  if (!vault) throw new Error(`Vault ${vaultAddress} not found on chain ${chainId} and dex ${dex}`);
+  // eslint-disable-next-line no-return-await
+  await validateVaultData(vaultAddress, jsonProvider, dex);
 
-  const vaultContract = getIchiVaultContract(vaultAddress, jsonProvider);
-  const shares = await vaultContract.balanceOf(accountAddress);
-
-  return raw ? shares : formatBigInt(shares, ichiVaultDecimals);
+  return raw
+    ? _getUserBalance(accountAddress, vaultAddress, jsonProvider, true)
+    : _getUserBalance(accountAddress, vaultAddress, jsonProvider);
 }
 
 export async function getAllUserBalances(

@@ -20,8 +20,8 @@ const addressConfig: Record<SupportedChainId, Config> = {
     [SupportedDex.UniswapV3]: {
       factoryAddress: '0xfBf38920cCbCFF7268Ad714ae5F9Fad6dF607065',
       depositGuard: {
-        address: '0x932E1908461De58b0891E5022431dc995Cb95C5E',
-        version: 1,
+        address: '0xFB5263779D551d0f8a85D47a7D576C4893686D12',
+        version: 2,
       },
       vaultDeployerAddress: '0x508C3daa571854247726ba26949f182086Ff89B0',
       isAlgebra: false,
@@ -58,8 +58,8 @@ const addressConfig: Record<SupportedChainId, Config> = {
     [SupportedDex.UniswapV3]: {
       factoryAddress: '0x2d2c72C4dC71AA32D64e5142e336741131A73fc0',
       depositGuard: {
-        address: '0xA5cE107711789b350e04063D4EffBe6aB6eB05a4',
-        version: 1,
+        address: '0x64E44525a98bC85aC097Cc6Ca4c8F6BE7D483041',
+        version: 2,
       },
       vaultDeployerAddress: '0x0768A75F616B98ee0937673bD83B7aBF142236Ea',
       isAlgebra: false,
@@ -87,8 +87,8 @@ const addressConfig: Record<SupportedChainId, Config> = {
     [SupportedDex.UniswapV3]: {
       factoryAddress: '0x5a40DFaF8C1115196A1CDF529F97122030F26112',
       depositGuard: {
-        address: '0xe6e32D20258f475BaA8d0B39d4C391B96f0ef70A',
-        version: 1,
+        address: '0x3E1aFdB89B6Ea49e828C565ab6A36a485b7A4775',
+        version: 2,
       },
       vaultDeployerAddress: '0xfF7B5E167c9877f2b9f65D19d9c8c9aa651Fe19F',
       isAlgebra: false,
@@ -160,8 +160,8 @@ const addressConfig: Record<SupportedChainId, Config> = {
     [SupportedDex.UniswapV3]: {
       factoryAddress: '0x065356d9f628cDd1bb9F2384E2972CdAC50f51b7',
       depositGuard: {
-        address: '0xE7914034D4D39087bFF0Aed442a652F5945E914b',
-        version: 1,
+        address: '0xa9b751f37857790D0412c81B072DB57CCc0aF545',
+        version: 2,
       },
       vaultDeployerAddress: '0x05cC3CA6E768a68A7f86b09e3ceE754437bd5f12',
       isAlgebra: false,

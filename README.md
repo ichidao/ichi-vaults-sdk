@@ -61,6 +61,8 @@ npm install @ichidao/ichi-vaults-sdk
 | overrides         | [Overrides](https://github.com/ethers-io/ethers.js/blob/f97b92bbb1bde22fcc44100af78d7f31602863ab/packages/contracts/lib/index.d.ts#L7)  | undefined | false
 
 <br/>
+This function approves tokens for deposit into the vault and must be called before the deposit() function.
+The 'amount' parameter can be either a string or a number, representing the number of tokens in major units. For instance, if the deposit token is wETH, 'amount' being equal to 0.5 or '0.5' signifies 0.5 wETH. If the 'amount' parameter is not specified the token will be approved for the maximum allowable amount.
 
 ```typescript
 import { Web3Provider } from '@ethersproject/providers';
@@ -101,6 +103,9 @@ await txnDetails.wait();
 | overrides         | [Overrides](https://github.com/ethers-io/ethers.js/blob/f97b92bbb1bde22fcc44100af78d7f31602863ab/packages/contracts/lib/index.d.ts#L7)  | undefined | false
 
 <br/>
+This function facilitates deposits into the vault.
+The 'amount0' and 'amount1' parameters can be either a string or a number, representing the number of tokens in major units. For instance, if the deposit token is wETH, 'amount' being equal to 0.5 or '0.5' signifies 0.5 wETH. 
+One of the 'amount' parameters must be set to zero. Use the isTokenAllowed() function to determing if a token could be deposited. 
 
 ```typescript
 import { Web3Provider } from '@ethersproject/providers';
@@ -139,6 +144,9 @@ const txnDetails = await deposit(
 | overrides         | [Overrides](https://github.com/ethers-io/ethers.js/blob/f97b92bbb1bde22fcc44100af78d7f31602863ab/packages/contracts/lib/index.d.ts#L7)  | undefined | false
 
 <br/>
+This function deposits native tokens of the chain into the vault if the vault accepts wrapped native token deposits.
+The 'amount0' and 'amount1' parameters can be either a string or a number, representing the number of tokens in major units. For instance, if the deposit token is wETH, 'amount' being equal to 0.5 or '0.5' signifies 0.5 wETH, and 0.5 ETH will be deposited. 
+The other 'amount' parameter must be set to zero. 
 
 ```typescript
 import { Web3Provider } from '@ethersproject/providers';
@@ -178,7 +186,7 @@ const txnDetails = await depositNativeToken(
 
 ```typescript
 import { Web3Provider } from '@ethersproject/providers';
-import { approveDepositToken, SupportedDex } from '@ichidao/ichi-vaults-sdk';
+import { approveVaultToken, SupportedDex } from '@ichidao/ichi-vaults-sdk';
 
 const web3Provider = new Web3Provider(YOUR_WEB3_PROVIDER);
 const vaultAddress = "0x3ac9...a5f132"
@@ -243,6 +251,7 @@ const isToken0Approved: boolean = await isDepositTokenApproved(
 | overrides         | [Overrides](https://github.com/ethers-io/ethers.js/blob/f97b92bbb1bde22fcc44100af78d7f31602863ab/packages/contracts/lib/index.d.ts#L7)  | undefined | false
 
 <br/>
+This function facilitates the withdrawal of the specified amount of shares from the vault. Consequently, both tokens are added to the user's account.
 
 ```typescript
 import { Web3Provider } from '@ethersproject/providers';
@@ -284,6 +293,7 @@ const txnDetails = await withdraw(
 | overrides         | [Overrides](https://github.com/ethers-io/ethers.js/blob/f97b92bbb1bde22fcc44100af78d7f31602863ab/packages/contracts/lib/index.d.ts#L7)  | undefined | false
 
 <br/>
+Similar to the withdraw() function, this function facilitates the withdrawal of the specified amount of shares from the vault. Furthermore, it enables the setting of the slippage for the withdrawal transaction. By default, the slippage is set to 1%. If the slippage exceeds the specified amount, the transaction will not be executed.
 
 ```typescript
 import { Web3Provider } from '@ethersproject/providers';
@@ -325,6 +335,7 @@ const txnDetails = await withdraw(
 | overrides         | [Overrides](https://github.com/ethers-io/ethers.js/blob/f97b92bbb1bde22fcc44100af78d7f31602863ab/packages/contracts/lib/index.d.ts#L7)  | undefined | false
 
 <br/>
+Similar to the withdraw() function, this function facilitates the withdrawal of the specified amount of shares from the vault. This function could be used for vaults in which one of the tokens is a wrapped native token of the chain. Both vault tokens are added to the user's account after the withdrawal. Additionally, the wrapped token is converted to the native token.
 
 ```typescript
 import { Web3Provider } from '@ethersproject/providers';
@@ -365,6 +376,8 @@ const txnDetails = await withdraw(
 | dex   | SupportedDex | - | true |
 
 <br/>
+This function returns true if the token allowance is non-zero and greater than or equal to the specified amount. 
+The 'amount' parameter can be either a string or a number, representing the number of tokens in major units. For instance, if the deposit token is wETH, 'amount' being equal to 0.5 or '0.5' signifies 0.5 wETH.
 
 ```typescript
 import { Web3Provider } from '@ethersproject/providers';
@@ -373,7 +386,7 @@ import { isDepositTokenApproved, SupportedDex } from '@ichidao/ichi-vaults-sdk';
 const web3Provider = new Web3Provider(YOUR_WEB3_PROVIDER);
 const vaultAddress = "0x3ac9...a5f132"
 const accountAddress = "0xaaaa...aaaaaa"
-const amount = 100
+const amount = '10.5'
 const dex = SupportedDex.UniswapV3
 
 const isToken0Approved: boolean = await isDepositTokenApproved(
