@@ -976,6 +976,7 @@ if (!vault) {
 ```typescript
 enum SupportedChainId {
   arbitrum = 42161,
+  arthera_testnet = 10243,
   base = 8453,
   blast = 81457,
   blast_sepolia_testnet = 168587773,
@@ -1019,6 +1020,7 @@ enum SupportedDex {
   SaucerSwap = 'SaucerSwap',
   Sushiswap = 'SushiSwap',
   Thena = 'Thena',
+  Thirdfy = 'Thirdfy',
   UniswapV3 = 'Uniswap V3',
   Velocore = 'Velocore',
   XSwap = 'XSwap',

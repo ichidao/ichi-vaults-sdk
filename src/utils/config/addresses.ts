@@ -54,6 +54,17 @@ const addressConfig: Record<SupportedChainId, Config> = {
       vaultDeployerAddress: '0x508C3daa571854247726ba26949f182086Ff89B0',
     },
   },
+  [SupportedChainId.arthera_testnet]: {
+    [SupportedDex.Thirdfy]: {
+      factoryAddress: '0xbb7A3d439abf42Cf39837f9102F987bab3Ee2e73',
+      depositGuard: {
+        address: '0xe573920139a208989d83C57ea48837C6285F2cd3',
+        version: 2,
+      },
+      vaultDeployerAddress: '0x21222daEcAB7E64556ADED3EE7B891742E7e766b',
+      isAlgebra: true,
+    },
+  },
   [SupportedChainId.polygon]: {
     [SupportedDex.UniswapV3]: {
       factoryAddress: '0x2d2c72C4dC71AA32D64e5142e336741131A73fc0',
