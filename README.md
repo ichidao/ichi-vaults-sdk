@@ -103,7 +103,7 @@ await txnDetails.wait();
 | overrides         | [Overrides](https://github.com/ethers-io/ethers.js/blob/f97b92bbb1bde22fcc44100af78d7f31602863ab/packages/contracts/lib/index.d.ts#L7)  | undefined | false
 
 <br/>
-This function deposits into the vault.
+This function facilitates deposits into the vault.
 The 'amount0' and 'amount1' parameters can be either a string or a number, representing the number of tokens in major units. For instance, if the deposit token is wETH, 'amount' being equal to 0.5 or '0.5' signifies 0.5 wETH. 
 One of the 'amount' parameters must be set to zero. Use the isTokenAllowed() function to determing if a token could be deposited. 
 

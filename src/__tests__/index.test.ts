@@ -31,6 +31,10 @@ import {
   getAllUserBalances,
   getAllUserAmounts,
   getVaultMetrics,
+  withdrawWithSlippage,
+  approveVaultToken,
+  isVaultTokenApproved,
+  withdrawNativeToken,
 } from '../index';
 import formatBigInt from '../utils/formatBigInt';
 import parseBigInt from '../utils/parseBigInt';
@@ -38,15 +42,15 @@ import parseBigInt from '../utils/parseBigInt';
 const hdWalletProvider = new HDWalletProvider([process.env.PRIVATE_KEY!], process.env.PROVIDER_URL!, 0, 1);
 
 const provider = new Web3Provider(hdWalletProvider, {
-  chainId: SupportedChainId.bsc,
-  name: 'Binance Smart Chain',
+  chainId: SupportedChainId.polygon,
+  name: 'Polygon',
 });
 const account = process.env.ACCOUNT!;
 
 const vault = {
-  address: '0x015eb9b9ce3ab0ddacdab35880171b0078edc02e', //  vault (inverted)
-  chainId: SupportedChainId.bsc,
-  dex: SupportedDex.Thena,
+  address: '0x9ff3C1390300918B40714fD464A39699dDd9Fe00',
+  chainId: SupportedChainId.polygon,
+  dex: SupportedDex.UniswapV3,
 };
 
 const tokens = {
@@ -55,9 +59,9 @@ const tokens = {
 };
 
 const iface = new ethers.utils.Interface(ICHIVAULT_ABI);
-const amount1 = '0.5';
-const amount0 = '0';
-const sharesToWithdraw = '0.004';
+const amount0 = '10';
+const amount1 = '0';
+const sharesToWithdraw = '0.00004';
 const bigAmount = '1000';
 
 describe('Vault', () => {
@@ -77,14 +81,14 @@ describe('Vault', () => {
 
   it.skip('approve', async () => {
     let approve: ethers.ContractTransaction | null = null;
-    approve = await approveDepositToken(account, 1, vault.address, provider, vault.dex, amount1);
+    approve = await approveDepositToken(account, 0, vault.address, provider, vault.dex, amount0);
     await approve.wait();
-    const isApproved = await isDepositTokenApproved(account, 1, amount1, vault.address, provider, vault.dex);
+    const isApproved = await isDepositTokenApproved(account, 0, amount0, vault.address, provider, vault.dex);
     expect(isApproved).toEqual(true);
   });
 
   it('isDepositTokenApproved', async () => {
-    const isApproved = await isDepositTokenApproved(account, 1, bigAmount, vault.address, provider, vault.dex);
+    const isApproved = await isDepositTokenApproved(account, 0, bigAmount, vault.address, provider, vault.dex);
     expect(isApproved).toEqual(false);
   });
 
@@ -224,9 +228,7 @@ describe('Vault', () => {
   });
 
   it.skip('withdraw:deposited', async () => {
-    share = sharesToWithdraw;
-
-    await withdraw(account, share, vault.address, provider, vault.dex)
+    await withdraw(account, sharesToWithdraw, vault.address, provider, vault.dex)
       .then((e) => e.wait())
       .then((a) => {
         const result: any = a.logs
@@ -240,7 +242,52 @@ describe('Vault', () => {
           .find((e: any) => e && e.name === 'Withdraw')?.args;
 
         console.log('Withdraw:', result);
-        expect(formatBigInt(result.shares)).toEqual(share);
+        expect(formatBigInt(result.shares)).toEqual(sharesToWithdraw);
+      });
+  });
+
+  it.skip('approveVaultToken', async () => {
+    let approve: ethers.ContractTransaction | null = null;
+    approve = await approveVaultToken(account, vault.address, provider, vault.dex, sharesToWithdraw);
+    await approve.wait();
+    const isApproved = await isVaultTokenApproved(account, sharesToWithdraw, vault.address, provider, vault.dex);
+    expect(isApproved).toEqual(true);
+  });
+
+  it.skip('withdrawWithSlippage', async () => {
+    await withdrawWithSlippage(account, sharesToWithdraw, vault.address, provider, vault.dex, 2)
+      .then((e) => e.wait())
+      .then((a) => {
+        const result: any = a.logs
+          .map((e: any) => {
+            try {
+              return iface.parseLog(e);
+            } catch (error) {
+              return null;
+            }
+          })
+          .find((e: any) => e && e.name === 'Withdraw')?.args;
+
+        console.log('Withdraw with slippage:', result);
+        expect(formatBigInt(result.shares)).toEqual(sharesToWithdraw);
+      });
+  });
+  it.skip('withdrawNativeToken', async () => {
+    await withdrawNativeToken(account, sharesToWithdraw, vault.address, provider, vault.dex)
+      .then((e) => e.wait())
+      .then((a) => {
+        const result: any = a.logs
+          .map((e: any) => {
+            try {
+              return iface.parseLog(e);
+            } catch (error) {
+              return null;
+            }
+          })
+          .find((e: any) => e && e.name === 'Withdraw')?.args;
+
+        console.log('withdrawNativeToken:', result);
+        expect(formatBigInt(result.shares)).toEqual(sharesToWithdraw);
       });
   });
 });
