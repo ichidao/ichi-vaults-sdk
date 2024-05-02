@@ -14,6 +14,7 @@ import addressConfig from '../utils/config/addresses';
 import amountWithSlippage from '../utils/amountWithSlippage';
 import formatBigInt from '../utils/formatBigInt';
 import { getUserBalance } from './userBalances';
+import getVaultDeployer from './vaultBasics';
 
 export async function approveVaultToken(
   accountAddress: string,
@@ -135,10 +136,7 @@ export async function withdrawWithSlippage(
 
   const signer = jsonProvider.getSigner(accountAddress);
 
-  const vaultDeployerAddress = addressConfig[chainId as SupportedChainId]![dex]?.vaultDeployerAddress;
-  if (!vaultDeployerAddress) {
-    throw new Error(`Vault deployer not found for vault ${vaultAddress} on chain ${chainId} and dex ${dex}`);
-  }
+  const vaultDeployerAddress = getVaultDeployer(vaultAddress, chainId, dex);
 
   // obtain Deposit Guard contract
   const depositGuardAddress = addressConfig[chainId as SupportedChainId]![dex]?.depositGuard.address;
@@ -234,10 +232,7 @@ export async function withdrawNativeToken(
 
   const signer = jsonProvider.getSigner(accountAddress);
 
-  const vaultDeployerAddress = addressConfig[chainId as SupportedChainId]![dex]?.vaultDeployerAddress;
-  if (!vaultDeployerAddress) {
-    throw new Error(`Vault deployer not found for vault ${vaultAddress} on chain ${chainId} and dex ${dex}`);
-  }
+  const vaultDeployerAddress = getVaultDeployer(vaultAddress, chainId, dex);
 
   const userShares = getUserBalance(accountAddress, vaultAddress, jsonProvider, dex, true);
   const withdrawShares = shares instanceof BigNumber ? shares : parseBigInt(shares, 18);
