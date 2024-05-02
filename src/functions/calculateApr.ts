@@ -1,6 +1,6 @@
 import { JsonRpcProvider } from '@ethersproject/providers';
 import { BigNumber } from 'ethers';
-import { PriceChange, SupportedDex, VaultApr, VaultState } from '../types';
+import { PriceChange, SupportedChainId, SupportedDex, VaultApr, VaultState } from '../types';
 // eslint-disable-next-line import/no-cycle
 import { validateVaultData } from './vault';
 import { getTokenDecimals } from './totalBalances';
@@ -8,6 +8,7 @@ import { getCurrLpPrice } from './priceFromPool';
 import { getAllVaultEvents, getVaultStateAt } from './vaultEvents';
 import { millisecondsToDays } from '../utils/timestamps';
 import getPrice from '../utils/getPrice';
+import { graphUrls } from '../graphql/constants';
 
 export function getLpPriceAt(
   vaultEvents: VaultState[],
@@ -45,7 +46,10 @@ export async function getLpApr(
   dex: SupportedDex,
   timeIntervals?: number[],
 ): Promise<(VaultApr | null)[]> {
-  const { vault } = await validateVaultData(vaultAddress, jsonProvider, dex);
+  const { chainId, vault } = await validateVaultData(vaultAddress, jsonProvider, dex);
+  const url = graphUrls[chainId as SupportedChainId]![dex]?.url;
+  if (!url) throw new Error(`Unsupported DEX ${dex} on chain ${chainId}`);
+  if (url === 'none') throw new Error(`Function not available for DEX ${dex} on chain ${chainId}`);
 
   const decimals0 = await getTokenDecimals(vault.tokenA, jsonProvider);
   const decimals1 = await getTokenDecimals(vault.tokenB, jsonProvider);
@@ -76,7 +80,10 @@ export async function getLpPriceChange(
   dex: SupportedDex,
   timeIntervals?: number[],
 ): Promise<(PriceChange | null)[]> {
-  const { vault } = await validateVaultData(vaultAddress, jsonProvider, dex);
+  const { chainId, vault } = await validateVaultData(vaultAddress, jsonProvider, dex);
+  const url = graphUrls[chainId as SupportedChainId]![dex]?.url;
+  if (!url) throw new Error(`Unsupported DEX ${dex} on chain ${chainId}`);
+  if (url === 'none') throw new Error(`Function not available for DEX ${dex} on chain ${chainId}`);
 
   const decimals0 = await getTokenDecimals(vault.tokenA, jsonProvider);
   const decimals1 = await getTokenDecimals(vault.tokenB, jsonProvider);

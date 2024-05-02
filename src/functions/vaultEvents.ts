@@ -35,6 +35,7 @@ export async function getRebalances(
 
   const url = graphUrls[chainId as SupportedChainId]![dex]?.url;
   if (!url) throw new Error(`Unsupported DEX ${dex} on chain ${chainId}`);
+  if (url === 'none') throw new Error(`Function not available for DEX ${dex} on chain ${chainId}`);
 
   const currTimestamp = Date.now();
   const startTimestamp = days
@@ -95,6 +96,7 @@ export async function getFeesCollectedEvents(
 
   const url = graphUrls[chainId as SupportedChainId]![dex]?.url;
   if (!url) throw new Error(`Unsupported DEX ${dex} on chain ${chainId}`);
+  if (url === 'none') throw new Error(`Function not available for DEX ${dex} on chain ${chainId}`);
   const supportsCollectFees = graphUrls[chainId as SupportedChainId]![dex]?.supportsCollectFees;
   if (!supportsCollectFees) {
     return [] as unknown as Promise<Fees[]>;
@@ -158,6 +160,7 @@ export async function getDeposits(
 
   const url = graphUrls[chainId as SupportedChainId]![dex]?.url;
   if (!url) throw new Error(`Unsupported DEX ${dex} on chain ${chainId}`);
+  if (url === 'none') throw new Error(`Function not available for DEX ${dex} on chain ${chainId}`);
 
   const currTimestamp = Date.now();
   const startTimestamp = days
@@ -218,6 +221,7 @@ export async function getWithdraws(
 
   const url = graphUrls[chainId as SupportedChainId]![dex]?.url;
   if (!url) throw new Error(`Unsupported DEX ${dex} on chain ${chainId}`);
+  if (url === 'none') throw new Error(`Function not available for DEX ${dex} on chain ${chainId}`);
 
   const currTimestamp = Date.now();
   const startTimestamp = days
