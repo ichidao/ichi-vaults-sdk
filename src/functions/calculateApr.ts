@@ -1,6 +1,6 @@
 import { JsonRpcProvider } from '@ethersproject/providers';
 import { BigNumber } from 'ethers';
-import { PriceChange, SupportedChainId, SupportedDex, VaultApr, VaultState } from '../types';
+import { PriceChange, SupportedChainId, SupportedDex, VaultApr, VaultState, ichiVaultDecimals } from '../types';
 // eslint-disable-next-line import/no-cycle
 import { validateVaultData } from './vault';
 import { getTokenDecimals } from './totalBalances';
@@ -9,6 +9,7 @@ import { getAllVaultEvents, getVaultStateAt } from './vaultEvents';
 import { millisecondsToDays } from '../utils/timestamps';
 import getPrice from '../utils/getPrice';
 import { graphUrls } from '../graphql/constants';
+import formatBigInt from '../utils/formatBigInt';
 
 export function getLpPriceAt(
   vaultEvents: VaultState[],
@@ -24,14 +25,14 @@ export function getLpPriceAt(
     const depositTokenDecimals = isVaultInverted ? token1decimals : token0decimals;
     const scarseTokenDecimals = isVaultInverted ? token0decimals : token1decimals;
 
-    const { totalAmount0 } = e;
-    const { totalAmount1 } = e;
-    const { sqrtPrice } = e;
+    const { totalAmount0, totalAmount1, sqrtPrice } = e;
+    const formattedTotalAmount0 = formatBigInt(totalAmount0, token0decimals);
+    const formattedTotalAmount1 = formatBigInt(totalAmount1, token1decimals);
     const price = getPrice(isVaultInverted, BigNumber.from(sqrtPrice), depositTokenDecimals, scarseTokenDecimals, 15);
     const tvl = !isVaultInverted
-      ? Number(totalAmount0) + Number(totalAmount1) * price
-      : Number(totalAmount1) + Number(totalAmount0) * price;
-    const totalSupply = Number(e.totalSupply);
+      ? Number(formattedTotalAmount0) + Number(formattedTotalAmount1) * price
+      : Number(formattedTotalAmount1) + Number(formattedTotalAmount0) * price;
+    const totalSupply = Number(formatBigInt(e.totalSupply, ichiVaultDecimals));
     const days = millisecondsToDays(Date.now() - Number(e.createdAtTimestamp) * 1000);
     if (totalSupply === 0) {
       return null;

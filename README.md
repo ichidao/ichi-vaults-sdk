@@ -183,6 +183,7 @@ const txnDetails = await depositNativeToken(
 | overrides         | [Overrides](https://github.com/ethers-io/ethers.js/blob/f97b92bbb1bde22fcc44100af78d7f31602863ab/packages/contracts/lib/index.d.ts#L7)  | undefined | false
 
 <br/>
+The approveVaultToken() function facilitates the approval of vault tokens for the withdrawWithSlipage() and withdrawNativeToken functions. The 'shares' parameter can be either a string or a number, representing the number of vault tokens in major units. For example, if 'shares' is equal to 0.5 or '0.5', it signifies 0.5 vault token. If the 'shares' parameter is not specified, the token will be approved for the maximum allowable amount.
 
 ```typescript
 import { Web3Provider } from '@ethersproject/providers';
@@ -219,10 +220,13 @@ await txnDetails.wait();
 | dex   | SupportedDex | - | true |
 
 <br/>
+This function returns true if the vault token allowance is non-zero and greater than or equal to the specified amount. 
+The 'shares' parameter can be either a string or a number, representing the number of vault tokens in major units. For example, if 'shares' is equal to 0.5 or '0.5', it signifies 0.5 vault token.
+
 
 ```typescript
 import { Web3Provider } from '@ethersproject/providers';
-import { isDepositTokenApproved, SupportedDex } from '@ichidao/ichi-vaults-sdk';
+import { isVaultTokenApproved, SupportedDex } from '@ichidao/ichi-vaults-sdk';
 
 const web3Provider = new Web3Provider(YOUR_WEB3_PROVIDER);
 const vaultAddress = "0x3ac9...a5f132"
@@ -230,7 +234,7 @@ const accountAddress = "0xaaaa...aaaaaa"
 const amount = 100
 const dex = SupportedDex.UniswapV3
 
-const isToken0Approved: boolean = await isDepositTokenApproved(
+const isApproved: boolean = await isVaultTokenApproved(
     accountAddress,
     amount,
     vaultAddress,
@@ -251,7 +255,7 @@ const isToken0Approved: boolean = await isDepositTokenApproved(
 | overrides         | [Overrides](https://github.com/ethers-io/ethers.js/blob/f97b92bbb1bde22fcc44100af78d7f31602863ab/packages/contracts/lib/index.d.ts#L7)  | undefined | false
 
 <br/>
-This function facilitates the withdrawal of the specified amount of shares from the vault. Consequently, both tokens are added to the user's account.
+This function facilitates the withdrawal of the specified amount of shares from the vault. As a result, both vault tokens are added to the user's account. The 'shares' parameter can be either a string or a number, representing the number of vault tokens to be withdrawn from the vault, specified in major units. For instance, if 'shares' is equal to 0.5 or '0.5', it signifies 0.5 vault token.
 
 ```typescript
 import { Web3Provider } from '@ethersproject/providers';
@@ -293,7 +297,7 @@ const txnDetails = await withdraw(
 | overrides         | [Overrides](https://github.com/ethers-io/ethers.js/blob/f97b92bbb1bde22fcc44100af78d7f31602863ab/packages/contracts/lib/index.d.ts#L7)  | undefined | false
 
 <br/>
-Similar to the withdraw() function, this function facilitates the withdrawal of the specified amount of shares from the vault. Furthermore, it enables the setting of the slippage for the withdrawal transaction. By default, the slippage is set to 1%. If the slippage exceeds the specified amount, the transaction will not be executed.
+Similar to the withdraw() function, this function facilitates the withdrawal of the specified amount of shares from the vault. Furthermore, it enables the setting of the slippage for the withdrawal transaction. By default, the slippage is set to 1%. If the slippage exceeds the specified amount, the transaction will not be executed. Ensure to use the approveVaultToken() function before invoking withdrawWithSlippage().
 
 ```typescript
 import { Web3Provider } from '@ethersproject/providers';
@@ -335,7 +339,7 @@ const txnDetails = await withdraw(
 | overrides         | [Overrides](https://github.com/ethers-io/ethers.js/blob/f97b92bbb1bde22fcc44100af78d7f31602863ab/packages/contracts/lib/index.d.ts#L7)  | undefined | false
 
 <br/>
-Similar to the withdraw() function, this function facilitates the withdrawal of the specified amount of shares from the vault. This function could be used for vaults in which one of the tokens is a wrapped native token of the chain. Both vault tokens are added to the user's account after the withdrawal. Additionally, the wrapped token is converted to the native token.
+Similar to the withdraw() function, this function facilitates the withdrawal of the specified amount of shares from the vault. This function could be used for vaults in which one of the tokens is a wrapped native token of the chain. Both vault tokens are added to the user's account after the withdrawal. Additionally, the wrapped token is converted to the native token. Ensure to use the approveVaultToken() function before invoking withdrawNativeToken().
 
 ```typescript
 import { Web3Provider } from '@ethersproject/providers';
@@ -409,6 +413,7 @@ const isToken0Approved: boolean = await isDepositTokenApproved(
 | dex   | SupportedDex | - | true |
 
 <br/>
+Returns true if deposits of the specified token are allowed.
 
 ```typescript
 import { Web3Provider } from '@ethersproject/providers';
@@ -437,6 +442,7 @@ const isAllowed = await isTokenAllowed(
 | dex   | SupportedDex | - | true |
 
 <br/>
+Returns a BigNumber representing the maximum allowed deposit amount.
 
 ```typescript
 import { Web3Provider } from '@ethersproject/providers';
@@ -466,6 +472,7 @@ const maxAmount = await getMaxDepositAmount(
 | raw   | true | undefined | false |
 
 <br/>
+This function returns the number of user shares in the vault. If the 'raw' parameter is included, it returns a BigNumber.
 
 ```typescript
 import { Web3Provider } from '@ethersproject/providers';
@@ -505,6 +512,7 @@ const sharesBN: BigNumber = await getUserBalance(
 | raw   | true | undefined | false |
 
 <br/>
+The getUserAmounts() function returns the amounts of tokens in the vault owned by the user. If 'raw' is specified, it returns BigNumber's.
 
 ```typescript
 import { Web3Provider } from '@ethersproject/providers';
@@ -543,6 +551,7 @@ const amountsBN: [BigNumber, BigNumber] & {amount0: BigNumber, amount1: BigNumbe
 | raw   | true | undefined | false |
 
 <br/>
+This function returns user balances for all vaults on the specified decentralized exchange (DEX).
 
 ```typescript
 import { Web3Provider } from '@ethersproject/providers';
@@ -578,6 +587,7 @@ const userBalancesInVaultsBN: UserBalanceInVaultBN[] = await getAllUserBalances(
 | raw   | true | undefined | false |
 
 <br/>
+This function returns user token amounts in all vaults on the specified decentralized exchange (DEX).
 
 ```typescript
 import { Web3Provider } from '@ethersproject/providers';
@@ -613,6 +623,7 @@ const amountsBN: UserAmountsInVaultBN[] = await getAllUserAmounts(
 | raw   | true | undefined | false |
 
 <br/>
+This function returns the total number of shares in the vault.
 
 ```typescript
 import { Web3Provider } from '@ethersproject/providers';
@@ -650,6 +661,7 @@ const sharesBN: BigNumber = await getTotalSupply(
 | raw   | true | undefined | false |
 
 <br/>
+This function returns the total number of tokens in the vault.
 
 ```typescript
 import { Web3Provider } from '@ethersproject/providers';
@@ -689,6 +701,7 @@ const amountsBN: [BigNumber, BigNumber] & {total0: BigNumber, total1: BigNumber}
 | days   | number | undefined | false |
 
 <br/>
+The getFeesCollected() function returns the number of fees collected for the specified number of days. If the 'days' parameter is not included, it returns the number of fees collected since the vault's inception. 
 
 ```typescript
 import { Web3Provider } from '@ethersproject/providers';
@@ -744,7 +757,8 @@ const amountsBN: [BigNumber, BigNumber] & {total0: BigNumber, total1: BigNumber}
 | forDays   | number[] | undefined | false |
 
 <br/>
-If forDays is not specified, returns FeesInfo for time periods of 1, 7, and 30 days.
+The getFeesCollectedInfo() function returns an array of FeesInfo objects representing the number of fees collected for the periods of time specified by the 'forDays' parameter, along with the fee Annual Percentage Rate (APR) for those periods. 
+If 'forDays' is not specified, it returns FeesInfo for time periods of 1, 7, and 30 days.
 <br/>
 
 ```typescript
@@ -782,6 +796,8 @@ const feesInfo: FeesInfo[] = await getFeesCollectedInfo(
 | timeIntervals   | number[] | [1, 7, 30] | false |
 
 <br/>
+The getAverageDepositTokenRatios() function returns an array of DepositTokenRatio objects representing the average deposit token ratio for the periods of time specified by the 'timeIntervals' parameter.
+If 'timeIntervals' is not specified, it returns DepositTokenRatio objects for time periods of 1, 7, and 30 days.
 
 ```typescript
 import { Web3Provider } from '@ethersproject/providers';
@@ -818,6 +834,8 @@ const averageDtr: AverageDepositTokenRatio[] = await getAverageDepositTokenRatio
 | timeIntervals   | number[] | [1, 7, 30] | false |
 
 <br/>
+The getLpApr() function returns an array of VaultApr objects representing the Annual Percentage Rate (APR) for the periods of time specified by the 'timeIntervals' parameter.
+If 'timeIntervals' is not specified, it returns VaultApr objects for time periods of 1, 7, and 30 days.
 
 ```typescript
 import { Web3Provider } from '@ethersproject/providers';
@@ -854,6 +872,8 @@ const averageDtr: VaultApr[] = await getLpApr(
 | timeIntervals   | number[] | [1, 7, 30] | false |
 
 <br/>
+The getLpPriceChange() function returns an array of PriceChange objects representing the relative LP (vault token) price change in percentages for the periods of time specified by the 'timeIntervals' parameter.
+If 'timeIntervals' is not specified, it returns PriceChange objects for time periods of 1, 7, and 30 days.
 
 ```typescript
 import { Web3Provider } from '@ethersproject/providers';
@@ -890,6 +910,8 @@ const lpPriceChange: PriceChange[] = await getLpPriceChange(
 | timeIntervals   | number[] | [1, 7, 30] | false |
 
 <br/>
+The getVaultMetrics() function returns an array of VaultMetrics objects for the periods of time specified by the 'timeIntervals' parameter.
+If 'timeIntervals' is not specified, it returns VaultMetrics objects for time periods of 1, 7, and 30 days.
 
 ```typescript
 import { Web3Provider } from '@ethersproject/providers';
@@ -926,6 +948,7 @@ const vaultMetrics: VaultMetrics[] = await getVaultMetrics(
 | jsonProvider   | JsonRpcProvider | - | false |
 
 <br/>
+This function returns IchiVault object.
 
 ```typescript
 import { Web3Provider } from '@ethersproject/providers';
@@ -951,6 +974,7 @@ if (vaultInfo) {
 | pairedTokenAddress   | string | - | true |
 
 <br/>
+This function returns an array of all vaults on the specified DEX that contain two tokens defined by the 'depositTokenAddress' and 'pairedTokenAddress' parameters.
 
 ```typescript
 import { Web3Provider } from '@ethersproject/providers';
