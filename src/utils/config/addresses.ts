@@ -63,6 +63,7 @@ const addressConfig: Record<SupportedChainId, Config> = {
       },
       vaultDeployerAddress: '0x21222daEcAB7E64556ADED3EE7B891742E7e766b',
       isAlgebra: true,
+      ammVersion: 'algebraIntegral',
     },
   },
   [SupportedChainId.polygon]: {
