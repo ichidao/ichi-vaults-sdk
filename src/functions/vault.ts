@@ -3,10 +3,10 @@ import { request } from 'graphql-request';
 import { JsonRpcProvider } from '@ethersproject/providers';
 import { SupportedDex, SupportedChainId, IchiVault } from '../types';
 // eslint-disable-next-line import/no-cycle
-import { VaultQueryData, VaultsByTokensQueryData } from '../types/vaultQueryData';
+import { VaultQueryData, VaultsByPoolQueryData, VaultsByTokensQueryData } from '../types/vaultQueryData';
 import { getIchiVaultContract } from '../contracts';
 import { graphUrls } from '../graphql/constants';
-import { vaultByTokensQuery, vaultQuery } from '../graphql/queries';
+import { vaultByPoolQuery, vaultByTokensQuery, vaultQuery } from '../graphql/queries';
 
 const promises: Record<string, Promise<any>> = {};
 
@@ -110,6 +110,29 @@ export async function getVaultsByTokens(
 
   // eslint-disable-next-line no-return-await
   return [...arrVaults1, ...arrVaults2];
+}
+
+export async function getVaultsByPool(
+  poolAddress: string,
+  chainId: SupportedChainId,
+  dex: SupportedDex,
+): Promise<VaultsByPoolQueryData['deployICHIVaults']> {
+  const url = graphUrls[chainId]![dex]?.url;
+  if (!url) throw new Error(`Unsupported DEX ${dex} on chain ${chainId}`);
+  if (url === 'none') throw new Error(`This function is not supported for DEX ${dex} on chain ${chainId}`);
+
+  const key1 = `pool-${poolAddress}-${chainId}`;
+  if (Object.prototype.hasOwnProperty.call(promises, key1)) return promises[key1];
+
+  promises[key1] = request<VaultsByPoolQueryData, { poolAddress: string }>(url, vaultByPoolQuery, {
+    poolAddress,
+  })
+    .then(({ deployICHIVaults }) => deployICHIVaults)
+    .finally(() => setTimeout(() => delete promises[key1], 2 * 60 * 100 /* 2 mins */));
+
+  const arrVaults = (await promises[key1]) as any[];
+
+  return arrVaults;
 }
 
 export async function validateVaultData(
