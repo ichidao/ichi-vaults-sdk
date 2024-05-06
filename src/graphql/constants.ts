@@ -29,8 +29,8 @@ export const graphUrls: Record<SupportedChainId, dexGraph> = {
   },
   [SupportedChainId.arthera_testnet]: {
     [SupportedDex.Thirdfy]: {
-      url: 'none',
-      supportsCollectFees: false,
+      url: 'https://subgraph-test.arthera.net/subgraphs/name/ichifarm/thirdfy',
+      supportsCollectFees: true,
     },
   },
   [SupportedChainId.mainnet]: {
