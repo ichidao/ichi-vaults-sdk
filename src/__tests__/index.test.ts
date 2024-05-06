@@ -49,7 +49,7 @@ const provider = new Web3Provider(hdWalletProvider, {
 const account = process.env.ACCOUNT!;
 
 const vault = {
-  address: '0x9ff3C1390300918B40714fD464A39699dDd9Fe00',
+  address: '0x629dFc05Be606e773B1830d2616FA627C0d07f08',
   chainId: SupportedChainId.bsc,
   dex: SupportedDex.Thena,
 };
