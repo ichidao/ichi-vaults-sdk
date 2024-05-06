@@ -35,6 +35,7 @@ import {
   approveVaultToken,
   isVaultTokenApproved,
   withdrawNativeToken,
+  getVaultsByPool,
 } from '../index';
 import formatBigInt from '../utils/formatBigInt';
 import parseBigInt from '../utils/parseBigInt';
@@ -42,15 +43,21 @@ import parseBigInt from '../utils/parseBigInt';
 const hdWalletProvider = new HDWalletProvider([process.env.PRIVATE_KEY!], process.env.PROVIDER_URL!, 0, 1);
 
 const provider = new Web3Provider(hdWalletProvider, {
-  chainId: SupportedChainId.polygon,
-  name: 'Polygon',
+  chainId: SupportedChainId.bsc,
+  name: 'Binance Smart Chain',
 });
 const account = process.env.ACCOUNT!;
 
 const vault = {
   address: '0x9ff3C1390300918B40714fD464A39699dDd9Fe00',
-  chainId: SupportedChainId.polygon,
-  dex: SupportedDex.UniswapV3,
+  chainId: SupportedChainId.bsc,
+  dex: SupportedDex.Thena,
+};
+
+const pool = {
+  address: '0x1123E75b71019962CD4d21b0F3018a6412eDb632',
+  chainId: SupportedChainId.bsc,
+  dex: SupportedDex.Thena,
 };
 
 const tokens = {
@@ -298,8 +305,13 @@ describe('GraphQL', () => {
     expect(a).toBeTruthy();
   });
   it('Get vaults by tokens', async () => {
-    const a = await getVaultsByTokens(vault.chainId, vault.dex, tokens.depositToken, tokens.pairedToken);
-    console.log(a[0]);
-    expect(a).toBeTruthy();
+    const vaults = await getVaultsByTokens(vault.chainId, vault.dex, tokens.depositToken, tokens.pairedToken);
+
+    expect(vaults).toBeTruthy();
+  });
+  it('Get vaults by pool', async () => {
+    const vaults = await getVaultsByPool(pool.address, pool.chainId, pool.dex);
+
+    expect(vaults).toBeTruthy();
   });
 });

@@ -34,6 +34,7 @@ This sdk contains collection of functions to interact with IchiVault's smart con
         * [`getVaultMetrics()`](#23-getVaultMetrics)
         * [`getIchiVaultInfo()`](#24-getIchiVaultInfo)
         * [`getVaultsByTokens()`](#25-getVaultsByTokens)
+        * [`getVaultsByPool()`](#26-getVaultsByPool)
 
 ## Installation
 Install with
@@ -993,6 +994,34 @@ if (!vault) {
 }
 
 ```
+
+#### 26. `getVaultsByPool()`
+
+| param | type |  default | required
+| -------- | -------- | -------- | --------
+| poolAddress   | string | - | true |
+| chain      | SupportedChainId | - | true
+| dex   | SupportedDex | - | true
+
+<br/>
+This function returns an array of all vaults deployed on the specified pool.
+
+```typescript
+import { Web3Provider } from '@ethersproject/providers';
+import { getVaultsByPool, SupportedDex, SupportedChainId } from '@ichidao/ichi-vaults-sdk';
+
+const poolAddress = "0x1b...2fd6"
+const dex = SupportedDex.UniswapV3;
+const chain = SupportedChainId.Polygon;
+
+const vaults = await getVaultsByPool(poolAddress, chain, dex)
+if (vaults.length === 0) {
+    console.log("Couldn't find vaults with these parameters")
+} else {
+    const vaultAddress = vaults[0].vault;
+}
+```
+
 ## Types
 
 ### SupportedChainId

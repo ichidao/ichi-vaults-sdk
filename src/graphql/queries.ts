@@ -25,6 +25,14 @@ export const vaultByTokensQuery = gql`
   }
 `;
 
+export const vaultByPoolQuery = gql`
+  query ($poolAddress: String!) {
+    deployICHIVaults(where: { pool: $poolAddress }) {
+      vault
+    }
+  }
+`;
+
 export const rebalancesQuery = (page: number) => gql`
   query ($vaultAddress: String!, $createdAtTimestamp_gt: String!) {
     vaultRebalances(first:1000, skip: ${

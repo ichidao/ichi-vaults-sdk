@@ -8,6 +8,9 @@ export interface VaultQueryData {
 export interface VaultsByTokensQueryData {
   ichiVaults: IchiVault[];
 }
+export interface VaultsByPoolQueryData {
+  deployICHIVaults: string[];
+}
 
 export interface RebalancesQueryData {
   vaultRebalances: Fees[];
