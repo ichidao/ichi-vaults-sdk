@@ -1042,6 +1042,7 @@ enum SupportedDex {
   Ramses = 'Ramses',
   Retro = 'Retro',
   SaucerSwap = 'SaucerSwap',
+  SpiritSwap = 'SpiritSwap',
   Sushiswap = 'SushiSwap',
   Thena = 'Thena',
   Thirdfy = 'Thirdfy',
