@@ -240,6 +240,16 @@ const addressConfig: Record<SupportedChainId, Config> = {
       vaultDeployerAddress: '0xE495eFdf1d19668a27042D30ee22AC3C58b6fB6c',
       isAlgebra: false,
     },
+    [SupportedDex.SpiritSwap]: {
+      factoryAddress: '0x89FFdaa18b296d9F0CF02fBD88e5c633FEFA5f34',
+      depositGuard: {
+        address: '0x02F4a98A4e59E8c7Ba3269cbcd1F1e9F3eCcfcf5',
+        version: 2,
+      },
+      vaultDeployerAddress: '0xE495eFdf1d19668a27042D30ee22AC3C58b6fB6c',
+      isAlgebra: true,
+      ammVersion: 'algebraIntegral',
+    },
   },
   // [SupportedChainId.hedera]: {
   //   [SupportedDex.SaucerSwap]: {
