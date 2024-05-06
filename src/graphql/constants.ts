@@ -114,6 +114,10 @@ export const graphUrls: Record<SupportedChainId, dexGraph> = {
       url: 'https://api.thegraph.com/subgraphs/name/ichi-org/fantom-v1-equalizer',
       supportsCollectFees: true,
     },
+    [SupportedDex.SpiritSwap]: {
+      url: 'https://api.studio.thegraph.com/query/61136/fantom-v1-spiritswap/version/latest',
+      supportsCollectFees: true,
+    },
   },
   // [SupportedChainId.hedera]: {
   //   [SupportedDex.SaucerSwap]: { url: 'none', supportsCollectFees: false },
