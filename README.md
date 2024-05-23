@@ -1029,6 +1029,7 @@ if (vaults.length === 0) {
 ```typescript
 enum SupportedChainId {
   arbitrum = 42161,
+  arthera = 10242,
   arthera_testnet = 10243,
   base = 8453,
   blast = 81457,
@@ -1046,6 +1047,7 @@ enum SupportedChainId {
   polygon = 137,
   polygon_zkevm = 1101,
   scroll = 534352,
+  taiko_hekla = 167009,
   x_layer_testnet = 195,
   zksync_era = 324,
   zksync_era_testnet = 280,
@@ -1062,7 +1064,7 @@ enum SupportedDex {
   Equalizer = 'Equalizer',
   Fenix = 'Fenix',
   Forge = 'Forge',
-  Horiza = 'Horiza',
+  Henjin = 'Henjin',
   Kinetix = 'Kinetix',
   Lynex = 'Lynex',
   Metavault = 'Metavault',
@@ -1078,7 +1080,6 @@ enum SupportedDex {
   UniswapV3 = 'Uniswap V3',
   Velocore = 'Velocore',
   XSwap = 'XSwap',
-  Zero = 'Zero',
 }
 ```
 
