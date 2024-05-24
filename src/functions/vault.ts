@@ -74,18 +74,18 @@ export async function getVaultsByTokens(
   let addressTokenB = pairedTokenAddress;
 
   const key1 = `${addressTokenA}-${addressTokenB}-${chainId}`;
-  if (Object.prototype.hasOwnProperty.call(promises, key1)) return promises[key1];
-
-  promises[key1] = request<VaultsByTokensQueryData, { addressTokenA: string; addressTokenB: string }>(
-    url,
-    vaultByTokensQuery,
-    {
-      addressTokenA,
-      addressTokenB,
-    },
-  )
-    .then(({ ichiVaults }) => ichiVaults)
-    .finally(() => setTimeout(() => delete promises[key1], 2 * 60 * 100 /* 2 mins */));
+  if (!Object.prototype.hasOwnProperty.call(promises, key1)) {
+    promises[key1] = request<VaultsByTokensQueryData, { addressTokenA: string; addressTokenB: string }>(
+      url,
+      vaultByTokensQuery,
+      {
+        addressTokenA,
+        addressTokenB,
+      },
+    )
+      .then(({ ichiVaults }) => ichiVaults)
+      .finally(() => setTimeout(() => delete promises[key1], 2 * 60 * 100 /* 2 mins */));
+  }
 
   const arrVaults1 = ((await promises[key1]) as any[]).filter((v) => (v as IchiVault).allowTokenA);
 
@@ -93,18 +93,18 @@ export async function getVaultsByTokens(
   addressTokenB = depositTokenAddress;
 
   const key2 = `${addressTokenA}-${addressTokenB}-${chainId}`;
-  if (Object.prototype.hasOwnProperty.call(promises, key2)) return promises[key2];
-
-  promises[key2] = request<VaultsByTokensQueryData, { addressTokenA: string; addressTokenB: string }>(
-    url,
-    vaultByTokensQuery,
-    {
-      addressTokenA,
-      addressTokenB,
-    },
-  )
-    .then(({ ichiVaults }) => ichiVaults)
-    .finally(() => setTimeout(() => delete promises[key2], 2 * 60 * 100 /* 2 mins */));
+  if (!Object.prototype.hasOwnProperty.call(promises, key2)) {
+    promises[key2] = request<VaultsByTokensQueryData, { addressTokenA: string; addressTokenB: string }>(
+      url,
+      vaultByTokensQuery,
+      {
+        addressTokenA,
+        addressTokenB,
+      },
+    )
+      .then(({ ichiVaults }) => ichiVaults)
+      .finally(() => setTimeout(() => delete promises[key2], 2 * 60 * 100 /* 2 mins */));
+  }
 
   const arrVaults2 = ((await promises[key2]) as any[]).filter((v) => (v as IchiVault).allowTokenB);
 
