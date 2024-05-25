@@ -291,7 +291,7 @@ const addressConfig: Record<SupportedChainId, Config> = {
     [SupportedDex.Lynex]: {
       factoryAddress: '0x0248b992ac2a75294b05286E9DD3A2bD3C9CFE4B',
       depositGuard: {
-        address: '0x6337625bF843911Da1e1eeFaEaFb5599C876469c',
+        address: '0x57C9d919AEA56171506cfb62B60ce76be0A079DF',
         version: 2,
       },
       vaultDeployerAddress: '0x75178e0a2829B73E3AE4C21eE64F4B684085392a',
