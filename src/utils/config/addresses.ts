@@ -369,9 +369,9 @@ const addressConfig: Record<SupportedChainId, Config> = {
   },
   [SupportedChainId.taiko_hekla]: {
     [SupportedDex.Henjin]: {
-      factoryAddress: '0x6F85eb17955257a39fd78692f6884ebE6531fd8b',
+      factoryAddress: '0x7C6389714719C68cAAc8Ae06baE6E878B3605f6D',
       depositGuard: {
-        address: '0xB90ca9Dfa7128f5e074106acd93CBF05928c78aF',
+        address: '0xF8b3f6727e44abb211C0049FC849FbB091Ff765E',
         version: 2,
       },
       vaultDeployerAddress: '0x92403A045a2C908920D6A7FD5A5591a01dB7EE6E',
