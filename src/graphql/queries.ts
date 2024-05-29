@@ -9,6 +9,19 @@ export const vaultQuery = gql`
       tokenB
       allowTokenA
       allowTokenB
+      fee
+    }
+  }
+`;
+
+export const vaultQueryAlgebra = gql`
+  query ($vaultAddress: String!) {
+    ichiVault(id: $vaultAddress) {
+      id
+      tokenA
+      tokenB
+      allowTokenA
+      allowTokenB
     }
   }
 `;

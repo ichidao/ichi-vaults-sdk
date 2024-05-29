@@ -6,7 +6,9 @@ import { SupportedDex, SupportedChainId, IchiVault } from '../types';
 import { VaultQueryData, VaultsByPoolQueryData, VaultsByTokensQueryData } from '../types/vaultQueryData';
 import { getIchiVaultContract } from '../contracts';
 import { graphUrls } from '../graphql/constants';
-import { vaultByPoolQuery, vaultByTokensQuery, vaultQuery } from '../graphql/queries';
+import { vaultByPoolQuery, vaultByTokensQuery, vaultQuery, vaultQueryAlgebra } from '../graphql/queries';
+import addressConfig from '../utils/config/addresses';
+import { getGraphUrls } from '../utils/getGraphUrls';
 
 const promises: Record<string, Promise<any>> = {};
 
@@ -38,12 +40,13 @@ export async function getIchiVaultInfo(
 
   if (Object.prototype.hasOwnProperty.call(promises, key)) return promises[key];
 
-  const url = graphUrls[chainId]![dex]?.url;
-  if (!url) throw new Error(`Unsupported DEX ${dex} on chain ${chainId}`);
+  const thisQuery = addressConfig[chainId][dex]?.isAlgebra ? vaultQueryAlgebra : vaultQuery;
+
+  const {url, publishedUrl} = getGraphUrls(chainId, dex);
   if (url === 'none' && jsonProvider) {
     promises[key] = getVaultInfoFromContract(vaultAddress, jsonProvider);
   } else {
-    promises[key] = request<VaultQueryData, { vaultAddress: string }>(url, vaultQuery, {
+    promises[key] = request<VaultQueryData, { vaultAddress: string }>(url, thisQuery, {
       vaultAddress: vaultAddress.toLowerCase(),
     })
       .then(({ ichiVault }) => ichiVault)

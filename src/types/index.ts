@@ -81,6 +81,7 @@ export interface IchiVault {
   tokenB: string;
   allowTokenA: boolean;
   allowTokenB: boolean;
+  fee?: string;
 }
 
 type VaultShares = {
