@@ -105,8 +105,8 @@ await txnDetails.wait();
 
 <br/>
 This function facilitates deposits into the vault.
-The 'amount0' and 'amount1' parameters can be either a string or a number, representing the number of tokens in major units. For instance, if the deposit token is wETH, 'amount' being equal to 0.5 or '0.5' signifies 0.5 wETH. 
-One of the 'amount' parameters must be set to zero. Use the isTokenAllowed() function to determing if a token could be deposited. 
+The 'amount0' and 'amount1' parameters can be either a string or a number, representing the number of tokens in major units. For instance, if the deposit token is wETH, 'amount' being equal to 0.5 or '0.5' signifies 0.5 wETH.
+One of the 'amount' parameters must be set to zero. Use the isTokenAllowed() function to determing if a token could be deposited.
 
 ```typescript
 import { Web3Provider } from '@ethersproject/providers';
@@ -146,8 +146,8 @@ const txnDetails = await deposit(
 
 <br/>
 This function deposits native tokens of the chain into the vault if the vault accepts wrapped native token deposits.
-The 'amount0' and 'amount1' parameters can be either a string or a number, representing the number of tokens in major units. For instance, if the deposit token is wETH, 'amount' being equal to 0.5 or '0.5' signifies 0.5 wETH, and 0.5 ETH will be deposited. 
-The other 'amount' parameter must be set to zero. 
+The 'amount0' and 'amount1' parameters can be either a string or a number, representing the number of tokens in major units. For instance, if the deposit token is wETH, 'amount' being equal to 0.5 or '0.5' signifies 0.5 wETH, and 0.5 ETH will be deposited.
+The other 'amount' parameter must be set to zero.
 
 ```typescript
 import { Web3Provider } from '@ethersproject/providers';
@@ -221,7 +221,7 @@ await txnDetails.wait();
 | dex   | SupportedDex | - | true |
 
 <br/>
-This function returns true if the vault token allowance is non-zero and greater than or equal to the specified amount. 
+This function returns true if the vault token allowance is non-zero and greater than or equal to the specified amount.
 The 'shares' parameter can be either a string or a number, representing the number of vault tokens in major units. For example, if 'shares' is equal to 0.5 or '0.5', it signifies 0.5 vault token.
 
 
@@ -381,7 +381,7 @@ const txnDetails = await withdraw(
 | dex   | SupportedDex | - | true |
 
 <br/>
-This function returns true if the token allowance is non-zero and greater than or equal to the specified amount. 
+This function returns true if the token allowance is non-zero and greater than or equal to the specified amount.
 The 'amount' parameter can be either a string or a number, representing the number of tokens in major units. For instance, if the deposit token is wETH, 'amount' being equal to 0.5 or '0.5' signifies 0.5 wETH.
 
 ```typescript
@@ -702,7 +702,7 @@ const amountsBN: [BigNumber, BigNumber] & {total0: BigNumber, total1: BigNumber}
 | days   | number | undefined | false |
 
 <br/>
-The getFeesCollected() function returns the number of fees collected for the specified number of days. If the 'days' parameter is not included, it returns the number of fees collected since the vault's inception. 
+The getFeesCollected() function returns the number of fees collected for the specified number of days. If the 'days' parameter is not included, it returns the number of fees collected since the vault's inception.
 
 ```typescript
 import { Web3Provider } from '@ethersproject/providers';
@@ -758,7 +758,7 @@ const amountsBN: [BigNumber, BigNumber] & {total0: BigNumber, total1: BigNumber}
 | forDays   | number[] | undefined | false |
 
 <br/>
-The getFeesCollectedInfo() function returns an array of FeesInfo objects representing the number of fees collected for the periods of time specified by the 'forDays' parameter, along with the fee Annual Percentage Rate (APR) for those periods. 
+The getFeesCollectedInfo() function returns an array of FeesInfo objects representing the number of fees collected for the periods of time specified by the 'forDays' parameter, along with the fee Annual Percentage Rate (APR) for those periods.
 If 'forDays' is not specified, it returns FeesInfo for time periods of 1, 7, and 30 days.
 <br/>
 
@@ -1092,6 +1092,7 @@ interface IchiVault {
   tokenB: string; // token1 address
   allowTokenA: boolean;
   allowTokenB: boolean;
+  fee?: string
 }
 ```
 
@@ -1148,7 +1149,7 @@ type VaultMetrics  = {
 ### UserAmountsBN
 
 ```typescript
-type UserAmountsBN = 
+type UserAmountsBN =
   [BigNumber, BigNumber] & { amount0: BigNumber; amount1: BigNumber };
 ```
 
@@ -1170,7 +1171,7 @@ type UserAmountsInVault = {
 ### UserAmountsBN
 
 ```typescript
-type UserAmountsBN = 
+type UserAmountsBN =
   [BigNumber, BigNumber] & { amount0: BigNumber; amount1: BigNumber };
 ```
 
@@ -1202,7 +1203,7 @@ type UserAmountsInVaultBN = {
 
 ```typescript
 type UserBalanceInVault = {
-  vaultAddress: string; 
+  vaultAddress: string;
   shares: string;
 };
 ```
@@ -1211,7 +1212,7 @@ type UserBalanceInVault = {
 
 ```typescript
 type UserBalanceInVaultBN = {
-  vaultAddress: string; 
+  vaultAddress: string;
   shares: BigNumber;
 };
 ```
