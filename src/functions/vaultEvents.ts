@@ -15,9 +15,28 @@ import {
 import { graphUrls } from '../graphql/constants';
 import { rebalancesQuery, vaultCollectFeesQuery, vaultDepositsQuery, vaultWithdrawsQuery } from '../graphql/queries';
 import { daysToMilliseconds } from '../utils/timestamps';
-import { getIchiVaultInfo } from './vault';
+import { getIchiVaultInfo, validateVaultData } from './vault';
+import getGraphUrls from '../utils/getGraphUrls';
 
 const promises: Record<string, Promise<any>> = {};
+
+async function sendRebalancesQueryRequest(
+  url: string,
+  vaultAddress: string,
+  createdAtTimestamp_gt: string,
+  query: string,
+): Promise<RebalancesQueryData['vaultRebalances']> {
+  return request<RebalancesQueryData, { vaultAddress: string; createdAtTimestamp_gt: string }>(url, query, {
+    vaultAddress,
+    createdAtTimestamp_gt,
+  }).then(({ vaultRebalances }) => vaultRebalances);
+}
+function storeResult(key: string, result: any) {
+  promises[key] = Promise.resolve(result);
+  setTimeout(() => {
+    delete promises[key];
+  }, 120000); // 120000 ms = 2 minutes
+}
 
 export async function getRebalances(
   vaultAddress: string,
@@ -25,59 +44,58 @@ export async function getRebalances(
   dex: SupportedDex,
   days?: number,
 ): Promise<Fees[]> {
-  const { chainId } = await jsonProvider.getNetwork();
-  if (!Object.values(SupportedChainId).includes(chainId)) {
-    throw new Error(`Unsupported chainId: ${chainId ?? 'undefined'}`);
-  }
+  const { chainId } = await validateVaultData(vaultAddress, jsonProvider, dex);
 
   const key = `${chainId + vaultAddress + days}-rebalances`;
   if (Object.prototype.hasOwnProperty.call(promises, key)) return promises[key];
 
-  const url = graphUrls[chainId as SupportedChainId]![dex]?.url;
-  if (!url) throw new Error(`Unsupported DEX ${dex} on chain ${chainId}`);
-  if (url === 'none') throw new Error(`Function not available for DEX ${dex} on chain ${chainId}`);
+  const { publishedUrl, url } = getGraphUrls(chainId, dex, true);
 
   const currTimestamp = Date.now();
   const startTimestamp = days
     ? parseInt(((currTimestamp - daysToMilliseconds(days)) / 1000).toString()).toString()
     : '0';
 
-  if (url === 'none' && jsonProvider) {
-    throw new Error(`Unsupported function for DEX ${dex} on chain ${chainId}`);
-  } else {
-    const rebalances = [] as Fees[];
-    let endOfData = false;
-    let page = 0;
-    while (!endOfData) {
-      const result = await request<RebalancesQueryData, { vaultAddress: string; createdAtTimestamp_gt: string }>(
-        url,
-        rebalancesQuery(page),
-        {
-          vaultAddress,
-          createdAtTimestamp_gt: startTimestamp,
-        },
-      )
-        .then(({ vaultRebalances }) => vaultRebalances)
-        .catch((err) => {
-          console.error(err);
-        });
-      if (result) {
-        rebalances.push(...result);
-        page += 1;
-        if (result.length < 1000) {
-          endOfData = true;
-        }
+  const rebalances = [] as Fees[];
+  let endOfData = false;
+  let page = 0;
+  while (!endOfData) {
+    let result;
+    try {
+      if (publishedUrl) {
+        result = await sendRebalancesQueryRequest(publishedUrl, vaultAddress, startTimestamp, rebalancesQuery(page));
+        storeResult(key, result);
       } else {
-        endOfData = true;
+        throw new Error(`Published URL is invalid for dex ${dex} on chain ${chainId}`);
+      }
+    } catch (error) {
+      if (publishedUrl) {
+        console.error('Request to published graph URL failed:', error);
+      }
+      try {
+        result = await sendRebalancesQueryRequest(url, vaultAddress, startTimestamp, rebalancesQuery(page));
+        storeResult(key, result);
+      } catch (error2) {
+        console.error('Request to public graph URL failed:', error2);
+        throw new Error(`Could not get rebalances for vault ${vaultAddress} on chain ${chainId}`);
       }
     }
-
-    promises[key] = new Promise((resolve) => resolve(rebalances)).finally(() =>
-      setTimeout(() => delete promises[key], 2 * 60 * 100 /* 2 mins */),
-    );
-
-    return rebalances;
+    if (result) {
+      rebalances.push(...result);
+      page += 1;
+      if (result.length < 1000) {
+        endOfData = true;
+      }
+    } else {
+      endOfData = true;
+    }
   }
+
+  promises[key] = new Promise((resolve) => resolve(rebalances)).finally(() =>
+    setTimeout(() => delete promises[key], 2 * 60 * 100 /* 2 mins */),
+  );
+
+  return rebalances;
 }
 
 export async function getFeesCollectedEvents(

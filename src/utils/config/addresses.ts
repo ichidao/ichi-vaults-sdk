@@ -288,6 +288,15 @@ const addressConfig: Record<SupportedChainId, Config> = {
     },
   },
   [SupportedChainId.linea]: {
+    [SupportedDex.Linehub]: {
+      factoryAddress: '0xb0e7871d53BE1b1d746bBfD9511e2eF3cD70a6E7',
+      depositGuard: {
+        address: '0x60f50858953dBf1A699B88037D9dce235b8c505D',
+        version: 2,
+      },
+      vaultDeployerAddress: '0x75178e0a2829B73E3AE4C21eE64F4B684085392a',
+      isAlgebra: false,
+    },
     [SupportedDex.Lynex]: {
       factoryAddress: '0x0248b992ac2a75294b05286E9DD3A2bD3C9CFE4B',
       depositGuard: {
@@ -301,6 +310,15 @@ const addressConfig: Record<SupportedChainId, Config> = {
       factoryAddress: '0x2592686212C164C1851dF2f62c5d5EC50600195E',
       depositGuard: {
         address: '0x92Bce3972916C2CEDA46c4EEbC9684aC26EFfe5B',
+        version: 2,
+      },
+      vaultDeployerAddress: '0x75178e0a2829B73E3AE4C21eE64F4B684085392a',
+      isAlgebra: false,
+    },
+    [SupportedDex.Nile]: {
+      factoryAddress: '0xa29F3D5403D50Ea1BF597E2Ef01791A1Ce4F544E',
+      depositGuard: {
+        address: '0x19227E17944FAF42419F019Dcc8762C400fE50A7',
         version: 2,
       },
       vaultDeployerAddress: '0x75178e0a2829B73E3AE4C21eE64F4B684085392a',
@@ -365,6 +383,18 @@ const addressConfig: Record<SupportedChainId, Config> = {
       },
       vaultDeployerAddress: '0x596643Ce4fe8b2e72F340584cec02Ab99dA866c1',
       isAlgebra: false,
+    },
+  },
+  [SupportedChainId.taiko]: {
+    [SupportedDex.Henjin]: {
+      factoryAddress: '0x9FAb4bdD4E05f5C023CCC85D2071b49791D7418F',
+      depositGuard: {
+        address: '0x2E76A8D053f839A04235341dF1f25235437fEDd6',
+        version: 2,
+      },
+      vaultDeployerAddress: '0xD639392f0fD8686E1739CE3E3174115e33E95a26',
+      isAlgebra: true,
+      ammVersion: 'algebraIntegral',
     },
   },
   [SupportedChainId.taiko_hekla]: {
