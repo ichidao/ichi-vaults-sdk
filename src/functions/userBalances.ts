@@ -20,12 +20,12 @@ import {
 } from '../types';
 import formatBigInt from '../utils/formatBigInt';
 // eslint-disable-next-line import/no-cycle
-import { getIchiVaultInfo, validateVaultData } from './vault';
+import { getChainByProvider, getIchiVaultInfo, validateVaultData } from './vault';
 import { getTokenDecimals, getTotalAmounts } from './totalBalances';
-import { graphUrls } from '../graphql/constants';
 import { UserBalancesQueryData } from '../types/vaultQueryData';
 import { userBalancesQuery } from '../graphql/queries';
 import parseBigInt from '../utils/parseBigInt';
+import getGraphUrls from '../utils/getGraphUrls';
 
 const promises: Record<string, Promise<any>> = {};
 
@@ -87,6 +87,22 @@ export async function getUserBalance(
     : _getUserBalance(accountAddress, vaultAddress, jsonProvider);
 }
 
+async function sendUserBalancesQueryRequest(
+  url: string,
+  accountAddress: string,
+  query: string,
+): Promise<UserBalancesQueryData['user']> {
+  return request<UserBalancesQueryData, { accountAddress: string }>(url, query, {
+    accountAddress: accountAddress.toLowerCase(),
+  }).then(({ user }) => user);
+}
+function storeResult(key: string, result: any) {
+  promises[key] = Promise.resolve(result);
+  setTimeout(() => {
+    delete promises[key];
+  }, 120000); // 120000 ms = 2 minutes
+}
+
 export async function getAllUserBalances(
   accountAddress: string,
   jsonProvider: JsonRpcProvider,
@@ -106,24 +122,31 @@ export async function getAllUserBalances(
   dex: SupportedDex,
   raw?: true,
 ) {
-  const { chainId } = await jsonProvider.getNetwork();
-  if (!Object.values(SupportedChainId).includes(chainId)) {
-    throw new Error(`Unsupported chainId: ${chainId ?? 'undefined'}`);
-  }
-  const url = graphUrls[chainId as SupportedChainId]![dex]?.url;
-  if (!url || url === 'none') throw new Error(`This function is unsupported for DEX ${dex} on chain ${chainId}`);
+  const { chainId } = await getChainByProvider(jsonProvider);
+  const { publishedUrl, url } = getGraphUrls(chainId, dex, true);
 
   let shares: UserBalanceInVault[];
   const key = `${chainId + accountAddress}-balances`;
   if (!Object.prototype.hasOwnProperty.call(promises, key)) {
-    promises[key] = request<UserBalancesQueryData, { accountAddress: string }>(url, userBalancesQuery, {
-      accountAddress: accountAddress.toLowerCase(),
-    })
-      .then(({ user }) => user)
-      .catch((err) => {
-        console.error(err);
-      })
-      .finally(() => setTimeout(() => delete promises[key], 2 * 60 * 100 /* 2 mins */));
+    try {
+      if (publishedUrl) {
+        const result = await sendUserBalancesQueryRequest(publishedUrl, accountAddress, userBalancesQuery);
+        storeResult(key, result);
+      } else {
+        throw new Error(`Published URL is invalid for dex ${dex} on chain ${chainId}`);
+      }
+    } catch (error) {
+      if (publishedUrl) {
+        console.error('Request to published graph URL failed:', error);
+      }
+      try {
+        const result = await sendUserBalancesQueryRequest(url, accountAddress, userBalancesQuery);
+        storeResult(key, result);
+      } catch (error2) {
+        console.error('Request to public graph URL failed:', error2);
+        throw new Error(`Could not get user balances for ${accountAddress} on chain ${chainId}`);
+      }
+    }
   }
 
   const balances = await promises[key];
@@ -231,24 +254,31 @@ export async function getAllUserAmounts(
   dex: SupportedDex,
   raw?: true,
 ) {
-  const { chainId } = await jsonProvider.getNetwork();
-  if (!Object.values(SupportedChainId).includes(chainId)) {
-    throw new Error(`Unsupported chainId: ${chainId}`);
-  }
-  const url = graphUrls[chainId as SupportedChainId]![dex]?.url;
-  if (!url || url === 'none') throw new Error(`This function is unsupported for DEX ${dex} on chain ${chainId}`);
+  const { chainId } = await getChainByProvider(jsonProvider);
+  const { publishedUrl, url } = getGraphUrls(chainId, dex, true);
 
   let shares: UserBalanceInVaultBN[];
   const key = `${chainId + accountAddress}-balances`;
   if (!Object.prototype.hasOwnProperty.call(promises, key)) {
-    promises[key] = request<UserBalancesQueryData, { accountAddress: string }>(url, userBalancesQuery, {
-      accountAddress: accountAddress.toLowerCase(),
-    })
-      .then(({ user }) => user)
-      .catch((err) => {
-        console.error(err);
-      })
-      .finally(() => setTimeout(() => delete promises[key], 2 * 60 * 100 /* 2 mins */));
+    try {
+      if (publishedUrl) {
+        const result = await sendUserBalancesQueryRequest(publishedUrl, accountAddress, userBalancesQuery);
+        storeResult(key, result);
+      } else {
+        throw new Error(`Published URL is invalid for dex ${dex} on chain ${chainId}`);
+      }
+    } catch (error) {
+      if (publishedUrl) {
+        console.error('Request to published graph URL failed:', error);
+      }
+      try {
+        const result = await sendUserBalancesQueryRequest(url, accountAddress, userBalancesQuery);
+        storeResult(key, result);
+      } catch (error2) {
+        console.error('Request to public graph URL failed:', error2);
+        throw new Error(`Could not get user balances for ${accountAddress} on chain ${chainId}`);
+      }
+    }
   }
 
   try {

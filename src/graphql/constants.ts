@@ -190,6 +190,12 @@ export const graphUrls: Record<SupportedChainId, dexGraph> = {
     },
   },
   [SupportedChainId.linea]: {
+    [SupportedDex.Linehub]: {
+      url: 'https://api.studio.thegraph.com/query/61136/linea-v1-linehub/version/latest',
+      publishedUrl:
+        'https://gateway-arbitrum.network.thegraph.com/api/[api-key]/subgraphs/id/GY8TjJW25MxkEPmJ399wBg8qdwUUmbULDAZFxqxWtDz3',
+      supportsCollectFees: true,
+    },
     [SupportedDex.Lynex]: {
       url: 'https://api.studio.thegraph.com/query/61136/linea-v1-lynex/version/latest',
       publishedUrl:
@@ -200,6 +206,12 @@ export const graphUrls: Record<SupportedChainId, dexGraph> = {
       url: 'https://api.studio.thegraph.com/query/61136/linea-v1-metavault/version/latest',
       publishedUrl:
         'https://gateway-arbitrum.network.thegraph.com/api/[api-key]/subgraphs/id/CW4wL8snqnUg7aZwvPFBuVJjmRRd7ukWZiFFxQ6qH4dG',
+      supportsCollectFees: true,
+    },
+    [SupportedDex.Nile]: {
+      url: 'https://api.studio.thegraph.com/query/61136/linea-v1-nile/version/latest',
+      publishedUrl:
+        'https://gateway-arbitrum.network.thegraph.com/api/[api-key]/subgraphs/id/DqGb2w82miUS3Npic8t7ijiHe7y1VgrigdMdv1D5Jknh',
       supportsCollectFees: true,
     },
     [SupportedDex.UniswapV3]: {
@@ -241,6 +253,14 @@ export const graphUrls: Record<SupportedChainId, dexGraph> = {
       url: 'https://api.studio.thegraph.com/query/61136/scroll-v1/version/latest',
       publishedUrl:
         'https://gateway-arbitrum.network.thegraph.com/api/[api-key]/subgraphs/id/7BxUZZoz7ngExxf9C7Hzohxu3MBxpjJvYA8ThJhe8Snt',
+      supportsCollectFees: true,
+    },
+  },
+  [SupportedChainId.taiko]: {
+    [SupportedDex.Henjin]: {
+      url: 'https://api.goldsky.com/api/public/project_clvwe2yydw1n701uh6yple20i/subgraphs/henjindex-ichi-subgraph/1.0.0/gn',
+      publishedUrl:
+        'https://api.goldsky.com/api/public/project_clvwe2yydw1n701uh6yple20i/subgraphs/henjindex-ichi-subgraph/1.0.0/gn',
       supportsCollectFees: true,
     },
   },
