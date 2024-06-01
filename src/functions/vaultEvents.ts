@@ -15,7 +15,7 @@ import {
 import { graphUrls } from '../graphql/constants';
 import { rebalancesQuery, vaultCollectFeesQuery, vaultDepositsQuery, vaultWithdrawsQuery } from '../graphql/queries';
 import { daysToMilliseconds } from '../utils/timestamps';
-import { getIchiVaultInfo, validateVaultData } from './vault';
+import { validateVaultData } from './vault';
 import getGraphUrls from '../utils/getGraphUrls';
 
 const promises: Record<string, Promise<any>> = {};
@@ -30,6 +30,39 @@ async function sendRebalancesQueryRequest(
     vaultAddress,
     createdAtTimestamp_gt,
   }).then(({ vaultRebalances }) => vaultRebalances);
+}
+async function sendCollectFeesQueryRequest(
+  url: string,
+  vaultAddress: string,
+  createdAtTimestamp_gt: string,
+  query: string,
+): Promise<CollectFeesQueryData['vaultCollectFees']> {
+  return request<CollectFeesQueryData, { vaultAddress: string; createdAtTimestamp_gt: string }>(url, query, {
+    vaultAddress,
+    createdAtTimestamp_gt,
+  }).then(({ vaultCollectFees }) => vaultCollectFees);
+}
+async function sendDepositsQueryRequest(
+  url: string,
+  vaultAddress: string,
+  createdAtTimestamp_gt: string,
+  query: string,
+): Promise<VaultDepositsQueryData['vaultDeposits']> {
+  return request<VaultDepositsQueryData, { vaultAddress: string; createdAtTimestamp_gt: string }>(url, query, {
+    vaultAddress,
+    createdAtTimestamp_gt,
+  }).then(({ vaultDeposits }) => vaultDeposits);
+}
+async function sendWithdrawsQueryRequest(
+  url: string,
+  vaultAddress: string,
+  createdAtTimestamp_gt: string,
+  query: string,
+): Promise<VaultWithdrawsQueryData['vaultWithdraws']> {
+  return request<VaultWithdrawsQueryData, { vaultAddress: string; createdAtTimestamp_gt: string }>(url, query, {
+    vaultAddress,
+    createdAtTimestamp_gt,
+  }).then(({ vaultWithdraws }) => vaultWithdraws);
 }
 function storeResult(key: string, result: any) {
   promises[key] = Promise.resolve(result);
@@ -64,7 +97,6 @@ export async function getRebalances(
     try {
       if (publishedUrl) {
         result = await sendRebalancesQueryRequest(publishedUrl, vaultAddress, startTimestamp, rebalancesQuery(page));
-        storeResult(key, result);
       } else {
         throw new Error(`Published URL is invalid for dex ${dex} on chain ${chainId}`);
       }
@@ -74,7 +106,6 @@ export async function getRebalances(
       }
       try {
         result = await sendRebalancesQueryRequest(url, vaultAddress, startTimestamp, rebalancesQuery(page));
-        storeResult(key, result);
       } catch (error2) {
         console.error('Request to public graph URL failed:', error2);
         throw new Error(`Could not get rebalances for vault ${vaultAddress} on chain ${chainId}`);
@@ -90,10 +121,7 @@ export async function getRebalances(
       endOfData = true;
     }
   }
-
-  promises[key] = new Promise((resolve) => resolve(rebalances)).finally(() =>
-    setTimeout(() => delete promises[key], 2 * 60 * 100 /* 2 mins */),
-  );
+  storeResult(key, rebalances);
 
   return rebalances;
 }
@@ -104,20 +132,18 @@ export async function getFeesCollectedEvents(
   dex: SupportedDex,
   days?: number,
 ): Promise<Fees[]> {
-  const { chainId } = await jsonProvider.getNetwork();
-  if (!Object.values(SupportedChainId).includes(chainId)) {
-    throw new Error(`Unsupported chainId: ${chainId ?? 'undefined'}`);
-  }
+  const { chainId } = await validateVaultData(vaultAddress, jsonProvider, dex);
 
   const key = `${chainId + vaultAddress + days}-collect-fees`;
   if (Object.prototype.hasOwnProperty.call(promises, key)) return promises[key];
 
-  const url = graphUrls[chainId as SupportedChainId]![dex]?.url;
-  if (!url) throw new Error(`Unsupported DEX ${dex} on chain ${chainId}`);
-  if (url === 'none') throw new Error(`Function not available for DEX ${dex} on chain ${chainId}`);
+  const { publishedUrl, url } = getGraphUrls(chainId, dex, true);
+
   const supportsCollectFees = graphUrls[chainId as SupportedChainId]![dex]?.supportsCollectFees;
   if (!supportsCollectFees) {
-    return [] as unknown as Promise<Fees[]>;
+    const result = [] as unknown as Promise<Fees[]>;
+    storeResult(key, result);
+    return result;
   }
 
   const currTimestamp = Date.now();
@@ -125,41 +151,46 @@ export async function getFeesCollectedEvents(
     ? parseInt(((currTimestamp - daysToMilliseconds(days)) / 1000).toString()).toString()
     : '0';
 
-  if (url === 'none' && jsonProvider) {
-    throw new Error(`Unsupported function for DEX ${dex} on chain ${chainId}`);
-  } else {
-    const otherFees = [] as Fees[];
-    let endOfData = false;
-    let page = 0;
-    while (!endOfData) {
-      const result = await request<CollectFeesQueryData, { vaultAddress: string; createdAtTimestamp_gt: string }>(
-        url,
-        vaultCollectFeesQuery(page),
-        {
+  const otherFees = [] as Fees[];
+  let endOfData = false;
+  let page = 0;
+  while (!endOfData) {
+    let result;
+    try {
+      if (publishedUrl) {
+        result = await sendCollectFeesQueryRequest(
+          publishedUrl,
           vaultAddress,
-          createdAtTimestamp_gt: startTimestamp,
-        },
-      )
-        .then(({ vaultCollectFees }) => vaultCollectFees)
-        .catch((err) => {
-          console.error(err);
-        });
-      if (result) {
-        otherFees.push(...result);
-        page += 1;
-        if (result.length < 1000) {
-          endOfData = true;
-        }
+          startTimestamp,
+          vaultCollectFeesQuery(page),
+        );
       } else {
-        endOfData = true;
+        throw new Error(`Published URL is invalid for dex ${dex} on chain ${chainId}`);
+      }
+    } catch (error) {
+      if (publishedUrl) {
+        console.error('Request to published graph URL failed:', error);
+      }
+      try {
+        result = await sendCollectFeesQueryRequest(url, vaultAddress, startTimestamp, vaultCollectFeesQuery(page));
+      } catch (error2) {
+        console.error('Request to public graph URL failed:', error2);
+        throw new Error(`Could not get collected fees for vault ${vaultAddress} on chain ${chainId}`);
       }
     }
-    promises[key] = new Promise((resolve) => resolve(otherFees)).finally(() =>
-      setTimeout(() => delete promises[key], 2 * 60 * 100 /* 2 mins */),
-    );
-
-    return otherFees;
+    if (result) {
+      otherFees.push(...result);
+      page += 1;
+      if (result.length < 1000) {
+        endOfData = true;
+      }
+    } else {
+      endOfData = true;
+    }
   }
+  storeResult(key, otherFees);
+
+  return otherFees;
 }
 
 export async function getDeposits(
@@ -168,59 +199,53 @@ export async function getDeposits(
   dex: SupportedDex,
   days?: number,
 ): Promise<VaultTransactionEvent[]> {
-  const { chainId } = await jsonProvider.getNetwork();
-  if (!Object.values(SupportedChainId).includes(chainId)) {
-    throw new Error(`Unsupported chainId: ${chainId ?? 'undefined'}`);
-  }
+  const { chainId } = await validateVaultData(vaultAddress, jsonProvider, dex);
 
   const key = `${chainId + vaultAddress + days}-deposits`;
   if (Object.prototype.hasOwnProperty.call(promises, key)) return promises[key];
 
-  const url = graphUrls[chainId as SupportedChainId]![dex]?.url;
-  if (!url) throw new Error(`Unsupported DEX ${dex} on chain ${chainId}`);
-  if (url === 'none') throw new Error(`Function not available for DEX ${dex} on chain ${chainId}`);
+  const { publishedUrl, url } = getGraphUrls(chainId, dex, true);
 
   const currTimestamp = Date.now();
   const startTimestamp = days
     ? parseInt(((currTimestamp - daysToMilliseconds(days)) / 1000).toString()).toString()
     : '0';
 
-  if (url === 'none' && jsonProvider) {
-    throw new Error(`Unsupported function for DEX ${dex} on chain ${chainId}`);
-  } else {
-    const depositEvents = [] as VaultTransactionEvent[];
-    let endOfData = false;
-    let page = 0;
-    while (!endOfData) {
-      const result = await request<VaultDepositsQueryData, { vaultAddress: string; createdAtTimestamp_gt: string }>(
-        url,
-        vaultDepositsQuery(page),
-        {
-          vaultAddress,
-          createdAtTimestamp_gt: startTimestamp,
-        },
-      )
-        .then(({ vaultDeposits }) => vaultDeposits)
-        .catch((err) => {
-          console.error(err);
-        });
-      if (result) {
-        depositEvents.push(...result);
-        page += 1;
-        if (result.length < 1000) {
-          endOfData = true;
-        }
+  const depositEvents = [] as VaultTransactionEvent[];
+  let endOfData = false;
+  let page = 0;
+  while (!endOfData) {
+    let result;
+    try {
+      if (publishedUrl) {
+        result = await sendDepositsQueryRequest(publishedUrl, vaultAddress, startTimestamp, vaultDepositsQuery(page));
       } else {
-        endOfData = true;
+        throw new Error(`Published URL is invalid for dex ${dex} on chain ${chainId}`);
+      }
+    } catch (error) {
+      if (publishedUrl) {
+        console.error('Request to published graph URL failed:', error);
+      }
+      try {
+        result = await sendDepositsQueryRequest(url, vaultAddress, startTimestamp, vaultDepositsQuery(page));
+      } catch (error2) {
+        console.error('Request to public graph URL failed:', error2);
+        throw new Error(`Could not get deposits for vault ${vaultAddress} on chain ${chainId}`);
       }
     }
-
-    promises[key] = new Promise((resolve) => resolve(depositEvents)).finally(() =>
-      setTimeout(() => delete promises[key], 2 * 60 * 100 /* 2 mins */),
-    );
-
-    return depositEvents;
+    if (result) {
+      depositEvents.push(...result);
+      page += 1;
+      if (result.length < 1000) {
+        endOfData = true;
+      }
+    } else {
+      endOfData = true;
+    }
   }
+  storeResult(key, depositEvents);
+
+  return depositEvents;
 }
 
 export async function getWithdraws(
@@ -229,59 +254,53 @@ export async function getWithdraws(
   dex: SupportedDex,
   days?: number,
 ): Promise<VaultTransactionEvent[]> {
-  const { chainId } = await jsonProvider.getNetwork();
-  if (!Object.values(SupportedChainId).includes(chainId)) {
-    throw new Error(`Unsupported chainId: ${chainId ?? 'undefined'}`);
-  }
+  const { chainId } = await validateVaultData(vaultAddress, jsonProvider, dex);
 
   const key = `${chainId + vaultAddress + days}-withdraws`;
   if (Object.prototype.hasOwnProperty.call(promises, key)) return promises[key];
 
-  const url = graphUrls[chainId as SupportedChainId]![dex]?.url;
-  if (!url) throw new Error(`Unsupported DEX ${dex} on chain ${chainId}`);
-  if (url === 'none') throw new Error(`Function not available for DEX ${dex} on chain ${chainId}`);
+  const { publishedUrl, url } = getGraphUrls(chainId, dex, true);
 
   const currTimestamp = Date.now();
   const startTimestamp = days
     ? parseInt(((currTimestamp - daysToMilliseconds(days)) / 1000).toString()).toString()
     : '0';
 
-  if (url === 'none' && jsonProvider) {
-    throw new Error(`Unsupported function for DEX ${dex} on chain ${chainId}`);
-  } else {
-    const withdrawEvents = [] as VaultTransactionEvent[];
-    let endOfData = false;
-    let page = 0;
-    while (!endOfData) {
-      const result = await request<VaultWithdrawsQueryData, { vaultAddress: string; createdAtTimestamp_gt: string }>(
-        url,
-        vaultWithdrawsQuery(page),
-        {
-          vaultAddress,
-          createdAtTimestamp_gt: startTimestamp,
-        },
-      )
-        .then(({ vaultWithdraws }) => vaultWithdraws)
-        .catch((err) => {
-          console.error(err);
-        });
-      if (result) {
-        withdrawEvents.push(...result);
-        page += 1;
-        if (result.length < 1000) {
-          endOfData = true;
-        }
+  const withdrawEvents = [] as VaultTransactionEvent[];
+  let endOfData = false;
+  let page = 0;
+  while (!endOfData) {
+    let result;
+    try {
+      if (publishedUrl) {
+        result = await sendWithdrawsQueryRequest(publishedUrl, vaultAddress, startTimestamp, vaultWithdrawsQuery(page));
       } else {
-        endOfData = true;
+        throw new Error(`Published URL is invalid for dex ${dex} on chain ${chainId}`);
+      }
+    } catch (error) {
+      if (publishedUrl) {
+        console.error('Request to published graph URL failed:', error);
+      }
+      try {
+        result = await sendWithdrawsQueryRequest(url, vaultAddress, startTimestamp, vaultWithdrawsQuery(page));
+      } catch (error2) {
+        console.error('Request to public graph URL failed:', error2);
+        throw new Error(`Could not get withdraws for vault ${vaultAddress} on chain ${chainId}`);
       }
     }
-
-    promises[key] = new Promise((resolve) => resolve(withdrawEvents)).finally(() =>
-      setTimeout(() => delete promises[key], 2 * 60 * 100 /* 2 mins */),
-    );
-
-    return withdrawEvents;
+    if (result) {
+      withdrawEvents.push(...result);
+      page += 1;
+      if (result.length < 1000) {
+        endOfData = true;
+      }
+    } else {
+      endOfData = true;
+    }
   }
+  storeResult(key, withdrawEvents);
+
+  return withdrawEvents;
 }
 
 export async function getAllVaultEvents(
@@ -289,14 +308,10 @@ export async function getAllVaultEvents(
   jsonProvider: JsonRpcProvider,
   dex: SupportedDex,
 ): Promise<VaultState[]> {
-  const { chainId } = await jsonProvider.getNetwork();
+  const { chainId } = await validateVaultData(vaultAddress, jsonProvider, dex);
 
-  if (!Object.values(SupportedChainId).includes(chainId)) {
-    throw new Error(`Unsupported chainId: ${chainId ?? 'undefined'}`);
-  }
-
-  const vault = await getIchiVaultInfo(chainId, dex, vaultAddress, jsonProvider);
-  if (!vault) throw new Error(`Vault ${vaultAddress} not found on chain ${chainId} and dex ${dex}`);
+  const key = `${chainId + vaultAddress}-all-events`;
+  if (Object.prototype.hasOwnProperty.call(promises, key)) return promises[key];
 
   const rebalances = (await getRebalances(vaultAddress, jsonProvider, dex)) as VaultState[];
   if (!rebalances) throw new Error(`Error getting vault rebalances on ${chainId} for ${vaultAddress}`);
@@ -310,6 +325,7 @@ export async function getAllVaultEvents(
   const result = [...deposits, ...withdraws, ...rebalances, ...collectedFees].sort(
     (a, b) => Number(b.createdAtTimestamp) - Number(a.createdAtTimestamp), // recent events first
   );
+  storeResult(key, result);
 
   return result;
 }
