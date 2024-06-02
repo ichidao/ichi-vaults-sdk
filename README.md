@@ -7,6 +7,7 @@ This sdk contains collection of functions to interact with IchiVault's smart con
 ## Table of Contents
 
 * [__Installation__](#Installation)
+* [__Subgraphs__](#Subgraphs)
 * [__Usage__](#Usage)
      * [__Vault Functions__](#Vault)
         * [`approveDepositToken()`](#1-approveDepositToken)
@@ -47,6 +48,9 @@ npm install @ichidao/ichi-vaults-sdk
 ```
 
 ## Usage
+### Subgraphs
+This SDK uses subgraphs to obtain information about ICHI vaults. The subgraphs are deployed in the Subgraph Studio and published on Arbitrum One. If you prefer to use published subgraphs, you need to add your [subgraph API key](https://thegraph.com/studio/apikeys/) to the SUBGRAPH_API_KEY environment variable. Otherwise, the SDK will use the subgraph's Studio endpoint.
+
 ### Vault
 
 #### 1. `approveDepositToken()`

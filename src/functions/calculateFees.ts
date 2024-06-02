@@ -3,9 +3,9 @@
 
 import { JsonRpcProvider } from '@ethersproject/providers';
 import { BigNumber } from '@ethersproject/bignumber';
-import { Fees, FeesInfo, SupportedChainId, SupportedDex, TotalAmounts, TotalAmountsBN, VaultState } from '../types';
+import { Fees, FeesInfo, SupportedDex, TotalAmounts, TotalAmountsBN, VaultState } from '../types';
 // eslint-disable-next-line import/no-cycle
-import { getIchiVaultInfo } from './vault';
+import { validateVaultData } from './vault';
 import { getFeesCollectedEvents, getRebalances } from './vaultEvents';
 import { getTokenDecimals } from './totalBalances';
 import formatBigInt from '../utils/formatBigInt';
@@ -13,7 +13,7 @@ import { daysToMilliseconds } from '../utils/timestamps';
 import { isTokenAllowed } from './deposit';
 import getPrice from '../utils/getPrice';
 import { getVaultTvl } from './priceFromPool';
-import { graphUrls } from '../graphql/constants';
+import getGraphUrls from '../utils/getGraphUrls';
 
 function getCollectedTokenAmountBN(ind: 0 | 1, feesDataset: Fees[]): BigNumber {
   const amounts =
@@ -93,17 +93,8 @@ export async function getFeesCollected(
   rawOrDays?: true | number,
   days?: number,
 ): Promise<TotalAmounts | TotalAmountsBN> {
-  const { chainId } = await jsonProvider.getNetwork();
-
-  if (!Object.values(SupportedChainId).includes(chainId)) {
-    throw new Error(`Unsupported chainId: ${chainId ?? 'undefined'}`);
-  }
-
-  const vault = await getIchiVaultInfo(chainId, dex, vaultAddress, jsonProvider);
-  if (!vault) throw new Error(`Vault ${vaultAddress} not found on chain ${chainId} and dex ${dex}`);
-  const url = graphUrls[chainId as SupportedChainId]![dex]?.url;
-  if (!url) throw new Error(`Unsupported DEX ${dex} on chain ${chainId}`);
-  if (url === 'none') throw new Error(`Function not available for DEX ${dex} on chain ${chainId}`);
+  const { chainId, vault } = await validateVaultData(vaultAddress, jsonProvider, dex);
+  getGraphUrls(chainId, dex, true);
 
   const token0Decimals = await getTokenDecimals(vault.tokenA, jsonProvider);
   const token1Decimals = await getTokenDecimals(vault.tokenB, jsonProvider);
@@ -144,17 +135,8 @@ export async function getFeesCollectedInfo(
   dex: SupportedDex,
   forDays?: number[],
 ): Promise<FeesInfo[]> {
-  const { chainId } = await jsonProvider.getNetwork();
-
-  if (!Object.values(SupportedChainId).includes(chainId)) {
-    throw new Error(`Unsupported chainId: ${chainId ?? 'undefined'}`);
-  }
-
-  const vault = await getIchiVaultInfo(chainId, dex, vaultAddress, jsonProvider);
-  if (!vault) throw new Error(`Vault ${vaultAddress} not found on chain ${chainId} and dex ${dex}`);
-  const url = graphUrls[chainId as SupportedChainId]![dex]?.url;
-  if (!url) throw new Error(`Unsupported DEX ${dex} on chain ${chainId}`);
-  if (url === 'none') throw new Error(`Function not available for DEX ${dex} on chain ${chainId}`);
+  const { chainId, vault } = await validateVaultData(vaultAddress, jsonProvider, dex);
+  getGraphUrls(chainId, dex, true);
 
   const token0Decimals = await getTokenDecimals(vault.tokenA, jsonProvider);
   const token1Decimals = await getTokenDecimals(vault.tokenB, jsonProvider);

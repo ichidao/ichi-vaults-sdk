@@ -29,7 +29,7 @@ import addressConfig from '../utils/config/addresses';
 import { getAverageDtr, getDtrAtFeeCollectionEvent, getDtrAtTransactionEvent } from './calculateDtr';
 import { getTotalFeesAmountInBaseTokens } from './calculateFees';
 import { getLpPriceAt } from './calculateApr';
-import { graphUrls } from '../graphql/constants';
+import getGraphUrls from '../utils/getGraphUrls';
 
 export async function getVaultMetrics(
   vaultAddress: string,
@@ -38,9 +38,7 @@ export async function getVaultMetrics(
   timeIntervals?: number[],
 ): Promise<(VaultMetrics | null)[]> {
   const { chainId, vault } = await validateVaultData(vaultAddress, jsonProvider, dex);
-  const url = graphUrls[chainId as SupportedChainId]![dex]?.url;
-  if (!url) throw new Error(`Unsupported DEX ${dex} on chain ${chainId}`);
-  if (url === 'none') throw new Error(`Function not available for DEX ${dex} on chain ${chainId}`);
+  getGraphUrls(chainId, dex, true);
 
   const decimals0 = await getTokenDecimals(vault.tokenA, jsonProvider);
   const decimals1 = await getTokenDecimals(vault.tokenB, jsonProvider);
