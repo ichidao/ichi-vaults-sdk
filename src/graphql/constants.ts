@@ -258,9 +258,9 @@ export const graphUrls: Record<SupportedChainId, dexGraph> = {
   },
   [SupportedChainId.taiko]: {
     [SupportedDex.Henjin]: {
-      url: 'https://api.goldsky.com/api/public/project_clvwe2yydw1n701uh6yple20i/subgraphs/henjindex-ichi-subgraph/1.0.0/gn',
+      url: 'https://api.goldsky.com/api/public/project_clvwe2yydw1n701uh6yple20i/subgraphs/henjin-ichi/1.0.0/gn',
       publishedUrl:
-        'https://api.goldsky.com/api/public/project_clvwe2yydw1n701uh6yple20i/subgraphs/henjindex-ichi-subgraph/1.0.0/gn',
+        'https://api.goldsky.com/api/public/project_clvwe2yydw1n701uh6yple20i/subgraphs/henjin-ichi/1.0.0/gn',
       supportsCollectFees: true,
     },
   },
