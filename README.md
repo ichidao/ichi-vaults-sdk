@@ -1043,6 +1043,7 @@ enum SupportedChainId {
   eon = 7332,
   evmos = 9001,
   fantom = 250,
+  fuse = 122,
   hedera_testnet = 296,
   kava = 2222,
   linea = 59144,
@@ -1051,6 +1052,7 @@ enum SupportedChainId {
   polygon = 137,
   polygon_zkevm = 1101,
   scroll = 534352,
+  skale_europa = 2046399126,
   taiko = 167000,
   taiko_hekla = 167009,
   x_layer_testnet = 195,
@@ -1084,8 +1086,10 @@ enum SupportedDex {
   Sushiswap = 'SushiSwap',
   Thena = 'Thena',
   Thirdfy = 'Thirdfy',
+  Thruster = 'Thruster',
   UniswapV3 = 'Uniswap V3',
   Velocore = 'Velocore',
+  Voltage = 'Voltage',
   XSwap = 'XSwap',
 }
 ```
