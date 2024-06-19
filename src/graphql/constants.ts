@@ -102,6 +102,12 @@ export const graphUrls: Record<SupportedChainId, dexGraph> = {
         'https://gateway-arbitrum.network.thegraph.com/api/[api-key]/subgraphs/id/2cJiB62w497AptncjaPsm51YHtykmEzo3191Ar2iTTB2',
       supportsCollectFees: true,
     },
+    [SupportedDex.Thruster]: {
+      url: 'https://api.studio.thegraph.com/query/61136/blast-v1-thruster/version/latest',
+      publishedUrl:
+        'https://gateway-arbitrum.network.thegraph.com/api/[api-key]/subgraphs/id/H1oJS2d8WQ9Vi1vDJ6HGGd2D2aMy6Kc1yNaTCaKbTQCa',
+      supportsCollectFees: true,
+    },
     [SupportedDex.UniswapV3]: {
       url: 'https://api.studio.thegraph.com/query/61136/blast-v1/version/latest',
       publishedUrl:
@@ -169,6 +175,14 @@ export const graphUrls: Record<SupportedChainId, dexGraph> = {
       url: 'https://api.studio.thegraph.com/query/61136/fantom-v1-spiritswap/version/latest',
       publishedUrl:
         'https://gateway-arbitrum.network.thegraph.com/api/[api-key]/subgraphs/id/HNGwhhSx8VvADhcUaQ6vpTSfdPaeLTxZjgf5BWR2oGhS',
+      supportsCollectFees: true,
+    },
+  },
+  [SupportedChainId.fuse]: {
+    [SupportedDex.Voltage]: {
+      url: 'https://api.studio.thegraph.com/query/61136/fuse-v1-voltage/version/latest',
+      publishedUrl: 
+        'https://gateway-arbitrum.network.thegraph.com/api/[api-key]/subgraphs/id/A27v7wyriyz87hEM6bpJBCTR2gZMA5mZsJH8WbCZWbWU',
       supportsCollectFees: true,
     },
   },
@@ -253,6 +267,14 @@ export const graphUrls: Record<SupportedChainId, dexGraph> = {
       url: 'https://api.studio.thegraph.com/query/61136/scroll-v1/version/latest',
       publishedUrl:
         'https://gateway-arbitrum.network.thegraph.com/api/[api-key]/subgraphs/id/7BxUZZoz7ngExxf9C7Hzohxu3MBxpjJvYA8ThJhe8Snt',
+      supportsCollectFees: true,
+    },
+  },
+  [SupportedChainId.skale_europa]: {
+    [SupportedDex.Sushiswap]: {
+      url: 'https://elated-tan-skat-graph.skalenodes.com:8000/subgraphs/name/ichi-org/skale-europa-v1-sushiswap',
+      publishedUrl: 
+        'https://elated-tan-skat-graph.skalenodes.com:8000/subgraphs/name/ichi-org/skale-europa-v1-sushiswap',
       supportsCollectFees: true,
     },
   },

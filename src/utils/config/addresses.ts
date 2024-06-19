@@ -149,6 +149,15 @@ const addressConfig: Record<SupportedChainId, Config> = {
       isAlgebra: true,
       ammVersion: 'algebraIntegral',
     },
+    [SupportedDex.Thruster]: {
+      factoryAddress: '0x2145B1CCe3A13AF4fBB14131f1F480fc121EAD93',
+      depositGuard: {
+        address: '0x8346A803e1754f9d4c6935aee1fd864Ff15955F1',
+        version: 2,
+      },
+      vaultDeployerAddress: '0xaD7cf2b8ce5eB8b75dA393fc164C4F4502761379',
+      isAlgebra: false,
+    },
     [SupportedDex.UniswapV3]: {
       factoryAddress: '0x9FAb4bdD4E05f5C023CCC85D2071b49791D7418F',
       depositGuard: {
@@ -252,6 +261,17 @@ const addressConfig: Record<SupportedChainId, Config> = {
       vaultDeployerAddress: '0xE495eFdf1d19668a27042D30ee22AC3C58b6fB6c',
       isAlgebra: true,
       ammVersion: 'algebraIntegral',
+    },
+  },
+  [SupportedChainId.fuse]: {
+    [SupportedDex.Voltage]: {
+      factoryAddress: '0xfBf38920cCbCFF7268Ad714ae5F9Fad6dF607065',
+      depositGuard: {
+        address: '0xADDA3A15EA71c223a82Af86d4578EF2B076035F1',
+        version: 2,
+      },
+      vaultDeployerAddress: '0x9f99f94B6AF33a04684Ab3c9578608a2Ae1706AA',
+      isAlgebra: false,
     },
   },
   // [SupportedChainId.hedera]: {
@@ -382,6 +402,17 @@ const addressConfig: Record<SupportedChainId, Config> = {
         version: 2,
       },
       vaultDeployerAddress: '0x596643Ce4fe8b2e72F340584cec02Ab99dA866c1',
+      isAlgebra: false,
+    },
+  },
+  [SupportedChainId.skale_europa]: {
+    [SupportedDex.Sushiswap]: {
+      factoryAddress: '0x1B0ef045830466171D617dD0F1142aD699A4Cd63',
+      depositGuard: {
+        address: '0x860F3881aCBbF05D48a324C5b8ca9004D31A146C',
+        version: 2,
+      },
+      vaultDeployerAddress: '0xED0A10A7db58d9dB23DDfB7EEbFE1Fe863ef67aA',
       isAlgebra: false,
     },
   },
