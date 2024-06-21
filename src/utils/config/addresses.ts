@@ -137,6 +137,15 @@ const addressConfig: Record<SupportedChainId, Config> = {
       vaultDeployerAddress: '0x7d11De61c219b70428Bb3199F0DD88bA9E76bfEE',
       isAlgebra: false,
     },
+    [SupportedDex.UniswapV3]: {
+      factoryAddress: '0xaBe5B5AC472Ead17B4B4CaC7fAF42430748ab3b3',
+      depositGuard: {
+        address: '0xe2381b5AFae99B899596Bc550184a080dAa31F26',
+        version: 2,
+      },
+      vaultDeployerAddress: '0x7d11De61c219b70428Bb3199F0DD88bA9E76bfEE',
+      isAlgebra: false,
+    },
   },
   [SupportedChainId.blast]: {
     [SupportedDex.Fenix]: {
