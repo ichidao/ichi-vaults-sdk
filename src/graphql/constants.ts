@@ -94,6 +94,12 @@ export const graphUrls: Record<SupportedChainId, dexGraph> = {
         'https://gateway-arbitrum.network.thegraph.com/api/[api-key]/subgraphs/id/5H2HuQKBjXaSVTmWVYagNitiuDy7v84iXC7sqqk2P5sH',
       supportsCollectFees: true,
     },
+    [SupportedDex.UniswapV3]: {
+      url: 'https://api.studio.thegraph.com/query/61136/base-v1/version/latest',
+      publishedUrl:
+        'https://gateway-arbitrum.network.thegraph.com/api/[api-key]/subgraphs/id/E66SfL5gTo58uLatLmd5PqL2PB7QK7ZW1JnGqx7BPsGd',
+      supportsCollectFees: true,
+    },
   },
   [SupportedChainId.blast]: {
     [SupportedDex.Fenix]: {

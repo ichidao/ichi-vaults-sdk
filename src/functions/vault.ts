@@ -8,6 +8,7 @@ import { getIchiVaultContract } from '../contracts';
 import { vaultByPoolQuery, vaultByTokensQuery, vaultQuery, vaultQueryAlgebra } from '../graphql/queries';
 import getGraphUrls from '../utils/getGraphUrls';
 import addressConfig from '../utils/config/addresses';
+import cache from '../utils/cache';
 
 const promises: Record<string, Promise<any>> = {};
 
@@ -53,12 +54,6 @@ async function sendVaultsByPoolQueryRequest(url: string, poolAddress: string, qu
     poolAddress: poolAddress.toLowerCase(),
   }).then(({ deployICHIVaults }) => deployICHIVaults);
 }
-function storeResult(key: string, result: any) {
-  promises[key] = Promise.resolve(result);
-  setTimeout(() => {
-    delete promises[key];
-  }, 120000); // 120000 ms = 2 minutes
-}
 
 export async function getIchiVaultInfo(
   chainId: SupportedChainId,
@@ -66,22 +61,24 @@ export async function getIchiVaultInfo(
   vaultAddress: string,
   jsonProvider?: JsonRpcProvider,
 ): Promise<IchiVault> {
-  const key = `${chainId + vaultAddress}-info`;
-
-  if (Object.prototype.hasOwnProperty.call(promises, key)) {
-    return promises[key];
+  const key = `vault-${chainId}-${vaultAddress}`;
+  const ttl = 2*24*60*60*1000;
+  const cachedData = cache.get(key);
+  if (cachedData) {
+    return cachedData as IchiVault;
   }
+
   const { url, publishedUrl } = getGraphUrls(chainId, dex);
   const thisQuery = addressConfig[chainId][dex]?.isAlgebra ? vaultQueryAlgebra : vaultQuery;
   if (url === 'none' && jsonProvider) {
     const result = await getVaultInfoFromContract(vaultAddress, jsonProvider);
-    storeResult(key, result);
+    cache.set(key, result, ttl);
     return result;
   }
   try {
     if (publishedUrl) {
       const result = await sendVaultQueryRequest(publishedUrl, vaultAddress, thisQuery);
-      storeResult(key, result);
+      cache.set(key, result, ttl);
       return result;
     }
     throw new Error(`Published URL is invalid for ${vaultAddress}`);
@@ -91,17 +88,55 @@ export async function getIchiVaultInfo(
     }
     try {
       const result = await sendVaultQueryRequest(url, vaultAddress, thisQuery);
-      storeResult(key, result);
+      cache.set(key, result, ttl);
       return result;
     } catch (error2) {
       console.error('Request to public graph URL failed:', error2);
       if (jsonProvider) {
         const result = await getVaultInfoFromContract(vaultAddress, jsonProvider);
-        storeResult(key, result);
+        cache.set(key, result, ttl);
         return result;
       } else {
         throw new Error(`Could not get vault info for ${vaultAddress}`);
       }
+    }
+  }
+}
+
+async function getVaultsByTokensAB(
+  chainId: SupportedChainId,
+  dex: SupportedDex,
+  tokenA: string,
+  tokenB: string,
+): Promise<VaultsByTokensQueryData['ichiVaults']> {
+  const key = `vaultByTokens-${chainId}-${tokenA}-${tokenB}`;
+  const cachedData = cache.get(key);
+  if (cachedData) {
+    return cachedData as VaultsByTokensQueryData['ichiVaults'];
+  }
+
+  const ttl = 3600000;
+  const { url, publishedUrl } = getGraphUrls(chainId, dex, true);
+
+  try {
+    if (publishedUrl) {
+      const result = await sendVaultsByTokensRequest(publishedUrl, tokenA, tokenB, vaultByTokensQuery);
+      cache.set(key, result, ttl);
+      return result;
+    } else {
+      throw new Error(`Published URL is invalid for dex ${dex} on chain ${chainId}`);
+    }
+  } catch (error) {
+    if (publishedUrl) {
+      console.error('Request to published graph URL failed:', error);
+    }
+    try {
+      const result = await sendVaultsByTokensRequest(url, tokenA, tokenB, vaultByTokensQuery);
+      cache.set(key, result, ttl);
+      return result;
+    } catch (error2) {
+      console.error('Request to public graph URL failed:', error2);
+      throw new Error(`Could not get vaults by tokens, dex ${dex} on chain ${chainId}`);
     }
   }
 }
@@ -112,63 +147,12 @@ export async function getVaultsByTokens(
   depositTokenAddress: string,
   pairedTokenAddress: string,
 ): Promise<VaultsByTokensQueryData['ichiVaults']> {
-  const { url, publishedUrl } = getGraphUrls(chainId, dex, true);
-
-  let addressTokenA = depositTokenAddress;
-  let addressTokenB = pairedTokenAddress;
-
-  const key1 = `${addressTokenA}-${addressTokenB}-${chainId}`;
-  if (!Object.prototype.hasOwnProperty.call(promises, key1)) {
-    try {
-      if (publishedUrl) {
-        const result = await sendVaultsByTokensRequest(publishedUrl, addressTokenA, addressTokenB, vaultByTokensQuery);
-        storeResult(key1, result);
-      } else {
-        throw new Error(`Published URL is invalid for dex ${dex} on chain ${chainId}`);
-      }
-    } catch (error) {
-      if (publishedUrl) {
-        console.error('Request to published graph URL failed:', error);
-      }
-      try {
-        const result = await sendVaultsByTokensRequest(url, addressTokenA, addressTokenB, vaultByTokensQuery);
-        storeResult(key1, result);
-      } catch (error2) {
-        console.error('Request to public graph URL failed:', error2);
-        throw new Error(`Could not get vaults by tokens, dex ${dex} on chain ${chainId}`);
-      }
-    }
-  }
-
-  const arrVaults1 = ((await promises[key1]) as IchiVault[]).filter((v) => v.allowTokenA);
-
-  addressTokenA = pairedTokenAddress;
-  addressTokenB = depositTokenAddress;
-
-  const key2 = `${addressTokenA}-${addressTokenB}-${chainId}`;
-  if (!Object.prototype.hasOwnProperty.call(promises, key2)) {
-    try {
-      if (publishedUrl) {
-        const result = await sendVaultsByTokensRequest(publishedUrl, addressTokenA, addressTokenB, vaultByTokensQuery);
-        storeResult(key2, result);
-      } else {
-        throw new Error(`Published URL is invalid for dex ${dex} on chain ${chainId}`);
-      }
-    } catch (error) {
-      if (publishedUrl) {
-        console.error('Request to published graph URL failed:', error);
-      }
-      try {
-        const result = await sendVaultsByTokensRequest(url, addressTokenA, addressTokenB, vaultByTokensQuery);
-        storeResult(key2, result);
-      } catch (error2) {
-        console.error('Request to public graph URL failed:', error2);
-        throw new Error(`Could not get vaults by tokens, dex ${dex} on chain ${chainId}`);
-      }
-    }
-  }
-
-  const arrVaults2 = ((await promises[key2]) as IchiVault[]).filter((v) => v.allowTokenB);
+  const arrVaults1 = (await getVaultsByTokensAB(chainId, dex, depositTokenAddress, pairedTokenAddress)).filter(
+    (v) => v.allowTokenA,
+  );
+  const arrVaults2 = (await getVaultsByTokensAB(chainId, dex, pairedTokenAddress, depositTokenAddress)).filter(
+    (v) => v.allowTokenB,
+  );
 
   // eslint-disable-next-line no-return-await
   return [...arrVaults1, ...arrVaults2];
@@ -179,15 +163,19 @@ export async function getVaultsByPool(
   chainId: SupportedChainId,
   dex: SupportedDex,
 ): Promise<VaultsByPoolQueryData['deployICHIVaults']> {
-  const { url, publishedUrl } = getGraphUrls(chainId, dex, true);
+  const key = `pool-${chainId}-${poolAddress}`;
+  const cachedData = cache.get(key);
+  if (cachedData) {
+    return cachedData as VaultsByPoolQueryData['deployICHIVaults'];
+  }
 
-  const key = `pool-${poolAddress}-${chainId}`;
-  if (Object.prototype.hasOwnProperty.call(promises, key)) return promises[key];
+  const { url, publishedUrl } = getGraphUrls(chainId, dex, true);
+  const ttl = 3600000;
 
   try {
     if (publishedUrl) {
       const result = await sendVaultsByPoolQueryRequest(publishedUrl, poolAddress, vaultByPoolQuery);
-      storeResult(key, result);
+      cache.set(key, result, ttl);
       return result;
     }
     throw new Error(`Published URL is invalid for dex ${dex} on chain ${chainId}`);
@@ -197,7 +185,7 @@ export async function getVaultsByPool(
     }
     try {
       const result = await sendVaultsByPoolQueryRequest(url, poolAddress, vaultByPoolQuery);
-      storeResult(key, result);
+      cache.set(key, result, ttl);
       return result;
     } catch (error2) {
       console.error('Request to public graph URL failed:', error2);
@@ -218,7 +206,6 @@ export async function validateVaultData(
   }
 
   const vault = await getIchiVaultInfo(chainId, dex, vaultAddress, jsonProvider);
-  if (!vault) throw new Error(`Vault ${vaultAddress} not found on chain ${chainId} and dex ${dex}`);
 
   return { chainId, vault };
 }
