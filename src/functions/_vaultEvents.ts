@@ -1,87 +1,109 @@
 /* eslint-disable camelcase */
 /* eslint-disable no-await-in-loop */
 /* eslint-disable radix */
+/* eslint-disable import/no-cycle */
 // eslint-disable-next-line import/no-unresolved
-import { request } from 'graphql-request';
-import { JsonRpcProvider } from '@ethersproject/providers';
 import { SupportedDex, SupportedChainId, Fees, VaultTransactionEvent, VaultState } from '../types';
-// eslint-disable-next-line import/no-cycle
-import {
-  CollectFeesQueryData,
-  RebalancesQueryData,
-  VaultDepositsQueryData,
-  VaultWithdrawsQueryData,
-} from '../types/vaultQueryData';
+// eslint-disable import/no-cycle
 import { graphUrls } from '../graphql/constants';
-import { rebalancesQuery, vaultCollectFeesQuery, vaultDepositsQuery, vaultWithdrawsQuery } from '../graphql/queries';
+import {
+  allEventsQuery,
+  rebalancesQuery,
+  vaultCollectFeesQuery,
+  vaultDepositsQuery,
+  vaultWithdrawsQuery,
+} from '../graphql/queries';
 import { daysToMilliseconds } from '../utils/timestamps';
-import { validateVaultData } from './vault';
 import getGraphUrls from '../utils/getGraphUrls';
+import cache from '../utils/cache';
+import {
+  sendAllEventsQueryRequest,
+  sendCollectFeesQueryRequest,
+  sendDepositsQueryRequest,
+  sendRebalancesQueryRequest,
+  sendWithdrawsQueryRequest,
+} from '../graphql/functions';
 
-const promises: Record<string, Promise<any>> = {};
+// eslint-disable-next-line no-underscore-dangle
+export async function _getAllEvents(
+  vaultAddress: string,
+  chainId: SupportedChainId,
+  dex: SupportedDex,
+  days?: number,
+): Promise<VaultState[]> {
+  const key = `allevents-${chainId}-${vaultAddress}-${days}`;
+  const cachedData = cache.get(key);
+  if (cachedData) {
+    return cachedData as Fees[];
+  }
 
-async function sendRebalancesQueryRequest(
-  url: string,
-  vaultAddress: string,
-  createdAtTimestamp_gt: string,
-  query: string,
-): Promise<RebalancesQueryData['vaultRebalances']> {
-  return request<RebalancesQueryData, { vaultAddress: string; createdAtTimestamp_gt: string }>(url, query, {
-    vaultAddress,
-    createdAtTimestamp_gt,
-  }).then(({ vaultRebalances }) => vaultRebalances);
-}
-async function sendCollectFeesQueryRequest(
-  url: string,
-  vaultAddress: string,
-  createdAtTimestamp_gt: string,
-  query: string,
-): Promise<CollectFeesQueryData['vaultCollectFees']> {
-  return request<CollectFeesQueryData, { vaultAddress: string; createdAtTimestamp_gt: string }>(url, query, {
-    vaultAddress,
-    createdAtTimestamp_gt,
-  }).then(({ vaultCollectFees }) => vaultCollectFees);
-}
-async function sendDepositsQueryRequest(
-  url: string,
-  vaultAddress: string,
-  createdAtTimestamp_gt: string,
-  query: string,
-): Promise<VaultDepositsQueryData['vaultDeposits']> {
-  return request<VaultDepositsQueryData, { vaultAddress: string; createdAtTimestamp_gt: string }>(url, query, {
-    vaultAddress,
-    createdAtTimestamp_gt,
-  }).then(({ vaultDeposits }) => vaultDeposits);
-}
-async function sendWithdrawsQueryRequest(
-  url: string,
-  vaultAddress: string,
-  createdAtTimestamp_gt: string,
-  query: string,
-): Promise<VaultWithdrawsQueryData['vaultWithdraws']> {
-  return request<VaultWithdrawsQueryData, { vaultAddress: string; createdAtTimestamp_gt: string }>(url, query, {
-    vaultAddress,
-    createdAtTimestamp_gt,
-  }).then(({ vaultWithdraws }) => vaultWithdraws);
-}
-function storeResult(key: string, result: any) {
-  promises[key] = Promise.resolve(result);
-  setTimeout(() => {
-    delete promises[key];
-  }, 120000); // 120000 ms = 2 minutes
+  const ttl = 120000;
+  const { publishedUrl, url } = getGraphUrls(chainId, dex, true);
+
+  const currTimestamp = Date.now();
+  const startTimestamp = days
+    ? parseInt(((currTimestamp - daysToMilliseconds(days)) / 1000).toString()).toString()
+    : '0';
+
+  const allEvents = [] as Fees[];
+  let endOfData = false;
+  let page = 0;
+  while (!endOfData) {
+    let result;
+    try {
+      if (publishedUrl) {
+        result = await sendAllEventsQueryRequest(publishedUrl, vaultAddress, startTimestamp, allEventsQuery(page));
+      } else {
+        throw new Error(`Published URL is invalid for dex ${dex} on chain ${chainId}`);
+      }
+    } catch (error) {
+      if (publishedUrl) {
+        console.error('Request to published graph URL failed:', error);
+      }
+      try {
+        result = await sendAllEventsQueryRequest(url, vaultAddress, startTimestamp, allEventsQuery(page));
+      } catch (error2) {
+        console.error('Request to public graph URL failed:', error2);
+        throw new Error(`Could not get rebalances for vault ${vaultAddress} on chain ${chainId}`);
+      }
+    }
+    if (result) {
+      allEvents.push(...result.vaultRebalances);
+      allEvents.push(...result.vaultCollectFees);
+      allEvents.push(...result.vaultDeposits);
+      allEvents.push(...result.vaultWithdraws);
+      page += 1;
+      if (
+        result.vaultRebalances.length < 1000 &&
+        result.vaultCollectFees.length < 1000 &&
+        result.vaultDeposits.length < 1000 &&
+        result.vaultWithdraws.length < 1000
+      ) {
+        endOfData = true;
+      }
+    } else {
+      endOfData = true;
+    }
+  }
+  cache.set(key, allEvents, ttl);
+
+  return allEvents;
 }
 
-export async function getRebalances(
+// eslint-disable-next-line no-underscore-dangle
+export async function _getRebalances(
   vaultAddress: string,
-  jsonProvider: JsonRpcProvider,
+  chainId: SupportedChainId,
   dex: SupportedDex,
   days?: number,
 ): Promise<Fees[]> {
-  const { chainId } = await validateVaultData(vaultAddress, jsonProvider, dex);
+  const key = `rebalances-${chainId}-${vaultAddress}-${days}`;
+  const cachedData = cache.get(key);
+  if (cachedData) {
+    return cachedData as Fees[];
+  }
 
-  const key = `${chainId + vaultAddress + days}-rebalances`;
-  if (Object.prototype.hasOwnProperty.call(promises, key)) return promises[key];
-
+  const ttl = 120000;
   const { publishedUrl, url } = getGraphUrls(chainId, dex, true);
 
   const currTimestamp = Date.now();
@@ -121,28 +143,31 @@ export async function getRebalances(
       endOfData = true;
     }
   }
-  storeResult(key, rebalances);
+  cache.set(key, rebalances, ttl);
 
   return rebalances;
 }
 
-export async function getFeesCollectedEvents(
+// eslint-disable-next-line no-underscore-dangle
+export async function _getFeesCollectedEvents(
   vaultAddress: string,
-  jsonProvider: JsonRpcProvider,
+  chainId: SupportedChainId,
   dex: SupportedDex,
   days?: number,
 ): Promise<Fees[]> {
-  const { chainId } = await validateVaultData(vaultAddress, jsonProvider, dex);
+  const key = `fees-${chainId}-${vaultAddress}-${days}`;
+  const cachedData = cache.get(key);
+  if (cachedData) {
+    return cachedData as Fees[];
+  }
 
-  const key = `${chainId + vaultAddress + days}-collect-fees`;
-  if (Object.prototype.hasOwnProperty.call(promises, key)) return promises[key];
-
+  const ttl = 120000;
   const { publishedUrl, url } = getGraphUrls(chainId, dex, true);
 
   const supportsCollectFees = graphUrls[chainId as SupportedChainId]![dex]?.supportsCollectFees;
   if (!supportsCollectFees) {
     const result = [] as unknown as Promise<Fees[]>;
-    storeResult(key, result);
+    cache.set(key, result, 24 * 60 * 60 * 1000);
     return result;
   }
 
@@ -188,22 +213,25 @@ export async function getFeesCollectedEvents(
       endOfData = true;
     }
   }
-  storeResult(key, otherFees);
+  cache.set(key, otherFees, ttl);
 
   return otherFees;
 }
 
-export async function getDeposits(
+// eslint-disable-next-line no-underscore-dangle
+export async function _getDeposits(
   vaultAddress: string,
-  jsonProvider: JsonRpcProvider,
+  chainId: SupportedChainId,
   dex: SupportedDex,
   days?: number,
 ): Promise<VaultTransactionEvent[]> {
-  const { chainId } = await validateVaultData(vaultAddress, jsonProvider, dex);
+  const key = `deposits-${chainId}-${vaultAddress}-${days}`;
+  const cachedData = cache.get(key);
+  if (cachedData) {
+    return cachedData as VaultTransactionEvent[];
+  }
 
-  const key = `${chainId + vaultAddress + days}-deposits`;
-  if (Object.prototype.hasOwnProperty.call(promises, key)) return promises[key];
-
+  const ttl = 120000;
   const { publishedUrl, url } = getGraphUrls(chainId, dex, true);
 
   const currTimestamp = Date.now();
@@ -243,22 +271,25 @@ export async function getDeposits(
       endOfData = true;
     }
   }
-  storeResult(key, depositEvents);
+  cache.set(key, depositEvents, ttl);
 
   return depositEvents;
 }
 
-export async function getWithdraws(
+// eslint-disable-next-line no-underscore-dangle
+export async function _getWithdraws(
   vaultAddress: string,
-  jsonProvider: JsonRpcProvider,
+  chainId: SupportedChainId,
   dex: SupportedDex,
   days?: number,
 ): Promise<VaultTransactionEvent[]> {
-  const { chainId } = await validateVaultData(vaultAddress, jsonProvider, dex);
+  const key = `withdraws-${chainId}-${vaultAddress}-${days}`;
+  const cachedData = cache.get(key);
+  if (cachedData) {
+    return cachedData as VaultTransactionEvent[];
+  }
 
-  const key = `${chainId + vaultAddress + days}-withdraws`;
-  if (Object.prototype.hasOwnProperty.call(promises, key)) return promises[key];
-
+  const ttl = 120000;
   const { publishedUrl, url } = getGraphUrls(chainId, dex, true);
 
   const currTimestamp = Date.now();
@@ -298,34 +329,30 @@ export async function getWithdraws(
       endOfData = true;
     }
   }
-  storeResult(key, withdrawEvents);
+  cache.set(key, withdrawEvents, ttl);
 
   return withdrawEvents;
 }
 
-export async function getAllVaultEvents(
+// eslint-disable-next-line no-underscore-dangle
+export async function _getAllVaultEvents(
   vaultAddress: string,
-  jsonProvider: JsonRpcProvider,
+  chainId: SupportedChainId,
   dex: SupportedDex,
+  days?: number,
 ): Promise<VaultState[]> {
-  const { chainId } = await validateVaultData(vaultAddress, jsonProvider, dex);
+  const key = `allEvents-${chainId}-${vaultAddress}`;
+  const cachedData = cache.get(key);
+  if (cachedData) {
+    return cachedData as VaultState[];
+  }
 
-  const key = `${chainId + vaultAddress}-all-events`;
-  if (Object.prototype.hasOwnProperty.call(promises, key)) return promises[key];
-
-  const rebalances = (await getRebalances(vaultAddress, jsonProvider, dex)) as VaultState[];
-  if (!rebalances) throw new Error(`Error getting vault rebalances on ${chainId} for ${vaultAddress}`);
-  const collectedFees = (await getFeesCollectedEvents(vaultAddress, jsonProvider, dex)) as VaultState[];
-  if (!collectedFees) throw new Error(`Error getting vault collected fees on ${chainId} for ${vaultAddress}`);
-  const deposits = (await getDeposits(vaultAddress, jsonProvider, dex)) as VaultState[];
-  if (!deposits) throw new Error(`Error getting vault deposits on ${chainId} for ${vaultAddress}`);
-  const withdraws = (await getWithdraws(vaultAddress, jsonProvider, dex)) as VaultState[];
-  if (!withdraws) throw new Error(`Error getting vault withdraws on ${chainId} for ${vaultAddress}`);
-
-  const result = [...deposits, ...withdraws, ...rebalances, ...collectedFees].sort(
+  const ttl = 120000;
+  const allEvents = await _getAllEvents(vaultAddress, chainId, dex, days);
+  const result = allEvents.sort(
     (a, b) => Number(b.createdAtTimestamp) - Number(a.createdAtTimestamp), // recent events first
   );
-  storeResult(key, result);
+  cache.set(key, result, ttl);
 
   return result;
 }

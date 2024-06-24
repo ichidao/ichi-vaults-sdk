@@ -10,8 +10,6 @@ import getGraphUrls from '../utils/getGraphUrls';
 import addressConfig from '../utils/config/addresses';
 import cache from '../utils/cache';
 
-const promises: Record<string, Promise<any>> = {};
-
 async function getVaultInfoFromContract(vaultAddress: string, jsonProvider: JsonRpcProvider): Promise<IchiVault> {
   const vault: IchiVault = {
     id: vaultAddress,
@@ -62,7 +60,7 @@ export async function getIchiVaultInfo(
   jsonProvider?: JsonRpcProvider,
 ): Promise<IchiVault> {
   const key = `vault-${chainId}-${vaultAddress}`;
-  const ttl = 2*24*60*60*1000;
+  const ttl = 2 * 24 * 60 * 60 * 1000;
   const cachedData = cache.get(key);
   if (cachedData) {
     return cachedData as IchiVault;

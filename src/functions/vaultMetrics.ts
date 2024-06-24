@@ -13,9 +13,8 @@ import {
 } from '../types';
 // eslint-disable-next-line import/no-cycle
 import { validateVaultData } from './vault';
-import { getTokenDecimals } from './totalBalances';
+import { getTokenDecimals } from './_totalBalances';
 import { getCurrentDtr } from './priceFromPool';
-import { getDeposits, getFeesCollectedEvents, getRebalances, getWithdraws } from './vaultEvents';
 import { daysToMilliseconds } from '../utils/timestamps';
 import getPrice from '../utils/getPrice';
 import {
@@ -30,6 +29,7 @@ import { getAverageDtr, getDtrAtFeeCollectionEvent, getDtrAtTransactionEvent } f
 import { getTotalFeesAmountInBaseTokens } from './calculateFees';
 import { getLpPriceAt } from './calculateApr';
 import getGraphUrls from '../utils/getGraphUrls';
+import { _getDeposits, _getFeesCollectedEvents, _getRebalances, _getWithdraws } from './_vaultEvents';
 
 export async function getVaultMetrics(
   vaultAddress: string,
@@ -40,8 +40,8 @@ export async function getVaultMetrics(
   const { chainId, vault } = await validateVaultData(vaultAddress, jsonProvider, dex);
   getGraphUrls(chainId, dex, true);
 
-  const decimals0 = await getTokenDecimals(vault.tokenA, jsonProvider);
-  const decimals1 = await getTokenDecimals(vault.tokenB, jsonProvider);
+  const decimals0 = await getTokenDecimals(vault.tokenA, jsonProvider, chainId);
+  const decimals1 = await getTokenDecimals(vault.tokenB, jsonProvider, chainId);
   const isInv = vault.allowTokenB;
   const depositTokenDecimals = isInv ? decimals1 : decimals0;
   const scarseTokenDecimals = isInv ? decimals0 : decimals1;
@@ -99,13 +99,13 @@ export async function getVaultMetrics(
     throw e;
   }
 
-  const rebalances = (await getRebalances(vaultAddress, jsonProvider, dex)) as Fees[];
+  const rebalances = (await _getRebalances(vaultAddress, chainId, dex)) as Fees[];
   if (!rebalances) throw new Error(`Error getting vault rebalances on ${chainId} for ${vaultAddress}`);
-  const collectedFees = (await getFeesCollectedEvents(vaultAddress, jsonProvider, dex)) as Fees[];
+  const collectedFees = (await _getFeesCollectedEvents(vaultAddress, chainId, dex)) as Fees[];
   if (!collectedFees) throw new Error(`Error getting vault collected fees on ${chainId} for ${vaultAddress}`);
-  const deposits = (await getDeposits(vaultAddress, jsonProvider, dex)) as VaultTransactionEvent[];
+  const deposits = (await _getDeposits(vaultAddress, chainId, dex)) as VaultTransactionEvent[];
   if (!deposits) throw new Error(`Error getting vault deposits on ${chainId} for ${vaultAddress}`);
-  const withdraws = (await getWithdraws(vaultAddress, jsonProvider, dex)) as VaultTransactionEvent[];
+  const withdraws = (await _getWithdraws(vaultAddress, chainId, dex)) as VaultTransactionEvent[];
   if (!withdraws) throw new Error(`Error getting vault withdraws on ${chainId} for ${vaultAddress}`);
 
   const vaultEvents = [...deposits, ...withdraws, ...rebalances, ...collectedFees].sort(

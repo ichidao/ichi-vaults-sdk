@@ -3,10 +3,10 @@
 
 import { JsonRpcProvider } from '@ethersproject/providers';
 import { BigNumber } from '@ethersproject/bignumber';
-import { SupportedChainId, SupportedDex } from '../types';
+import { IchiVault, SupportedChainId, SupportedDex } from '../types';
 // eslint-disable-next-line import/no-cycle
 import { getIchiVaultInfo } from './vault';
-import { getTotalAmounts, getTotalSupply } from './totalBalances';
+import { getTotalAmounts } from './totalBalances';
 import getPrice from '../utils/getPrice';
 import {
   getAlgebraIntegralPoolContract,
@@ -15,22 +15,16 @@ import {
   getUniswapV3PoolContract,
 } from '../contracts';
 import addressConfig from '../utils/config/addresses';
+import { _getTotalAmounts, _getTotalSupply } from './_totalBalances';
 
 export async function getSqrtPriceFromPool(
-  vaultAddress: string,
+  vault: IchiVault,
   jsonProvider: JsonRpcProvider,
+  chainId: SupportedChainId,
   dex: SupportedDex,
 ): Promise<BigNumber> {
-  const { chainId } = await jsonProvider.getNetwork();
-
-  if (!Object.values(SupportedChainId).includes(chainId)) {
-    throw new Error(`Unsupported chainId: ${chainId ?? 'undefined'}`);
-  }
-
-  const vault = await getIchiVaultInfo(chainId, dex, vaultAddress, jsonProvider);
-  if (!vault) throw new Error(`Vault ${vaultAddress} not found on chain ${chainId} and dex ${dex}`);
   try {
-    const vaultContract = getIchiVaultContract(vaultAddress, jsonProvider);
+    const vaultContract = getIchiVaultContract(vault.id, jsonProvider);
     const poolAddress: string = await vaultContract.pool();
 
     if (addressConfig[chainId as SupportedChainId]![dex]?.isAlgebra) {
@@ -49,60 +43,45 @@ export async function getSqrtPriceFromPool(
       return slot0[0];
     }
   } catch (e) {
-    console.error(`Could not get price from vault ${vaultAddress} `);
+    console.error(`Could not get price from vault ${vault.id} `);
     throw e;
   }
 }
 
 // current price in pool of scarse token in deposit tokens
 export async function getCurrPrice(
-  vaultAddress: string,
+  vault: IchiVault,
   jsonProvider: JsonRpcProvider,
+  chainId: SupportedChainId,
   dex: SupportedDex,
   isVaultInverted: boolean,
   token0decimals: number,
   token1decimals: number,
 ): Promise<number> {
-  const { chainId } = await jsonProvider.getNetwork();
-
-  if (!Object.values(SupportedChainId).includes(chainId)) {
-    throw new Error(`Unsupported chainId: ${chainId ?? 'undefined'}`);
-  }
-
-  const vault = await getIchiVaultInfo(chainId, dex, vaultAddress, jsonProvider);
-  if (!vault) throw new Error(`Vault ${vaultAddress} not found on chain ${chainId} and dex ${dex}`);
   try {
-    const sqrtPrice = await getSqrtPriceFromPool(vaultAddress, jsonProvider, dex);
+    const sqrtPrice = await getSqrtPriceFromPool(vault, jsonProvider, chainId, dex);
     const depositTokenDecimals = isVaultInverted ? token1decimals : token0decimals;
     const scarseTokenDecimals = isVaultInverted ? token0decimals : token1decimals;
     const price = getPrice(isVaultInverted, sqrtPrice, depositTokenDecimals, scarseTokenDecimals, 15);
 
     return price;
   } catch (e) {
-    console.error(`Could not get price from vault ${vaultAddress} `);
+    console.error(`Could not get price from vault ${vault.id} `);
     throw e;
   }
 }
 
 export async function getVaultTvl(
-  vaultAddress: string,
+  vault: IchiVault,
   jsonProvider: JsonRpcProvider,
+  chainId: SupportedChainId,
   dex: SupportedDex,
   isVaultInverted: boolean,
   token0decimals: number,
   token1decimals: number,
 ): Promise<number> {
-  const { chainId } = await jsonProvider.getNetwork();
-
-  if (!Object.values(SupportedChainId).includes(chainId)) {
-    throw new Error(`Unsupported chainId: ${chainId ?? 'undefined'}`);
-  }
-
-  const vault = await getIchiVaultInfo(chainId, dex, vaultAddress, jsonProvider);
-  if (!vault) throw new Error(`Vault ${vaultAddress} not found on chain ${chainId} and dex ${dex}`);
-
-  const totalAmounts = await getTotalAmounts(vaultAddress, jsonProvider, dex);
-  const price = await getCurrPrice(vaultAddress, jsonProvider, dex, isVaultInverted, token0decimals, token1decimals);
+  const totalAmounts = await _getTotalAmounts(vault, jsonProvider, chainId);
+  const price = await getCurrPrice(vault, jsonProvider, chainId, dex, isVaultInverted, token0decimals, token1decimals);
   const tvl = !isVaultInverted
     ? Number(totalAmounts.total0) + Number(totalAmounts.total1) * price
     : Number(totalAmounts.total1) + Number(totalAmounts.total0) * price;
@@ -112,31 +91,32 @@ export async function getVaultTvl(
 
 // current LP price in pool in deposit tokens
 export async function getCurrLpPrice(
-  vaultAddress: string,
+  vault: IchiVault,
   jsonProvider: JsonRpcProvider,
   dex: SupportedDex,
+  chainId: SupportedChainId,
   isVaultInverted: boolean,
   token0decimals: number,
   token1decimals: number,
 ): Promise<number> {
-  const { chainId } = await jsonProvider.getNetwork();
-
-  if (!Object.values(SupportedChainId).includes(chainId)) {
-    throw new Error(`Unsupported chainId: ${chainId ?? 'undefined'}`);
-  }
-
-  const vault = await getIchiVaultInfo(chainId, dex, vaultAddress, jsonProvider);
-  if (!vault) throw new Error(`Vault ${vaultAddress} not found on chain ${chainId} and dex ${dex}`);
   try {
-    const currTvl = await getVaultTvl(vaultAddress, jsonProvider, dex, isVaultInverted, token0decimals, token1decimals);
-    const totalSupply = await getTotalSupply(vaultAddress, jsonProvider, dex);
+    const currTvl = await getVaultTvl(
+      vault,
+      jsonProvider,
+      chainId,
+      dex,
+      isVaultInverted,
+      token0decimals,
+      token1decimals,
+    );
+    const totalSupply = await _getTotalSupply(vault.id, jsonProvider);
     if (Number(totalSupply) === 0) {
-      throw new Error(`Could not get LP price. Vault total supply is 0 for vault ${vaultAddress} on chain ${chainId}`);
+      throw new Error(`Could not get LP price. Vault total supply is 0 for vault ${vault.id} on chain ${chainId}`);
     }
-
-    return currTvl / Number(totalSupply);
+    const result = currTvl / Number(totalSupply);
+    return result;
   } catch (e) {
-    console.error(`Could not get LP price from vault ${vaultAddress} `);
+    console.error(`Could not get LP price from vault ${vault.id} `);
     throw e;
   }
 }
@@ -160,7 +140,7 @@ export async function getCurrentDtr(
   if (!vault) throw new Error(`Vault ${vaultAddress} not found on chain ${chainId} and dex ${dex}`);
 
   const totalAmounts = await getTotalAmounts(vaultAddress, jsonProvider, dex);
-  const price = await getCurrPrice(vaultAddress, jsonProvider, dex, isVaultInverted, token0decimals, token1decimals);
+  const price = await getCurrPrice(vault, jsonProvider, chainId, dex, isVaultInverted, token0decimals, token1decimals);
   if (Number(totalAmounts.total0) + Number(totalAmounts.total1) * price === 0) return 0;
   const dtr = !isVaultInverted
     ? (Number(totalAmounts.total0) / (Number(totalAmounts.total0) + Number(totalAmounts.total1) * price)) * 100

@@ -12,6 +12,7 @@ import { getIchiVaultInfo, validateVaultData } from './vault';
 import addressConfig from '../utils/config/addresses';
 import amountWithSlippage from '../utils/amountWithSlippage';
 import getVaultDeployer from './vaultBasics';
+import { getTokenDecimals } from './_totalBalances';
 
 export async function isTokenAllowed(
   tokenIdx: 0 | 1,
@@ -75,14 +76,9 @@ export async function approveDepositToken(
   amount?: string | number | BigNumber,
   overrides?: Overrides,
 ): Promise<ContractTransaction> {
-  const { chainId } = await jsonProvider.getNetwork();
-  if (!Object.values(SupportedChainId).includes(chainId)) {
-    throw new Error(`Unsupported chainId: ${chainId}`);
-  }
+  const { chainId, vault } = await validateVaultData(vaultAddress, jsonProvider, dex);
 
   const signer = jsonProvider.getSigner(accountAddress);
-  const vault = await getIchiVaultInfo(chainId, dex, vaultAddress, jsonProvider);
-  if (!vault) throw new Error(`Vault ${vaultAddress} not found on chain ${chainId} and dex ${dex}`);
 
   const token = vault[tokenIdx === 0 ? 'tokenA' : 'tokenB'];
 
@@ -103,22 +99,28 @@ export async function approveDepositToken(
   return tokenContract.approve(depositGuardAddress, amountBN, { gasLimit });
 }
 
+// eslint-disable-next-line no-underscore-dangle
+export async function _getMaxDepositAmount(
+  tokenIdx: 0 | 1,
+  vaultAddress: string,
+  jsonProvider: JsonRpcProvider,
+): Promise<BigNumber> {
+  const vaultContract = getIchiVaultContract(vaultAddress, jsonProvider);
+
+  const maxDepositAmount = tokenIdx === 0 ? vaultContract.deposit0Max() : vaultContract.deposit1Max();
+
+  return maxDepositAmount;
+}
+
 export async function getMaxDepositAmount(
   tokenIdx: 0 | 1,
   vaultAddress: string,
   jsonProvider: JsonRpcProvider,
   dex: SupportedDex,
 ): Promise<BigNumber> {
-  const { chainId } = await jsonProvider.getNetwork();
-  if (!Object.values(SupportedChainId).includes(chainId)) {
-    throw new Error(`Unsupported chainId: ${chainId}`);
-  }
-  const vault = await getIchiVaultInfo(chainId, dex, vaultAddress, jsonProvider);
-  if (!vault) throw new Error(`Vault ${vaultAddress} not found on chain ${chainId} and dex ${dex}`);
+  await validateVaultData(vaultAddress, jsonProvider, dex);
 
-  const vaultContract = getIchiVaultContract(vaultAddress, jsonProvider);
-
-  const maxDepositAmount = tokenIdx === 0 ? vaultContract.deposit0Max() : vaultContract.deposit1Max();
+  const maxDepositAmount = _getMaxDepositAmount(tokenIdx, vaultAddress, jsonProvider);
 
   return maxDepositAmount;
 }
@@ -141,10 +143,8 @@ export async function deposit(
   const token1 = vault.tokenB;
   const isToken0Allowed = vault.allowTokenA;
   const isToken1Allowed = vault.allowTokenB;
-  const token0Contract = getERC20Contract(token0, signer);
-  const token1Contract = getERC20Contract(token1, signer);
-  const token0Decimals = await token0Contract.decimals();
-  const token1Decimals = await token1Contract.decimals();
+  const token0Decimals = await getTokenDecimals(token0, jsonProvider, chainId);
+  const token1Decimals = await getTokenDecimals(token1, jsonProvider, chainId);
   const amount0BN = amount0 instanceof BigNumber ? amount0 : parseBigInt(amount0, +token0Decimals);
   const amount1BN = amount1 instanceof BigNumber ? amount1 : parseBigInt(amount1, +token1Decimals);
   if (!isToken0Allowed && amount0BN.gt(BigNumber.from(0))) {
@@ -186,8 +186,8 @@ export async function deposit(
     throw new Error(`Deposit amount exceeds user token amount for token: ${depositToken}, chain ${chainId}`);
   }
 
-  const maxDeposit0 = await getMaxDepositAmount(0, vaultAddress, jsonProvider, dex);
-  const maxDeposit1 = await getMaxDepositAmount(1, vaultAddress, jsonProvider, dex);
+  const maxDeposit0 = await _getMaxDepositAmount(0, vaultAddress, jsonProvider);
+  const maxDeposit1 = await _getMaxDepositAmount(1, vaultAddress, jsonProvider);
   if (amount0BN.gt(maxDeposit0) || amount0BN.gt(maxDeposit1)) {
     throw new Error(`Deposit amount exceeds max deposit amount: vault ${vaultAddress}, chain ${chainId}`);
   }
