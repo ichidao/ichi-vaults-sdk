@@ -20,7 +20,6 @@ import {
   getTotalSupply,
   getUserAmounts,
   getUserBalance,
-  getTokenDecimals,
   getVaultsByTokens,
   getFeesCollected,
   getFeesCollectedInfo,
@@ -39,6 +38,7 @@ import {
 } from '../index';
 import formatBigInt from '../utils/formatBigInt';
 import parseBigInt from '../utils/parseBigInt';
+import { getTokenDecimals } from '../functions/_totalBalances';
 
 const hdWalletProvider = new HDWalletProvider([process.env.PRIVATE_KEY!], process.env.PROVIDER_URL!, 0, 1);
 
@@ -109,8 +109,8 @@ describe('Vault', () => {
     const vaultFromQuery = await getIchiVaultInfo(vault.chainId, vault.dex, vault.address, provider);
     if (!vaultFromQuery)
       throw new Error(`Vault ${vault.address} not found on chain ${vault.chainId} and dex ${vault.dex}]`);
-    const token0Decimals = await getTokenDecimals(vaultFromQuery.tokenA, provider);
-    const token1Decimals = await getTokenDecimals(vaultFromQuery.tokenB, provider);
+    const token0Decimals = await getTokenDecimals(vaultFromQuery.tokenA, provider, vault.chainId);
+    const token1Decimals = await getTokenDecimals(vaultFromQuery.tokenB, provider, vault.chainId);
 
     if (!isAllowed0 && Number(amount0) > 0) return;
     if (!isAllowed1 && Number(amount1) > 0) return;
@@ -147,8 +147,8 @@ describe('Vault', () => {
     const vaultFromQuery = await getIchiVaultInfo(vault.chainId, vault.dex, vault.address, provider);
     if (!vaultFromQuery)
       throw new Error(`Vault ${vault.address} not found on chain ${vault.chainId} and dex ${vault.dex}]`);
-    const token0Decimals = await getTokenDecimals(vaultFromQuery.tokenA, provider);
-    const token1Decimals = await getTokenDecimals(vaultFromQuery.tokenB, provider);
+    const token0Decimals = await getTokenDecimals(vaultFromQuery.tokenA, provider, vault.chainId);
+    const token1Decimals = await getTokenDecimals(vaultFromQuery.tokenB, provider, vault.chainId);
 
     if (!isAllowed0 && Number(amount0) > 0) return;
     if (!isAllowed1 && Number(amount1) > 0) return;

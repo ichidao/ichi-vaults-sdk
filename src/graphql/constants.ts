@@ -187,7 +187,7 @@ export const graphUrls: Record<SupportedChainId, dexGraph> = {
   [SupportedChainId.fuse]: {
     [SupportedDex.Voltage]: {
       url: 'https://api.studio.thegraph.com/query/61136/fuse-v1-voltage/version/latest',
-      publishedUrl: 
+      publishedUrl:
         'https://gateway-arbitrum.network.thegraph.com/api/[api-key]/subgraphs/id/A27v7wyriyz87hEM6bpJBCTR2gZMA5mZsJH8WbCZWbWU',
       supportsCollectFees: true,
     },
@@ -279,7 +279,7 @@ export const graphUrls: Record<SupportedChainId, dexGraph> = {
   [SupportedChainId.skale_europa]: {
     [SupportedDex.Sushiswap]: {
       url: 'https://elated-tan-skat-graph.skalenodes.com:8000/subgraphs/name/ichi-org/skale-europa-v1-sushiswap',
-      publishedUrl: 
+      publishedUrl:
         'https://elated-tan-skat-graph.skalenodes.com:8000/subgraphs/name/ichi-org/skale-europa-v1-sushiswap',
       supportsCollectFees: true,
     },

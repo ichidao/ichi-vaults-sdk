@@ -3,24 +3,17 @@
 
 import { JsonRpcProvider } from '@ethersproject/providers';
 import { BigNumber } from '@ethersproject/bignumber';
-import {
-  AverageDepositTokenRatio,
-  DepositTokenRatio,
-  SupportedChainId,
-  SupportedDex,
-  VaultState,
-  VaultTransactionEvent,
-} from '../types';
+import { AverageDepositTokenRatio, DepositTokenRatio, SupportedDex, VaultState, VaultTransactionEvent } from '../types';
 // eslint-disable-next-line import/no-cycle
-import { getIchiVaultInfo } from './vault';
-import { getDeposits, getFeesCollectedEvents, getRebalances, getWithdraws } from './vaultEvents';
-import { getTokenDecimals } from './totalBalances';
+import { validateVaultData } from './vault';
+import { getTokenDecimals } from './_totalBalances';
 import formatBigInt from '../utils/formatBigInt';
 import { daysToMilliseconds } from '../utils/timestamps';
 import { isTokenAllowed } from './deposit';
 import getPrice from '../utils/getPrice';
 import { getTotalAmountsAtFeeCollectionEvent } from './calculateFees';
 import { getCurrentDtr } from './priceFromPool';
+import { _getDeposits, _getFeesCollectedEvents, _getRebalances, _getWithdraws } from './_vaultEvents';
 
 // total amounts at deposit or withdrawal in deposit tokens
 function getTotalAmountsAtTransactionEvent(
@@ -92,25 +85,18 @@ export async function getAllDtrsForTimeInterval(
   dex: SupportedDex,
   timeInterval: number,
 ): Promise<DepositTokenRatio[]> {
-  const { chainId } = await jsonProvider.getNetwork();
-
-  if (!Object.values(SupportedChainId).includes(chainId)) {
-    throw new Error(`Unsupported chainId: ${chainId ?? 'undefined'}`);
-  }
-
-  const vault = await getIchiVaultInfo(chainId, dex, vaultAddress, jsonProvider);
-  if (!vault) throw new Error(`Vault ${vaultAddress} not found on chain ${chainId} and dex ${dex}`);
-  const token0Decimals = await getTokenDecimals(vault.tokenA, jsonProvider);
-  const token1Decimals = await getTokenDecimals(vault.tokenB, jsonProvider);
+  const { chainId, vault } = await validateVaultData(vaultAddress, jsonProvider, dex);
+  const token0Decimals = await getTokenDecimals(vault.tokenA, jsonProvider, chainId);
+  const token1Decimals = await getTokenDecimals(vault.tokenB, jsonProvider, chainId);
   const isVaultInverted = await isTokenAllowed(1, vaultAddress, jsonProvider, dex);
 
-  const rebalances = await getRebalances(vaultAddress, jsonProvider, dex, timeInterval);
+  const rebalances = await _getRebalances(vaultAddress, chainId, dex, timeInterval);
   if (!rebalances) throw new Error(`Error getting vault rebalances on ${chainId} for ${vaultAddress}`);
-  const collectedFees = await getFeesCollectedEvents(vaultAddress, jsonProvider, dex, timeInterval);
+  const collectedFees = await _getFeesCollectedEvents(vaultAddress, chainId, dex, timeInterval);
   if (!collectedFees) throw new Error(`Error getting vault collected fees on ${chainId} for ${vaultAddress}`);
-  const deposits = await getDeposits(vaultAddress, jsonProvider, dex, timeInterval);
+  const deposits = await _getDeposits(vaultAddress, chainId, dex, timeInterval);
   if (!deposits) throw new Error(`Error getting vault deposits on ${chainId} for ${vaultAddress}`);
-  const withdraws = await getWithdraws(vaultAddress, jsonProvider, dex, timeInterval);
+  const withdraws = await _getWithdraws(vaultAddress, chainId, dex, timeInterval);
   if (!withdraws) throw new Error(`Error getting vault withdraws on ${chainId} for ${vaultAddress}`);
 
   const arrRebalances = rebalances

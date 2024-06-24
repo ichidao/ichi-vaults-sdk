@@ -5,9 +5,8 @@ import { JsonRpcProvider } from '@ethersproject/providers';
 import { BigNumber } from 'ethers';
 // eslint-disable-next-line import/no-unresolved
 import { request } from 'graphql-request';
-import { getERC20Contract, getIchiVaultContract } from '../contracts';
+import { getIchiVaultContract } from '../contracts';
 import {
-  SupportedChainId,
   SupportedDex,
   UserAmounts,
   UserAmountsBN,
@@ -20,12 +19,13 @@ import {
 } from '../types';
 import formatBigInt from '../utils/formatBigInt';
 // eslint-disable-next-line import/no-cycle
-import { getChainByProvider, getIchiVaultInfo, validateVaultData } from './vault';
-import { getTokenDecimals, getTotalAmounts } from './totalBalances';
+import { getChainByProvider, validateVaultData } from './vault';
+import { getTotalAmounts } from './totalBalances';
 import { UserBalancesQueryData } from '../types/vaultQueryData';
 import { userBalancesQuery } from '../graphql/queries';
 import parseBigInt from '../utils/parseBigInt';
 import getGraphUrls from '../utils/getGraphUrls';
+import { _getTotalAmounts, _getTotalSupply, getTokenDecimals } from './_totalBalances';
 
 const promises: Record<string, Promise<any>> = {};
 
@@ -187,17 +187,11 @@ export async function getUserAmounts(
   dex: SupportedDex,
   raw?: true,
 ) {
-  const { chainId } = await jsonProvider.getNetwork();
-  if (!Object.values(SupportedChainId).includes(chainId)) {
-    throw new Error(`Unsupported chainId: ${chainId}`);
-  }
-  const vaultContract = getIchiVaultContract(vaultAddress, jsonProvider);
-  const vault = await getIchiVaultInfo(chainId, dex, vaultAddress, jsonProvider);
-  if (!vault) throw new Error(`Vault ${vaultAddress} not found on chain ${chainId} and dex ${dex}`);
+  const { chainId, vault } = await validateVaultData(vaultAddress, jsonProvider, dex);
 
-  const totalAmountsBN = await getTotalAmounts(vaultAddress, jsonProvider, dex, true);
-  const totalSupplyBN = await vaultContract.totalSupply();
-  const userBalanceBN = await getUserBalance(accountAddress, vaultAddress, jsonProvider, dex, true);
+  const totalAmountsBN = await _getTotalAmounts(vault, jsonProvider, chainId, true);
+  const totalSupplyBN = await _getTotalSupply(vaultAddress, jsonProvider, true);
+  const userBalanceBN = await _getUserBalance(accountAddress, vaultAddress, jsonProvider, true);
   if (!totalSupplyBN.isZero()) {
     const userAmountsBN = {
       amount0: userBalanceBN.mul(totalAmountsBN[0]).div(totalSupplyBN),
@@ -206,8 +200,8 @@ export async function getUserAmounts(
       1: userBalanceBN.mul(totalAmountsBN[1]).div(totalSupplyBN),
     } as UserAmountsBN;
     if (!raw) {
-      const token0Decimals = await getTokenDecimals(vault.tokenA, jsonProvider);
-      const token1Decimals = await getTokenDecimals(vault.tokenB, jsonProvider);
+      const token0Decimals = await getTokenDecimals(vault.tokenA, jsonProvider, chainId);
+      const token1Decimals = await getTokenDecimals(vault.tokenB, jsonProvider, chainId);
       const userAmounts = {
         amount0: formatBigInt(userAmountsBN.amount0, token0Decimals),
         amount1: formatBigInt(userAmountsBN.amount1, token1Decimals),
@@ -301,14 +295,14 @@ export async function getAllUserAmounts(
       const totalAmountsBN = await Promise.all(totalAmountsBnPromises);
 
       const token0DecimalsPromises = userBalances.map((vault) => {
-        const token0Contract = getERC20Contract(vault.vault.tokenA, jsonProvider);
-        return token0Contract.decimals();
+        const token0decimals = getTokenDecimals(vault.vault.tokenA, jsonProvider, chainId);
+        return token0decimals;
       });
       const token0Decimals = await Promise.all(token0DecimalsPromises);
 
       const token1DecimalsPromises = userBalances.map((vault) => {
-        const token1Contract = getERC20Contract(vault.vault.tokenB, jsonProvider);
-        return token1Contract.decimals();
+        const token1decimals = getTokenDecimals(vault.vault.tokenB, jsonProvider, chainId);
+        return token1decimals;
       });
       const token1Decimals = await Promise.all(token1DecimalsPromises);
 
