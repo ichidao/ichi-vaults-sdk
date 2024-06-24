@@ -7,6 +7,7 @@ import { SupportedDex, SupportedChainId, Fees, VaultTransactionEvent, VaultState
 // eslint-disable import/no-cycle
 import { graphUrls } from '../graphql/constants';
 import {
+  allEventsNoCollectFeesQuery,
   allEventsQuery,
   rebalancesQuery,
   vaultCollectFeesQuery,
@@ -45,6 +46,9 @@ export async function _getAllEvents(
     ? parseInt(((currTimestamp - daysToMilliseconds(days)) / 1000).toString()).toString()
     : '0';
 
+  const supportsCollectFees = graphUrls[chainId as SupportedChainId]![dex]?.supportsCollectFees;
+  const query = supportsCollectFees ? allEventsQuery : allEventsNoCollectFeesQuery;
+
   const allEvents = [] as Fees[];
   let endOfData = false;
   let page = 0;
@@ -52,7 +56,7 @@ export async function _getAllEvents(
     let result;
     try {
       if (publishedUrl) {
-        result = await sendAllEventsQueryRequest(publishedUrl, vaultAddress, startTimestamp, allEventsQuery(page));
+        result = await sendAllEventsQueryRequest(publishedUrl, vaultAddress, startTimestamp, query(page));
       } else {
         throw new Error(`Published URL is invalid for dex ${dex} on chain ${chainId}`);
       }
@@ -61,7 +65,7 @@ export async function _getAllEvents(
         console.error('Request to published graph URL failed:', error);
       }
       try {
-        result = await sendAllEventsQueryRequest(url, vaultAddress, startTimestamp, allEventsQuery(page));
+        result = await sendAllEventsQueryRequest(url, vaultAddress, startTimestamp, query(page));
       } catch (error2) {
         console.error('Request to public graph URL failed:', error2);
         throw new Error(`Could not get rebalances for vault ${vaultAddress} on chain ${chainId}`);
@@ -69,13 +73,13 @@ export async function _getAllEvents(
     }
     if (result) {
       allEvents.push(...result.vaultRebalances);
-      allEvents.push(...result.vaultCollectFees);
+      if (supportsCollectFees) allEvents.push(...result.vaultCollectFees);
       allEvents.push(...result.vaultDeposits);
       allEvents.push(...result.vaultWithdraws);
       page += 1;
       if (
         result.vaultRebalances.length < 1000 &&
-        result.vaultCollectFees.length < 1000 &&
+        (result.vaultCollectFees?.length < 1000 || !supportsCollectFees) &&
         result.vaultDeposits.length < 1000 &&
         result.vaultWithdraws.length < 1000
       ) {
