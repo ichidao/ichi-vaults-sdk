@@ -5,7 +5,7 @@ import { BigNumber } from 'ethers';
 import { getDepositGuardContract, getERC20Contract, getIchiVaultContract } from '../contracts';
 import parseBigInt from '../utils/parseBigInt';
 import { SupportedDex, SupportedChainId, IchiVault } from '../types';
-import calculateGasMargin from '../types/calculateGasMargin';
+import { calculateGasMargin, getGasLimit } from '../types/calculateGasMargin';
 import formatBigInt from '../utils/formatBigInt';
 // eslint-disable-next-line import/no-cycle
 import { getIchiVaultInfo, validateVaultData } from './vault';
@@ -195,6 +195,7 @@ export async function deposit(
   // obtain Deposit Guard contract
   const depositGuardAddress = addressConfig[chainId as SupportedChainId]![dex]?.depositGuard.address ?? '';
   const depositGuardContract = getDepositGuardContract(depositGuardAddress, signer);
+  const maxGasLimit = getGasLimit(chainId);
 
   // the first call: get estimated LP amount
   let lpAmount = await depositGuardContract.callStatic.forwardDepositToICHIVault(
@@ -205,7 +206,7 @@ export async function deposit(
     BigNumber.from(0),
     accountAddress,
     {
-      gasLimit: 5e6, // the deposit via guard tx should never exceed 5e6
+      gasLimit: maxGasLimit,
     },
   );
 
@@ -303,6 +304,8 @@ export async function depositNativeToken(
     throw new Error(`Deposit amount exceeds user native token amount on chain ${chainId}`);
   }
 
+  const maxGasLimit = getGasLimit(chainId);
+
   // if (chainId === SupportedChainId.hedera){
   //   depositAmount = depositAmount.mul(BigNumber.from(1e10));
   // }
@@ -315,7 +318,7 @@ export async function depositNativeToken(
     accountAddress,
     {
       value: depositAmount,
-      gasLimit: 5e6, // the deposit via guard tx should never exceed 5e6
+      gasLimit: maxGasLimit,
     },
   );
 
