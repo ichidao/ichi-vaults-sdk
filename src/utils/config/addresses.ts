@@ -364,10 +364,28 @@ const addressConfig: Record<SupportedChainId, Config> = {
     },
   },
   [SupportedChainId.mantle]: {
+    [SupportedDex.Agni]: {
+      factoryAddress: '0x92Bce3972916C2CEDA46c4EEbC9684aC26EFfe5B',
+      depositGuard: {
+        address: '0x2121AA95a8B05d9C1Db90368B60C6867618814b8',
+        version: 2,
+      },
+      vaultDeployerAddress: '0xC4183bCcBa1D825A8aC971e13E698368b744F43C',
+      isAlgebra: false,
+    },
     [SupportedDex.Cleo]: {
       factoryAddress: '0xbBB97d634460DACCA0d41E249510Bb741ef46ad3',
       depositGuard: {
         address: '0xADDA3A15EA71c223a82Af86d4578EF2B076035F1',
+        version: 2,
+      },
+      vaultDeployerAddress: '0xC4183bCcBa1D825A8aC971e13E698368b744F43C',
+      isAlgebra: false,
+    },
+    [SupportedDex.Crust]: {
+      factoryAddress: '0x797ebB6A84367B0409094FEA0D10aC7516432433',
+      depositGuard: {
+        address: '0x15Ea9A2a0FfBaA8Ad51a10a9bda84E60585Ba0De',
         version: 2,
       },
       vaultDeployerAddress: '0xC4183bCcBa1D825A8aC971e13E698368b744F43C',

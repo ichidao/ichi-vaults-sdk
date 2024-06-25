@@ -1065,9 +1065,11 @@ enum SupportedChainId {
 
 ```typescript
 enum SupportedDex {
+  Agni = 'Agni',
   Ascent = 'Ascent',
   Blueprint = 'Blueprint',
   Cleo = 'Cleo',
+  Crust = 'Crust',
   Equalizer = 'Equalizer',
   Fenix = 'Fenix',
   Forge = 'Forge',

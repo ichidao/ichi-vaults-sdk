@@ -7,7 +7,7 @@ import { MaxUint256 } from '@ethersproject/constants';
 import { getDepositGuardContract, getERC20Contract, getIchiVaultContract } from '../contracts';
 import parseBigInt from '../utils/parseBigInt';
 import { IchiVault, SupportedChainId, SupportedDex, ichiVaultDecimals } from '../types';
-import calculateGasMargin from '../types/calculateGasMargin';
+import { getGasLimit, calculateGasMargin } from '../types/calculateGasMargin';
 // eslint-disable-next-line import/no-cycle
 import { getIchiVaultInfo, validateVaultData } from './vault';
 import addressConfig from '../utils/config/addresses';
@@ -160,6 +160,7 @@ export async function withdrawWithSlippage(
   }
 
   const depositGuardContract = getDepositGuardContract(depositGuardAddress, signer);
+  const maxGasLimit = getGasLimit(chainId);
 
   // the first call: get estimated LP amount
   let amounts = await depositGuardContract.callStatic.forwardWithdrawFromICHIVault(
@@ -170,7 +171,7 @@ export async function withdrawWithSlippage(
     BigNumber.from(0),
     BigNumber.from(0),
     {
-      gasLimit: 5e6, // the deposit via guard tx should never exceed 5e6
+      gasLimit: maxGasLimit,
     },
   );
 
@@ -263,6 +264,8 @@ export async function withdrawNativeToken(
     throw new Error('None of vault tokens is wrapped native token');
   }
 
+  const maxGasLimit = getGasLimit(chainId);
+
   // the first call: get estimated LP amount
   let amounts = await depositGuardContract.callStatic.forwardNativeWithdrawFromICHIVault(
     vaultAddress,
@@ -272,7 +275,7 @@ export async function withdrawNativeToken(
     BigNumber.from(0),
     BigNumber.from(0),
     {
-      gasLimit: 5e6, // the deposit via guard tx should never exceed 5e6
+      gasLimit: maxGasLimit,
     },
   );
 

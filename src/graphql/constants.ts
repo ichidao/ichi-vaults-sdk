@@ -242,9 +242,19 @@ export const graphUrls: Record<SupportedChainId, dexGraph> = {
     },
   },
   [SupportedChainId.mantle]: {
+    [SupportedDex.Agni]: {
+      url: 'https://subgraph-api.mantle.xyz/subgraphs/name/ichi-org/mantle-v1-agni',
+      publishedUrl: 'https://subgraph-api.mantle.xyz/subgraphs/name/ichi-org/mantle-v1-agni',
+      supportsCollectFees: true,
+    },
     [SupportedDex.Cleo]: {
       url: 'https://subgraph-api.mantle.xyz/subgraphs/name/ichi-org/mantle-v1-cleo',
       publishedUrl: 'https://subgraph-api.mantle.xyz/subgraphs/name/ichi-org/mantle-v1-cleo',
+      supportsCollectFees: true,
+    },
+    [SupportedDex.Crust]: {
+      url: 'https://subgraph-api.mantle.xyz/subgraphs/name/ichi-org/mantle-v1-crust',
+      publishedUrl: 'https://subgraph-api.mantle.xyz/subgraphs/name/ichi-org/mantle-v1-crust',
       supportsCollectFees: true,
     },
   },
