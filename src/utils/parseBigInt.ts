@@ -1,11 +1,14 @@
 import { BigNumber } from '@ethersproject/bignumber';
-import { parseEther } from '@ethersproject/units';
 
 export default function parseBigInt(_value: number | string, decimals: number): BigNumber {
-  const value = Number(_value).toFixed(18);
-
-  const bi18 = parseEther(value.toString());
-  const divisor = BigNumber.from(10).pow(18 - decimals);
-
-  return bi18.div(BigNumber.from(divisor));
+  const valueStr = _value.toString();
+  
+  const [wholePart, fractionalPart = ''] = valueStr.split('.');
+  if (fractionalPart.length > decimals) throw new Error(`Number ${valueStr} is too long`);
+  
+  const combined = wholePart + fractionalPart.padEnd(decimals, '0');
+  
+  const bigNumberValue = BigNumber.from(combined);
+  
+  return bigNumberValue;
 }
