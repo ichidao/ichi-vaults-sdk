@@ -9,10 +9,9 @@ import parseBigInt from '../utils/parseBigInt';
 import { IchiVault, SupportedChainId, SupportedDex, ichiVaultDecimals } from '../types';
 import { getGasLimit, calculateGasMargin } from '../types/calculateGasMargin';
 // eslint-disable-next-line import/no-cycle
-import { getIchiVaultInfo, validateVaultData } from './vault';
+import { validateVaultData } from './vault';
 import addressConfig from '../utils/config/addresses';
 import amountWithSlippage from '../utils/amountWithSlippage';
-import formatBigInt from '../utils/formatBigInt';
 import { getUserBalance } from './userBalances';
 import getVaultDeployer from './vaultBasics';
 
@@ -24,23 +23,17 @@ export async function approveVaultToken(
   shares?: string | number | BigNumber,
   overrides?: Overrides,
 ): Promise<ContractTransaction> {
-  const { chainId } = await jsonProvider.getNetwork();
-  if (!Object.values(SupportedChainId).includes(chainId)) {
-    throw new Error(`Unsupported chainId: ${chainId}`);
-  }
+  const { chainId } = await validateVaultData(vaultAddress, jsonProvider, dex);
 
   const signer = jsonProvider.getSigner(accountAddress);
-  const vault = await getIchiVaultInfo(chainId, dex, vaultAddress, jsonProvider);
-  if (!vault) throw new Error(`Vault ${vaultAddress} not found on chain ${chainId} and dex ${dex}`);
 
   const vaultTokenContract = getERC20Contract(vaultAddress, signer);
-  const vaultTokenDecimals = ichiVaultDecimals;
 
   // eslint-disable-next-line no-nested-ternary
   const sharesBN = shares
     ? shares instanceof BigNumber
       ? shares
-      : parseBigInt(shares, +vaultTokenDecimals || 18)
+      : parseBigInt(shares, ichiVaultDecimals)
     : MaxUint256;
 
   const depositGuardAddress = addressConfig[chainId as SupportedChainId]![dex]?.depositGuard.address;
@@ -57,7 +50,7 @@ export async function approveVaultToken(
 // eslint-disable-next-line no-underscore-dangle
 async function _isVaultTokenApproved(
   accountAddress: string,
-  shares: string | number,
+  shares: string | number | BigNumber,
   vault: IchiVault,
   chainId: SupportedChainId,
   jsonProvider: JsonRpcProvider,
@@ -71,16 +64,15 @@ async function _isVaultTokenApproved(
     throw new Error(`Deposit Guard  for vault ${vault.id} not found on chain ${chainId} and dex ${dex}`);
   }
   const currentAllowanceBN = await vaultTokenContract.allowance(accountAddress, depositGuardAddress);
-  const vaultTokenDecimals = ichiVaultDecimals;
 
-  const currentAllowance = +formatBigInt(currentAllowanceBN, vaultTokenDecimals);
+  const sharesBN = shares instanceof BigNumber ? shares : parseBigInt(shares, ichiVaultDecimals);
 
-  return currentAllowance !== 0 && currentAllowance >= +(shares ?? 0);
+  return currentAllowanceBN.gt(BigNumber.from(0)) && currentAllowanceBN.gte(sharesBN);
 }
 
 export async function isVaultTokenApproved(
   accountAddress: string,
-  shares: string | number,
+  shares: string | number | BigNumber,
   vaultAddress: string,
   jsonProvider: JsonRpcProvider,
   dex: SupportedDex,
@@ -151,8 +143,7 @@ export async function withdrawWithSlippage(
     );
   }
 
-  const strShares = shares instanceof BigNumber ? formatBigInt(shares, ichiVaultDecimals) : shares.toString();
-  const isApproved = await _isVaultTokenApproved(accountAddress, strShares, vault, chainId, jsonProvider, dex);
+  const isApproved = await _isVaultTokenApproved(accountAddress, withdrawShares, vault, chainId, jsonProvider, dex);
   if (!isApproved) {
     throw new Error(
       `Vault token transfer is not approved for vault ${vaultAddress} on chain ${chainId} and dex ${dex}`,
@@ -242,8 +233,7 @@ export async function withdrawNativeToken(
     );
   }
 
-  const strShares = shares instanceof BigNumber ? formatBigInt(shares, ichiVaultDecimals) : shares.toString();
-  const isApproved = await _isVaultTokenApproved(accountAddress, strShares, vault, chainId, jsonProvider, dex);
+  const isApproved = await _isVaultTokenApproved(accountAddress, withdrawShares, vault, chainId, jsonProvider, dex);
   if (!isApproved) {
     throw new Error(
       `Vault token transfer is not approved for vault ${vaultAddress} on chain ${chainId} and dex ${dex}`,

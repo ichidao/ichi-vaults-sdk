@@ -62,7 +62,7 @@ This SDK uses subgraphs to obtain information about ICHI vaults. The subgraphs a
 | vaultAddress   | string | - | true |
 | jsonProvider      | [JsonRpcProvider](https://github.com/ethers-io/ethers.js/blob/f97b92bbb1bde22fcc44100af78d7f31602863ab/packages/providers/src.ts/json-rpc-provider.ts#L393) | - | true
 | dex   | SupportedDex | - | true |
-| amount   | string \| number | undefined | false |
+| amount   | string \| number \| BigNumber | undefined | false |
 | overrides         | [Overrides](https://github.com/ethers-io/ethers.js/blob/f97b92bbb1bde22fcc44100af78d7f31602863ab/packages/contracts/lib/index.d.ts#L7)  | undefined | false
 
 <br/>
@@ -99,8 +99,8 @@ await txnDetails.wait();
 | param | type |  default | required
 | -------- | -------- | -------- | --------
 | accountAddress   | string | - | true
-| amount0           | string \| number | - | true
-| amount1           | string \| number | - | true
+| amount0           | string \| number \| BigNumber | - | true
+| amount1           | string \| number \| BigNumber | - | true
 | vaultAddress   | string | - | true
 | jsonProvider      | [JsonRpcProvider](https://github.com/ethers-io/ethers.js/blob/f97b92bbb1bde22fcc44100af78d7f31602863ab/packages/providers/src.ts/json-rpc-provider.ts#L393) | - | true
 | dex   | SupportedDex | - | true
@@ -140,8 +140,8 @@ const txnDetails = await deposit(
 | param | type |  default | required
 | -------- | -------- | -------- | --------
 | accountAddress   | string | - | true
-| amount0           | string \| number | - | true
-| amount1           | string \| number | - | true
+| amount0           | string \| number \| BigNumber | - | true
+| amount1           | string \| number \| BigNumber | - | true
 | vaultAddress   | string | - | true
 | jsonProvider      | [JsonRpcProvider](https://github.com/ethers-io/ethers.js/blob/f97b92bbb1bde22fcc44100af78d7f31602863ab/packages/providers/src.ts/json-rpc-provider.ts#L393) | - | true
 | dex   | SupportedDex | - | true
@@ -184,7 +184,7 @@ const txnDetails = await depositNativeToken(
 | vaultAddress   | string | - | true |
 | jsonProvider      | [JsonRpcProvider](https://github.com/ethers-io/ethers.js/blob/f97b92bbb1bde22fcc44100af78d7f31602863ab/packages/providers/src.ts/json-rpc-provider.ts#L393) | - | true
 | dex   | SupportedDex | - | true |
-| shares   | string \| number | undefined | false |
+| shares   | string \| number \| BigNumber | undefined | false |
 | overrides         | [Overrides](https://github.com/ethers-io/ethers.js/blob/f97b92bbb1bde22fcc44100af78d7f31602863ab/packages/contracts/lib/index.d.ts#L7)  | undefined | false
 
 <br/>
@@ -219,7 +219,7 @@ await txnDetails.wait();
 | param | type |  default | required
 | -------- | -------- | -------- | --------
 | accountAddress   | string | - | true
-| shares   | string \| number, | - | true |
+| shares   | string \| number \| BigNumber, | - | true |
 | vaultAddress   | string | - | true |
 | jsonProvider      | [JsonRpcProvider](https://github.com/ethers-io/ethers.js/blob/f97b92bbb1bde22fcc44100af78d7f31602863ab/packages/providers/src.ts/json-rpc-provider.ts#L393) | - | true
 | dex   | SupportedDex | - | true |
@@ -253,7 +253,7 @@ const isApproved: boolean = await isVaultTokenApproved(
 | param | type |  default | required
 | -------- | -------- | -------- | --------
 | accountAddress   | string | - | true
-| shares           | string \| number | - | true
+| shares           | string \| number \| BigNumber | - | true
 | vaultAddress   | string | - | true
 | jsonProvider      | [JsonRpcProvider](https://github.com/ethers-io/ethers.js/blob/f97b92bbb1bde22fcc44100af78d7f31602863ab/packages/providers/src.ts/json-rpc-provider.ts#L393) | - | true
 | dex   | SupportedDex | - | true
@@ -294,7 +294,7 @@ const txnDetails = await withdraw(
 | param | type |  default | required
 | -------- | -------- | -------- | --------
 | accountAddress   | string | - | true
-| shares           | string \| number | - | true
+| shares           | string \| number \| BigNumber | - | true
 | vaultAddress   | string | - | true
 | jsonProvider      | [JsonRpcProvider](https://github.com/ethers-io/ethers.js/blob/f97b92bbb1bde22fcc44100af78d7f31602863ab/packages/providers/src.ts/json-rpc-provider.ts#L393) | - | true
 | dex   | SupportedDex | - | true
@@ -336,7 +336,7 @@ const txnDetails = await withdraw(
 | param | type |  default | required
 | -------- | -------- | -------- | --------
 | accountAddress   | string | - | true
-| shares           | string \| number | - | true
+| shares           | string \| number \| BigNumber | - | true
 | vaultAddress   | string | - | true
 | jsonProvider      | [JsonRpcProvider](https://github.com/ethers-io/ethers.js/blob/f97b92bbb1bde22fcc44100af78d7f31602863ab/packages/providers/src.ts/json-rpc-provider.ts#L393) | - | true
 | dex   | SupportedDex | - | true
