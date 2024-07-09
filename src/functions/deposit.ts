@@ -6,7 +6,6 @@ import { getDepositGuardContract, getERC20Contract, getIchiVaultContract } from 
 import parseBigInt from '../utils/parseBigInt';
 import { SupportedDex, SupportedChainId, IchiVault } from '../types';
 import { calculateGasMargin, getGasLimit } from '../types/calculateGasMargin';
-import formatBigInt from '../utils/formatBigInt';
 // eslint-disable-next-line import/no-cycle
 import { getIchiVaultInfo, validateVaultData } from './vault';
 import addressConfig from '../utils/config/addresses';
@@ -37,7 +36,7 @@ export async function isTokenAllowed(
 async function _isDepositTokenApproved(
   accountAddress: string,
   tokenIdx: 0 | 1,
-  amount: string | number,
+  amount: string | number | BigNumber,
   vault: IchiVault,
   chainId: SupportedChainId,
   jsonProvider: JsonRpcProvider,
@@ -50,15 +49,15 @@ async function _isDepositTokenApproved(
   const currentAllowanceBN = await tokenContract.allowance(accountAddress, depositGuardAddress);
   const tokenDecimals = await tokenContract.decimals();
 
-  const currentAllowance = +formatBigInt(currentAllowanceBN, +tokenDecimals);
+  const amountBN = amount instanceof BigNumber ? amount : parseBigInt(amount, tokenDecimals);
 
-  return currentAllowance !== 0 && currentAllowance >= +(amount ?? 0);
+  return currentAllowanceBN.gt(BigNumber.from(0)) && currentAllowanceBN.gte(amountBN);
 }
 
 export async function isDepositTokenApproved(
   accountAddress: string,
   tokenIdx: 0 | 1,
-  amount: string | number,
+  amount: string | number | BigNumber,
   vaultAddress: string,
   jsonProvider: JsonRpcProvider,
   dex: SupportedDex,
@@ -155,21 +154,18 @@ export async function deposit(
   }
   let depositAmount = amount0BN;
   let depositToken = token0;
-  let depositTokenDecimals = token0Decimals;
   let tokenIndex = 0 as 0 | 1;
   if (amount1BN.gt(BigNumber.from(0))) {
     depositAmount = amount1BN;
     depositToken = token1;
     tokenIndex = 1;
-    depositTokenDecimals = token1Decimals;
   }
-  let amount = isToken0Allowed ? amount0 : amount1;
-  if (amount instanceof BigNumber) amount = formatBigInt(amount, depositTokenDecimals);
+  const amountBN = isToken0Allowed ? amount0BN : amount1BN;
 
   const isApproved = await _isDepositTokenApproved(
     accountAddress,
     tokenIndex,
-    amount,
+    amountBN,
     vault,
     chainId,
     jsonProvider,
