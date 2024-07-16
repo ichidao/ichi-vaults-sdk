@@ -272,6 +272,17 @@ const addressConfig: Record<SupportedChainId, Config> = {
       ammVersion: 'algebraIntegral',
     },
   },
+  [SupportedChainId.flare]: {
+    [SupportedDex.SparkDex]: {
+      factoryAddress: '0x9FAb4bdD4E05f5C023CCC85D2071b49791D7418F',
+      depositGuard: {
+        address: '0xbb7A3d439abf42Cf39837f9102F987bab3Ee2e73',
+        version: 2,
+      },
+      vaultDeployerAddress: '0x2d1918dBa43d55B9F0E2596aecC74826BbB7d668',
+      isAlgebra: false,
+    },
+  },
   [SupportedChainId.fuse]: {
     [SupportedDex.Voltage]: {
       factoryAddress: '0xfBf38920cCbCFF7268Ad714ae5F9Fad6dF607065',

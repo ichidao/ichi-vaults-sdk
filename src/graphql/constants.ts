@@ -184,6 +184,14 @@ export const graphUrls: Record<SupportedChainId, dexGraph> = {
       supportsCollectFees: true,
     },
   },
+  [SupportedChainId.flare]: {
+    [SupportedDex.SparkDex]: {
+      url: 'https://api.goldsky.com/api/public/project_clynrq1h8gam301xx6vgngo9p/subgraphs/ichi-org/flare-v1-sparkdex/gn',
+      publishedUrl:
+        'https://api.goldsky.com/api/public/project_clynrq1h8gam301xx6vgngo9p/subgraphs/ichi-org/flare-v1-sparkdex/gn',
+      supportsCollectFees: true,
+    },
+  },
   [SupportedChainId.fuse]: {
     [SupportedDex.Voltage]: {
       url: 'https://api.studio.thegraph.com/query/61136/fuse-v1-voltage/version/latest',
