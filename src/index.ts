@@ -8,4 +8,5 @@ export * from './functions/calculateFees';
 export * from './functions/calculateDtr';
 export * from './functions/calculateApr';
 export * from './functions/vaultMetrics';
+export * from './functions/vaultTvl';
 export * from './types/index';
