@@ -6,7 +6,7 @@ import { BigNumber } from '@ethersproject/bignumber';
 import { DepositTokenRatio, IchiVault, SupportedDex, VaultState, VaultTransactionEvent } from '../types';
 // eslint-disable-next-line import/no-cycle
 import { validateVaultData } from './vault';
-import { _getTotalAmounts, getTokenDecimals } from './_totalBalances';
+import { getTokenDecimals } from './_totalBalances';
 import formatBigInt from '../utils/formatBigInt';
 import { daysToMilliseconds } from '../utils/timestamps';
 import getPrice from '../utils/getPrice';
@@ -22,8 +22,8 @@ export type VaultEvent = {
   feeAmount: number;
 };
 
-function formatVaultEvent(dtr: DepositTokenRatio, tvl: number, fee: number): VaultEvent{
-  const ve = {atTimestamp: dtr.atTimestamp, dtr: dtr.percent, tvl: tvl, feeAmount: fee};
+function formatVaultEvent(dtr: DepositTokenRatio, tvl: number, fee: number): VaultEvent {
+  const ve = { atTimestamp: dtr.atTimestamp, dtr: dtr.percent, tvl, feeAmount: fee };
   return ve;
 }
 
@@ -58,11 +58,12 @@ export function getTvlAtTransactionEvent(
 ): number {
   const isVaultInverted = vault.allowTokenB;
   const totalAmounts = getTotalAmountsAtTransactionEvent(
-    objTransactionEvent, 
-    isVaultInverted, 
-    token0decimals, 
-    token1decimals, 
-    false);
+    objTransactionEvent,
+    isVaultInverted,
+    token0decimals,
+    token1decimals,
+    false,
+  );
   const tvl = totalAmounts[0] + totalAmounts[1];
 
   return tvl;
@@ -109,29 +110,43 @@ export async function getVaultEventsForTimeInterval(
   const arrRebalances = rebalances
     .slice()
     .filter((r) => Number(r.createdAtTimestamp) * 1000 > Date.now() - daysToMilliseconds(timeInterval))
-    .map((e) => formatVaultEvent(
-      getDtrAtFeeCollectionEvent(e, vault.allowTokenB, token0Decimals, token1Decimals),
-      getTvlAtFeeCollectionEvent(e, vault, token0Decimals, token1Decimals),
-      getFeesAmountInBaseTokens(e, vault.allowTokenB, token0Decimals, token1Decimals)));
+    .map((e) =>
+      formatVaultEvent(
+        getDtrAtFeeCollectionEvent(e, vault.allowTokenB, token0Decimals, token1Decimals),
+        getTvlAtFeeCollectionEvent(e, vault, token0Decimals, token1Decimals),
+        getFeesAmountInBaseTokens(e, vault.allowTokenB, token0Decimals, token1Decimals),
+      ),
+    );
   const arrOtherFees = collectedFees
     .slice()
     .filter((r) => Number(r.createdAtTimestamp) * 1000 > Date.now() - daysToMilliseconds(timeInterval))
-    .map((e) => formatVaultEvent(
-      getDtrAtFeeCollectionEvent(e, vault.allowTokenB, token0Decimals, token1Decimals),
-      getTvlAtFeeCollectionEvent(e, vault, token0Decimals, token1Decimals),
-      getFeesAmountInBaseTokens(e, vault.allowTokenB, token0Decimals, token1Decimals)));
+    .map((e) =>
+      formatVaultEvent(
+        getDtrAtFeeCollectionEvent(e, vault.allowTokenB, token0Decimals, token1Decimals),
+        getTvlAtFeeCollectionEvent(e, vault, token0Decimals, token1Decimals),
+        getFeesAmountInBaseTokens(e, vault.allowTokenB, token0Decimals, token1Decimals),
+      ),
+    );
   const arrDeposits = deposits
     .slice()
     .filter((r) => Number(r.createdAtTimestamp) * 1000 > Date.now() - daysToMilliseconds(timeInterval))
-    .map((e) => formatVaultEvent(
-      getDtrAtTransactionEvent(e, vault.allowTokenB, token0Decimals, token1Decimals),
-      getTvlAtTransactionEvent(e, vault, token0Decimals, token1Decimals), 0));
+    .map((e) =>
+      formatVaultEvent(
+        getDtrAtTransactionEvent(e, vault.allowTokenB, token0Decimals, token1Decimals),
+        getTvlAtTransactionEvent(e, vault, token0Decimals, token1Decimals),
+        0,
+      ),
+    );
   const arrWithdraws = withdraws
     .slice()
     .filter((r) => Number(r.createdAtTimestamp) * 1000 > Date.now() - daysToMilliseconds(timeInterval))
-    .map((e) => formatVaultEvent(
-      getDtrAtTransactionEvent(e, vault.allowTokenB, token0Decimals, token1Decimals),
-      getTvlAtTransactionEvent(e, vault, token0Decimals, token1Decimals), 0));
+    .map((e) =>
+      formatVaultEvent(
+        getDtrAtTransactionEvent(e, vault.allowTokenB, token0Decimals, token1Decimals),
+        getTvlAtTransactionEvent(e, vault, token0Decimals, token1Decimals),
+        0,
+      ),
+    );
   const currentVaultEvent = {
     atTimestamp: Math.floor(Date.now() / 1000).toString(),
     dtr: await getCurrentDtr(vaultAddress, jsonProvider, dex, isVaultInverted, token0Decimals, token1Decimals),
