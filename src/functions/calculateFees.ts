@@ -41,7 +41,7 @@ export function getTotalAmountsAtFeeCollectionEvent(
   return [amount0, amount1];
 }
 
-function getFeesAmountInBaseTokens(
+export function getFeesAmountInBaseTokens(
   objFees: Fees,
   isVaultInverted: boolean,
   token0Decimals: number,
