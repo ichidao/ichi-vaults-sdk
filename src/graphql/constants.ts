@@ -103,7 +103,7 @@ export const graphUrls: Record<SupportedChainId, dexGraph> = {
   },
   [SupportedChainId.blast]: {
     [SupportedDex.Fenix]: {
-      url: 'https://api.studio.thegraph.com/query/61136/blast-v1-fenix/version/latest',
+      url: 'https://api.goldsky.com/api/public/project_clxadvm41bujy01ui2qalezdn/subgraphs/blast-v1-fenix/1.0.0/gn',
       publishedUrl:
         'https://gateway-arbitrum.network.thegraph.com/api/[api-key]/subgraphs/id/2cJiB62w497AptncjaPsm51YHtykmEzo3191Ar2iTTB2',
       supportsCollectFees: true,
@@ -123,7 +123,7 @@ export const graphUrls: Record<SupportedChainId, dexGraph> = {
   },
   [SupportedChainId.blast_sepolia_testnet]: {
     [SupportedDex.Fenix]: {
-      url: 'https://api.studio.thegraph.com/query/61136/blast-sepolia-v1-fenix/version/latest',
+      url: 'https://api.goldsky.com/api/public/project_clxadvm41bujy01ui2qalezdn/subgraphs/blast-sepolia-v1-fenix/1.0.0/gn',
       publishedUrl: 'https://api.studio.thegraph.com/query/61136/blast-sepolia-v1-fenix/version/latest',
       supportsCollectFees: true,
     },
