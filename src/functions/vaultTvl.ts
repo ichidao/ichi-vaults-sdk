@@ -11,7 +11,7 @@ import formatBigInt from '../utils/formatBigInt';
 import { daysToMilliseconds } from '../utils/timestamps';
 import getPrice from '../utils/getPrice';
 import { getFeesAmountInBaseTokens, getTotalAmountsAtFeeCollectionEvent } from './calculateFees';
-import { getCurrentDtr, getVaultTvl } from './priceFromPool';
+import { getCurrLpPrice, getCurrPrice, getCurrentDtr, getVaultTvl } from './priceFromPool';
 import { _getDeposits, _getFeesCollectedEvents, _getRebalances, _getWithdraws } from './_vaultEvents';
 import { getDtrAtFeeCollectionEvent, getDtrAtTransactionEvent } from './calculateDtr';
 
@@ -205,6 +205,9 @@ export async function getVaultEventsForTimeInterval(
     atTimestamp: Math.floor(Date.now() / 1000).toString(),
     dtr: await getCurrentDtr(vaultAddress, jsonProvider, dex, isVaultInverted, token0Decimals, token1Decimals),
     tvl: await getVaultTvl(vault, jsonProvider, chainId, dex, isVaultInverted, token0Decimals, token1Decimals),
+    feeAmount: 0,
+    lpPrice: await getCurrLpPrice(vault, jsonProvider, dex, chainId, isVaultInverted, token0Decimals, token1Decimals),
+    poolPrice: await getCurrPrice(vault, jsonProvider, chainId, dex, isVaultInverted, token0Decimals, token1Decimals),
   } as VaultEvent;
 
   const result = [...arrDeposits, ...arrWithdraws, ...arrRebalances, ...arrOtherFees, currentVaultEvent].sort(
