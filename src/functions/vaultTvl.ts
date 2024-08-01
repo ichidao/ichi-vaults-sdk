@@ -20,11 +20,35 @@ export type VaultEvent = {
   dtr: number;
   tvl: number;
   feeAmount: number;
+  lpPrice: number;
+  poolPrice: number;
 };
 
-function formatVaultEvent(dtr: DepositTokenRatio, tvl: number, fee: number): VaultEvent {
-  const ve = { atTimestamp: dtr.atTimestamp, dtr: dtr.percent, tvl, feeAmount: fee };
-  return ve;
+function formatVaultEvent(
+  dtr: DepositTokenRatio,
+  tvl: number,
+  fee: number,
+  lpPrice: number,
+  poolPrice: number,
+): VaultEvent {
+  return {
+    atTimestamp: dtr.atTimestamp,
+    dtr: dtr.percent,
+    tvl,
+    feeAmount: fee,
+    lpPrice,
+    poolPrice,
+  };
+}
+
+// get price from the pool/vault
+function getPoolPriceAtTransactionEvent(
+  objTransactionEvent: VaultState,
+  isVaultInverted: boolean,
+  token0Decimals: number,
+  token1Decimals: number,
+): number {
+  return getPrice(isVaultInverted, BigNumber.from(objTransactionEvent.sqrtPrice), token0Decimals, token1Decimals);
 }
 
 // total amounts at deposit or withdrawal in deposit tokens
@@ -86,6 +110,28 @@ export function getTvlAtFeeCollectionEvent(
   return tvl;
 }
 
+function getLpPriceAtFeeCollectionEvent(
+  objTransactionEvent: VaultState,
+  vault: IchiVault,
+  token0decimals: number,
+  token1decimals: number,
+): number {
+  const tvl = getTvlAtFeeCollectionEvent(objTransactionEvent, vault, token0decimals, token1decimals);
+  const totalSupply = Number(formatBigInt(BigNumber.from(objTransactionEvent.totalSupply), 18));
+  return tvl / totalSupply;
+}
+
+function getLpPriceAtTransactionEvent(
+  objTransactionEvent: VaultTransactionEvent,
+  vault: IchiVault,
+  token0decimals: number,
+  token1decimals: number,
+): number {
+  const tvl = getTvlAtTransactionEvent(objTransactionEvent, vault, token0decimals, token1decimals);
+  const totalSupply = Number(formatBigInt(BigNumber.from(objTransactionEvent.totalSupply), 18));
+  return tvl / totalSupply;
+}
+
 // time Interval in days
 export async function getVaultEventsForTimeInterval(
   vaultAddress: string,
@@ -115,6 +161,8 @@ export async function getVaultEventsForTimeInterval(
         getDtrAtFeeCollectionEvent(e, vault.allowTokenB, token0Decimals, token1Decimals),
         getTvlAtFeeCollectionEvent(e, vault, token0Decimals, token1Decimals),
         getFeesAmountInBaseTokens(e, vault.allowTokenB, token0Decimals, token1Decimals),
+        getLpPriceAtFeeCollectionEvent(e, vault, token0Decimals, token1Decimals),
+        getPoolPriceAtTransactionEvent(e, isVaultInverted, token0Decimals, token1Decimals),
       ),
     );
   const arrOtherFees = collectedFees
@@ -125,6 +173,8 @@ export async function getVaultEventsForTimeInterval(
         getDtrAtFeeCollectionEvent(e, vault.allowTokenB, token0Decimals, token1Decimals),
         getTvlAtFeeCollectionEvent(e, vault, token0Decimals, token1Decimals),
         getFeesAmountInBaseTokens(e, vault.allowTokenB, token0Decimals, token1Decimals),
+        getLpPriceAtFeeCollectionEvent(e, vault, token0Decimals, token1Decimals),
+        getPoolPriceAtTransactionEvent(e, isVaultInverted, token0Decimals, token1Decimals),
       ),
     );
   const arrDeposits = deposits
@@ -135,6 +185,8 @@ export async function getVaultEventsForTimeInterval(
         getDtrAtTransactionEvent(e, vault.allowTokenB, token0Decimals, token1Decimals),
         getTvlAtTransactionEvent(e, vault, token0Decimals, token1Decimals),
         0,
+        getLpPriceAtTransactionEvent(e, vault, token0Decimals, token1Decimals),
+        getPoolPriceAtTransactionEvent(e, isVaultInverted, token0Decimals, token1Decimals),
       ),
     );
   const arrWithdraws = withdraws
@@ -145,6 +197,8 @@ export async function getVaultEventsForTimeInterval(
         getDtrAtTransactionEvent(e, vault.allowTokenB, token0Decimals, token1Decimals),
         getTvlAtTransactionEvent(e, vault, token0Decimals, token1Decimals),
         0,
+        getLpPriceAtTransactionEvent(e, vault, token0Decimals, token1Decimals),
+        getPoolPriceAtTransactionEvent(e, isVaultInverted, token0Decimals, token1Decimals),
       ),
     );
   const currentVaultEvent = {
