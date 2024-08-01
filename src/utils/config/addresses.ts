@@ -478,6 +478,17 @@ const addressConfig: Record<SupportedChainId, Config> = {
       ammVersion: 'algebraIntegral',
     },
   },
+  [SupportedChainId.unreal]: {
+    [SupportedDex.Pearl]: {
+      factoryAddress: '0x89FFdaa18b296d9F0CF02fBD88e5c633FEFA5f34',
+      depositGuard: {
+        address: '0xe8532Db60408f2d47693dA5b9093D71580B8C23F',
+        version: 2,
+      },
+      vaultDeployerAddress: '0xBAd0700365De39C932b905002604B0A22aA4Bb77',
+      isAlgebra: false,
+    },
+  },
   [SupportedChainId.x_layer_testnet]: {
     [SupportedDex.XSwap]: {
       factoryAddress: '0xADDA3A15EA71c223a82Af86d4578EF2B076035F1',

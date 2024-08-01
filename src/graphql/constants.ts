@@ -318,6 +318,14 @@ export const graphUrls: Record<SupportedChainId, dexGraph> = {
       supportsCollectFees: true,
     },
   },
+  [SupportedChainId.unreal]: {
+    [SupportedDex.Pearl]: {
+      url: 'https://api.goldsky.com/api/public/project_clynrq1h8gam301xx6vgngo9p/subgraphs/ichi-org/unreal-v1-pearl/gn',
+      publishedUrl:
+        'https://api.goldsky.com/api/public/project_clynrq1h8gam301xx6vgngo9p/subgraphs/ichi-org/unreal-v1-pearl/gn',
+      supportsCollectFees: true,
+    },
+  },
   [SupportedChainId.x_layer_testnet]: {
     [SupportedDex.XSwap]: {
       url: 'https://api.studio.thegraph.com/query/61136/xlayer-sepolia-v1-xswap/version/latest',
