@@ -61,8 +61,8 @@ export async function getCurrPrice(
   try {
     const sqrtPrice = await getSqrtPriceFromPool(vault, jsonProvider, chainId, dex);
     const depositTokenDecimals = isVaultInverted ? token1decimals : token0decimals;
-    const scarseTokenDecimals = isVaultInverted ? token0decimals : token1decimals;
-    const price = getPrice(isVaultInverted, sqrtPrice, depositTokenDecimals, scarseTokenDecimals, 15);
+    const scarceTokenDecimals = isVaultInverted ? token0decimals : token1decimals;
+    const price = getPrice(isVaultInverted, sqrtPrice, depositTokenDecimals, scarceTokenDecimals, 15);
 
     return price;
   } catch (e) {

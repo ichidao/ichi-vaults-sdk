@@ -30,12 +30,14 @@ export function getTotalAmountsAtFeeCollectionEvent(
   token0Decimals: number,
   token1Decimals: number,
 ): [number, number] {
+  const depositTokenDecimals = isVaultInverted ? token1Decimals : token0Decimals;
+  const scarceTokenDecimals = isVaultInverted ? token0Decimals : token1Decimals;
   const price0 = !isVaultInverted
     ? 1
-    : getPrice(isVaultInverted, BigNumber.from(objFees.sqrtPrice), token0Decimals, token1Decimals);
+    : getPrice(isVaultInverted, BigNumber.from(objFees.sqrtPrice), depositTokenDecimals, scarceTokenDecimals, 15);
   const price1 = isVaultInverted
     ? 1
-    : getPrice(isVaultInverted, BigNumber.from(objFees.sqrtPrice), token0Decimals, token1Decimals);
+    : getPrice(isVaultInverted, BigNumber.from(objFees.sqrtPrice), depositTokenDecimals, scarceTokenDecimals, 15);
   const amount0 = Number(formatBigInt(BigNumber.from(objFees.totalAmount0), token0Decimals)) * price0;
   const amount1 = Number(formatBigInt(BigNumber.from(objFees.totalAmount1), token1Decimals)) * price1;
   return [amount0, amount1];
@@ -47,12 +49,14 @@ export function getFeesAmountInBaseTokens(
   token0Decimals: number,
   token1Decimals: number,
 ): number {
+  const depositTokenDecimals = isVaultInverted ? token1Decimals : token0Decimals;
+  const scarceTokenDecimals = isVaultInverted ? token0Decimals : token1Decimals;
   const price0 = !isVaultInverted
     ? 1
-    : getPrice(isVaultInverted, BigNumber.from(objFees.sqrtPrice), token0Decimals, token1Decimals);
+    : getPrice(isVaultInverted, BigNumber.from(objFees.sqrtPrice), depositTokenDecimals, scarceTokenDecimals, 15);
   const price1 = isVaultInverted
     ? 1
-    : getPrice(isVaultInverted, BigNumber.from(objFees.sqrtPrice), token0Decimals, token1Decimals);
+    : getPrice(isVaultInverted, BigNumber.from(objFees.sqrtPrice), depositTokenDecimals, scarceTokenDecimals, 15);
   const amount0 = Number(formatBigInt(BigNumber.from(objFees.feeAmount0), token0Decimals)) * price0;
   const amount1 = Number(formatBigInt(BigNumber.from(objFees.feeAmount1), token1Decimals)) * price1;
   return amount0 + amount1;

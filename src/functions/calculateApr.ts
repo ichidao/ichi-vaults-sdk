@@ -24,12 +24,12 @@ export function getLpPriceAt(
     return null;
   } else {
     const depositTokenDecimals = isVaultInverted ? token1decimals : token0decimals;
-    const scarseTokenDecimals = isVaultInverted ? token0decimals : token1decimals;
+    const scarceTokenDecimals = isVaultInverted ? token0decimals : token1decimals;
 
     const { totalAmount0, totalAmount1, sqrtPrice } = e;
     const formattedTotalAmount0 = formatBigInt(totalAmount0, token0decimals);
     const formattedTotalAmount1 = formatBigInt(totalAmount1, token1decimals);
-    const price = getPrice(isVaultInverted, BigNumber.from(sqrtPrice), depositTokenDecimals, scarseTokenDecimals, 15);
+    const price = getPrice(isVaultInverted, BigNumber.from(sqrtPrice), depositTokenDecimals, scarceTokenDecimals, 15);
     const tvl = !isVaultInverted
       ? Number(formattedTotalAmount0) + Number(formattedTotalAmount1) * price
       : Number(formattedTotalAmount1) + Number(formattedTotalAmount0) * price;

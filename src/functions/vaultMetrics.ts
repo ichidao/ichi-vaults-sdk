@@ -44,7 +44,7 @@ export async function getVaultMetrics(
   const decimals1 = await getTokenDecimals(vault.tokenB, jsonProvider, chainId);
   const isInv = vault.allowTokenB;
   const depositTokenDecimals = isInv ? decimals1 : decimals0;
-  const scarseTokenDecimals = isInv ? decimals0 : decimals1;
+  const scarceTokenDecimals = isInv ? decimals0 : decimals1;
   const vaultContract = getIchiVaultContract(vaultAddress, jsonProvider);
 
   // to remove/rewrite
@@ -81,7 +81,7 @@ export async function getVaultMetrics(
       const slot0 = await poolContract.slot0();
       sqrtPrice = slot0.sqrtPriceX96;
     }
-    const price = getPrice(isInv, sqrtPrice, depositTokenDecimals, scarseTokenDecimals, 15);
+    const price = getPrice(isInv, sqrtPrice, depositTokenDecimals, scarceTokenDecimals, 15);
     currTvl = !isInv
       ? Number(totalAmounts.total0) + Number(totalAmounts.total1) * price
       : Number(totalAmounts.total1) + Number(totalAmounts.total0) * price;
