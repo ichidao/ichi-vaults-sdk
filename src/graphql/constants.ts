@@ -200,9 +200,13 @@ export const graphUrls: Record<SupportedChainId, dexGraph> = {
       supportsCollectFees: true,
     },
   },
-  // [SupportedChainId.hedera]: {
-  //   [SupportedDex.SaucerSwap]: { url: 'none', supportsCollectFees: false },
-  // },
+  [SupportedChainId.hedera]: {
+    [SupportedDex.SaucerSwap]: {
+      url: 'none',
+      publishedUrl: 'none',
+      supportsCollectFees: false,
+    },
+  },
   [SupportedChainId.hedera_testnet]: {
     [SupportedDex.SaucerSwap]: {
       url: 'none',

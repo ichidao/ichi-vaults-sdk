@@ -294,17 +294,17 @@ const addressConfig: Record<SupportedChainId, Config> = {
       isAlgebra: false,
     },
   },
-  // [SupportedChainId.hedera]: {
-  //   [SupportedDex.SaucerSwap]: {
-  //     factoryAddress: '0xb62399d23d1c81f08ea445a42d7f15cc12090a71',
-  //     depositGuard: {
-  //       address: '0x1B0ef045830466171D617dD0F1142aD699A4Cd63',
-  //       version: 2,
-  //     },
-  //     vaultDeployerAddress: '0x8514B2Fa2889F7A2f46F1AA66b514999F2a7327F',
-  //     isAlgebra: false,
-  //   },
-  // },
+  [SupportedChainId.hedera]: {
+    [SupportedDex.SaucerSwap]: {
+      factoryAddress: '0xb62399d23d1c81f08ea445a42d7f15cc12090a71',
+      depositGuard: {
+        address: '0x1B0ef045830466171D617dD0F1142aD699A4Cd63',
+        version: 2,
+      },
+      vaultDeployerAddress: '0x8514B2Fa2889F7A2f46F1AA66b514999F2a7327F',
+      isAlgebra: false,
+    },
+  },
   [SupportedChainId.hedera_testnet]: {
     [SupportedDex.SaucerSwap]: {
       factoryAddress: '0x3DfD6dd38F055188adCb2332C2926DDA28d318bD',

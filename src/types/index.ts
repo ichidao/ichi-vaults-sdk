@@ -20,7 +20,7 @@ export enum SupportedChainId {
   fantom = 250,
   flare = 14,
   fuse = 122,
-  // hedera = 295,
+  hedera = 295,
   hedera_testnet = 296,
   kava = 2222,
   linea = 59144,
