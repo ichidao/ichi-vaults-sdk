@@ -1,30 +1,36 @@
 // eslint-disable-next-line import/no-unresolved
 import { gql } from 'graphql-request';
 
-export const vaultQuery = gql`
-  query ($vaultAddress: String!) {
-    ichiVault(id: $vaultAddress) {
-      id
-      tokenA
-      tokenB
-      allowTokenA
-      allowTokenB
-      fee
+export function vaultQuery(includeHoldersCount: boolean) {
+  return gql`
+    query ($vaultAddress: String!) {
+      ichiVault(id: $vaultAddress) {
+        id
+        tokenA
+        tokenB
+        allowTokenA
+        allowTokenB
+        fee
+        ${includeHoldersCount ? 'holdersCount' : ''}
+      }
     }
-  }
-`;
+  `;
+}
 
-export const vaultQueryAlgebra = gql`
-  query ($vaultAddress: String!) {
-    ichiVault(id: $vaultAddress) {
-      id
-      tokenA
-      tokenB
-      allowTokenA
-      allowTokenB
+export function vaultQueryAlgebra(includeHoldersCount: boolean) {
+  return gql`
+    query ($vaultAddress: String!) {
+      ichiVault(id: $vaultAddress) {
+        id
+        tokenA
+        tokenB
+        allowTokenA
+        allowTokenB
+        ${includeHoldersCount ? 'holdersCount' : ''}
+      }
     }
-  }
-`;
+  `;
+}
 
 export const vaultByTokensQuery = gql`
   query ($addressTokenA: String!, $addressTokenB: String!) {

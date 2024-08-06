@@ -53,6 +53,15 @@ async function sendVaultsByPoolQueryRequest(url: string, poolAddress: string, qu
   }).then(({ deployICHIVaults }) => deployICHIVaults);
 }
 
+function noHoldersCount(dex: SupportedDex, chainId: SupportedChainId): boolean {
+  return (
+    dex === SupportedDex.Henjin ||
+    dex === SupportedDex.Thirdfy ||
+    (dex === SupportedDex.Sushiswap && chainId === SupportedChainId.skale_europa) ||
+    (dex === SupportedDex.Velocore && chainId === SupportedChainId.zksync_era_testnet)
+  );
+}
+
 export async function getIchiVaultInfo(
   chainId: SupportedChainId,
   dex: SupportedDex,
@@ -60,14 +69,18 @@ export async function getIchiVaultInfo(
   jsonProvider?: JsonRpcProvider,
 ): Promise<IchiVault> {
   const key = `vault-${chainId}-${vaultAddress}`;
-  const ttl = 2 * 24 * 60 * 60 * 1000;
+  const ttl = 6 * 60 * 60 * 1000; // 6 hours
   const cachedData = cache.get(key);
   if (cachedData) {
     return cachedData as IchiVault;
   }
 
+  const includeHoldersCount = !noHoldersCount(dex, chainId);
+
   const { url, publishedUrl } = getGraphUrls(chainId, dex);
-  const thisQuery = addressConfig[chainId][dex]?.isAlgebra ? vaultQueryAlgebra : vaultQuery;
+  const thisQuery = addressConfig[chainId][dex]?.isAlgebra
+    ? vaultQueryAlgebra(includeHoldersCount)
+    : vaultQuery(includeHoldersCount);
   if (url === 'none' && jsonProvider) {
     const result = await getVaultInfoFromContract(vaultAddress, jsonProvider);
     cache.set(key, result, ttl);

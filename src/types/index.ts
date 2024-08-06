@@ -94,6 +94,7 @@ export interface IchiVault {
   tokenB: string;
   allowTokenA: boolean;
   allowTokenB: boolean;
+  holdersCount?: string;
   fee?: string;
 }
 

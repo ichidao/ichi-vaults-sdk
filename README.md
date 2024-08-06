@@ -1110,6 +1110,7 @@ interface IchiVault {
   tokenB: string; // token1 address
   allowTokenA: boolean;
   allowTokenB: boolean;
+  holdersCount?: string // number of vault LP holders
   fee?: string
 }
 ```

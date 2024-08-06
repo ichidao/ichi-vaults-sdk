@@ -28,7 +28,6 @@ import addressConfig from '../utils/config/addresses';
 import { getAverageDtr, getDtrAtFeeCollectionEvent, getDtrAtTransactionEvent } from './calculateDtr';
 import { getTotalFeesAmountInBaseTokens } from './calculateFees';
 import { getLpPriceAt } from './calculateApr';
-import getGraphUrls from '../utils/getGraphUrls';
 import { _getDeposits, _getFeesCollectedEvents, _getRebalances, _getWithdraws } from './_vaultEvents';
 
 export async function getVaultMetrics(
@@ -38,7 +37,6 @@ export async function getVaultMetrics(
   timeIntervals?: number[],
 ): Promise<(VaultMetrics | null)[]> {
   const { chainId, vault } = await validateVaultData(vaultAddress, jsonProvider, dex);
-  getGraphUrls(chainId, dex, true);
 
   const decimals0 = await getTokenDecimals(vault.tokenA, jsonProvider, chainId);
   const decimals1 = await getTokenDecimals(vault.tokenB, jsonProvider, chainId);
