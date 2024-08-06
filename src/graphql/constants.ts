@@ -255,18 +255,21 @@ export const graphUrls: Record<SupportedChainId, dexGraph> = {
   },
   [SupportedChainId.mantle]: {
     [SupportedDex.Agni]: {
-      url: 'https://subgraph-api.mantle.xyz/subgraphs/name/ichi-org/mantle-v1-agni',
-      publishedUrl: 'https://subgraph-api.mantle.xyz/subgraphs/name/ichi-org/mantle-v1-agni',
+      url: 'https://subgraph-api.mantle.xyz/api/public/0adbe4aa-15df-48ae-aead-f7a80732986d/subgraphs/ichi-org/mantle-v1-agni/v0.0.2/gn',
+      publishedUrl:
+        'https://subgraph-api.mantle.xyz/api/public/0adbe4aa-15df-48ae-aead-f7a80732986d/subgraphs/ichi-org/mantle-v1-agni/v0.0.2/gn',
       supportsCollectFees: true,
     },
     [SupportedDex.Cleo]: {
-      url: 'https://subgraph-api.mantle.xyz/subgraphs/name/ichi-org/mantle-v1-cleo',
-      publishedUrl: 'https://subgraph-api.mantle.xyz/subgraphs/name/ichi-org/mantle-v1-cleo',
+      url: 'https://subgraph-api.mantle.xyz/api/public/0adbe4aa-15df-48ae-aead-f7a80732986d/subgraphs/ichi-org/mantle-v1-cleo/v0.0.2/gn',
+      publishedUrl:
+        'https://subgraph-api.mantle.xyz/api/public/0adbe4aa-15df-48ae-aead-f7a80732986d/subgraphs/ichi-org/mantle-v1-cleo/v0.0.2/gn',
       supportsCollectFees: true,
     },
     [SupportedDex.Crust]: {
-      url: 'https://subgraph-api.mantle.xyz/subgraphs/name/ichi-org/mantle-v1-crust',
-      publishedUrl: 'https://subgraph-api.mantle.xyz/subgraphs/name/ichi-org/mantle-v1-crust',
+      url: 'https://subgraph-api.mantle.xyz/api/public/0adbe4aa-15df-48ae-aead-f7a80732986d/subgraphs/ichi-org/mantle-v1-crust/v0.0.2/gn',
+      publishedUrl:
+        'https://subgraph-api.mantle.xyz/api/public/0adbe4aa-15df-48ae-aead-f7a80732986d/subgraphs/ichi-org/mantle-v1-crust/v0.0.2/gn',
       supportsCollectFees: true,
     },
   },
