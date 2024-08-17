@@ -274,7 +274,7 @@ const accountAddress = "0xaaaa...aaaaaa"
 const totalUserShares: string = await getUserBalance(
     accountAddress,
     vaultAddress,
-    web3Provider
+    web3Provider,
     dex,
 )
 
@@ -316,7 +316,7 @@ const accountAddress = "0xaaaa...aaaaaa"
 const totalUserShares: string = await getUserBalance(
     accountAddress,
     vaultAddress,
-    web3Provider
+    web3Provider,
     dex,
 )
 
@@ -358,8 +358,8 @@ const accountAddress = "0xaaaa...aaaaaa"
 const totalUserShares: string = await getUserBalance(
     accountAddress,
     vaultAddress,
-    web3Provider
-    dex,
+    web3Provider,
+    dex
 )
 
 let shares = Number(totalUserShare) * 0.5 // 50% of user deshare balance
@@ -491,7 +491,7 @@ const accountAddress = "0xaaaa...aaaaaa"
 const shares: string = await getUserBalance(
     accountAddress,
     vaultAddress,
-    web3Provider
+    web3Provider,
     dex
 )
 
@@ -500,7 +500,7 @@ const shares: string = await getUserBalance(
 const sharesBN: BigNumber = await getUserBalance(
     accountAddress,
     vaultAddress,
-    web3Provider
+    web3Provider,
     dex,
     true
 )
@@ -531,8 +531,8 @@ const accountAddress = "0xaaaa...aaaaaa"
 const amounts: [string, string] & {amount0: string, amount1: string} = await getUserAmounts(
     accountAddress,
     vaultAddress,
-    web3Provider
-    dex,
+    web3Provider,
+    dex
 )
 
 // - or -
@@ -540,7 +540,7 @@ const amounts: [string, string] & {amount0: string, amount1: string} = await get
 const amountsBN: [BigNumber, BigNumber] & {amount0: BigNumber, amount1: BigNumber} = await getUserAmounts(
     accountAddress,
     vaultAddress,
-    web3Provider
+    web3Provider,
     dex,
     true
 )
@@ -568,7 +568,7 @@ const accountAddress = "0xaaaa...aaaaaa"
 
 const userBalancesInVaults: UserBalanceInVault[] = await getAllUserBalances(
     accountAddress,
-    web3Provider
+    web3Provider,
     dex
 )
 
@@ -576,7 +576,7 @@ const userBalancesInVaults: UserBalanceInVault[] = await getAllUserBalances(
 
 const userBalancesInVaultsBN: UserBalanceInVaultBN[] = await getAllUserBalances(
     accountAddress,
-    web3Provider
+    web3Provider,
     dex,
     true
 )
@@ -604,7 +604,7 @@ const accountAddress = "0xaaaa...aaaaaa"
 
 const amounts: UserAmountsInVault[] = await getAllUserAmounts(
     accountAddress,
-    web3Provider
+    web3Provider,
     dex,
 )
 
@@ -612,7 +612,7 @@ const amounts: UserAmountsInVault[] = await getAllUserAmounts(
 
 const amountsBN: UserAmountsInVaultBN[] = await getAllUserAmounts(
     accountAddress,
-    web3Provider
+    web3Provider,
     dex,
     true
 )
@@ -641,8 +641,8 @@ const dex = SupportedDex.UniswapV3
 const shares: string = await getTotalSupply(
     accountAddress,
     vaultAddress,
-    web3Provider
-    dex,
+    web3Provider,
+    dex
 )
 
 // - or -
@@ -650,7 +650,7 @@ const shares: string = await getTotalSupply(
 const sharesBN: BigNumber = await getTotalSupply(
     accountAddress,
     vaultAddress,
-    web3Provider
+    web3Provider,
     dex,
     true
 )
@@ -680,8 +680,8 @@ const accountAddress = "0xaaaa...aaaaaa"
 const amounts: [string, string] & {total0: string, total1: string} = await getTotalAmounts(
     accountAddress,
     vaultAddress,
-    web3Provider
-    dex,
+    web3Provider,
+    dex
 )
 
 // - or -
@@ -689,7 +689,7 @@ const amounts: [string, string] & {total0: string, total1: string} = await getTo
 const amountsBN: [BigNumber, BigNumber] & {total0: BigNumber, total1: BigNumber} = await getTotalAmounts(
     accountAddress,
     vaultAddress,
-    web3Provider
+    web3Provider,
     dex,
     true
 )
@@ -719,15 +719,15 @@ const days = 7;
 
 const amounts: [string, string] & {total0: string, total1: string} = await getFeesCollected(
     vaultAddress,
-    web3Provider
-    dex,
+    web3Provider,
+    dex
 )
 
 // - or -
 
 const amountsBN: [BigNumber, BigNumber] & {total0: BigNumber, total1: BigNumber} = await getFeesCollected(
     vaultAddress,
-    web3Provider
+    web3Provider,
     dex,
     true
 )
@@ -736,7 +736,7 @@ const amountsBN: [BigNumber, BigNumber] & {total0: BigNumber, total1: BigNumber}
 
 const amounts: [string, string] & {total0: string, total1: string} = await getFeesCollected(
     vaultAddress,
-    web3Provider
+    web3Provider,
     dex,
     days
 )
@@ -745,7 +745,7 @@ const amounts: [string, string] & {total0: string, total1: string} = await getFe
 
 const amountsBN: [BigNumber, BigNumber] & {total0: BigNumber, total1: BigNumber} = await getFeesCollected(
     vaultAddress,
-    web3Provider
+    web3Provider,
     dex,
     true,
     days
@@ -777,17 +777,17 @@ const days = [2, 5, 14, 60];
 
 const feesInfo: FeesInfo[] = await getFeesCollectedInfo(
     vaultAddress,
-    web3Provider
-    dex,
+    web3Provider,
+    dex
 )
 
 // - or -
 
 const feesInfo: FeesInfo[] = await getFeesCollectedInfo(
     vaultAddress,
-    web3Provider
+    web3Provider,
     dex,
-    days,
+    days
 )
 ```
 
@@ -815,17 +815,17 @@ const days = [2, 5, 14, 60];
 
 const averageDtr: AverageDepositTokenRatio[] = await getAverageDepositTokenRatios(
     vaultAddress,
-    web3Provider
-    dex,
+    web3Provider,
+    dex
 )
 
 // - or -
 
 const averageDtr: AverageDepositTokenRatio[] = await getAverageDepositTokenRatios(
     vaultAddress,
-    web3Provider
+    web3Provider,
     dex,
-    days,
+    days
 )
 ```
 
@@ -853,17 +853,17 @@ const days = [2, 5, 14, 60];
 
 const averageDtr: VaultApr[] = await getLpApr(
     vaultAddress,
-    web3Provider
-    dex,
+    web3Provider,
+    dex
 )
 
 // - or -
 
 const averageDtr: VaultApr[] = await getLpApr(
     vaultAddress,
-    web3Provider
+    web3Provider,
     dex,
-    days,
+    days
 )
 ```
 
@@ -891,17 +891,17 @@ const days = [2, 5, 14, 60];
 
 const lpPriceChange: PriceChange[] = await getLpPriceChange(
     vaultAddress,
-    web3Provider
-    dex,
+    web3Provider,
+    dex
 )
 
 // - or -
 
 const lpPriceChange: PriceChange[] = await getLpPriceChange(
     vaultAddress,
-    web3Provider
+    web3Provider,
     dex,
-    days,
+    days
 )
 ```
 
@@ -929,17 +929,17 @@ const days = [2, 5, 14, 60];
 
 const vaultMetrics: VaultMetrics[] = await getVaultMetrics(
     vaultAddress,
-    web3Provider
-    dex,
+    web3Provider,
+    dex
 )
 
 // - or -
 
 const vaultMetrics: VaultMetrics[] = await getVaultMetrics(
     vaultAddress,
-    web3Provider
+    web3Provider,
     dex,
-    days,
+    days
 )
 ```
 
