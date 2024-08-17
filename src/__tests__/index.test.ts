@@ -55,7 +55,7 @@ const vault = {
 };
 
 const pool = {
-  address: '0x1123E75b71019962CD4d21b0F3018a6412eDb632',
+  address: '0x1123E75b71019962CD4d21b0F3018a6412eDb63C',
   chainId: SupportedChainId.bsc,
   dex: SupportedDex.Thena,
 };

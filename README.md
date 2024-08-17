@@ -979,7 +979,7 @@ if (vaultInfo) {
 | pairedTokenAddress   | string | - | true |
 
 <br/>
-This function returns an array of all vaults on the specified DEX that contain two tokens defined by the 'depositTokenAddress' and 'pairedTokenAddress' parameters.
+This function returns an array of all vaults (IchiVault[]) on the specified DEX that contain two tokens defined by the 'depositTokenAddress' and 'pairedTokenAddress' parameters.
 
 ```typescript
 import { Web3Provider } from '@ethersproject/providers';
@@ -990,11 +990,11 @@ const pairedToken = "0x11...c4d6"
 const dex = SupportedDex.UniswapV3;
 const chain = SupportedChain.Polygon;
 
-const vault = await getVaultsByTokens(chain, dex, depositToken, pairedToken)
-if (!vault) {
+const vaults = await getVaultsByTokens(chain, dex, depositToken, pairedToken)
+if (vaults.length === 0) {
     console.log("Couldn't find vaults with these parameters")
 } else {
-    const vaultAddress = vault.id;
+    const vaultAddress = vaults[0].id;
 }
 
 ```
@@ -1008,7 +1008,7 @@ if (!vault) {
 | dex   | SupportedDex | - | true
 
 <br/>
-This function returns an array of all vaults deployed on the specified pool.
+This function returns an array of all vaults ({ vault: string }[]) deployed on the specified pool.
 
 ```typescript
 import { Web3Provider } from '@ethersproject/providers';
