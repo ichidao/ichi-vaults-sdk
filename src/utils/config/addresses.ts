@@ -482,7 +482,7 @@ const addressConfig: Record<SupportedChainId, Config> = {
     [SupportedDex.Pearl]: {
       factoryAddress: '0x1294EC9615C91077ebdC57CfC7DDB65140750992',
       depositGuard: {
-        address: '0x3b5FCB1D099AE8C7F065DdE579293841c74d9114',
+        address: '0x6DC9b390130c96b788eBEB389cb3cba992289532',
         version: 2,
       },
       vaultDeployerAddress: '0xBAd0700365De39C932b905002604B0A22aA4Bb77',
