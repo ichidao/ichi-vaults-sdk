@@ -480,9 +480,9 @@ const addressConfig: Record<SupportedChainId, Config> = {
   },
   [SupportedChainId.unreal]: {
     [SupportedDex.Pearl]: {
-      factoryAddress: '0x89FFdaa18b296d9F0CF02fBD88e5c633FEFA5f34',
+      factoryAddress: '0x1294EC9615C91077ebdC57CfC7DDB65140750992',
       depositGuard: {
-        address: '0xe8532Db60408f2d47693dA5b9093D71580B8C23F',
+        address: '0x3b5FCB1D099AE8C7F065DdE579293841c74d9114',
         version: 2,
       },
       vaultDeployerAddress: '0xBAd0700365De39C932b905002604B0A22aA4Bb77',
