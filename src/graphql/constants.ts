@@ -287,6 +287,14 @@ export const graphUrls: Record<SupportedChainId, dexGraph> = {
       supportsCollectFees: true,
     },
   },
+  [SupportedChainId.real]: {
+    [SupportedDex.Pearl]: {
+      url: 'https://api.goldsky.com/api/public/project_clynrq1h8gam301xx6vgngo9p/subgraphs/ichi-org/real-v1-pearl/gn',
+      publishedUrl:
+        'https://api.goldsky.com/api/public/project_clynrq1h8gam301xx6vgngo9p/subgraphs/ichi-org/real-v1-pearl/gn',
+      supportsCollectFees: true,
+    },
+  },
   [SupportedChainId.scroll]: {
     [SupportedDex.Metavault]: {
       url: 'https://api.studio.thegraph.com/query/61136/scroll-v1-metavault/version/latest',
