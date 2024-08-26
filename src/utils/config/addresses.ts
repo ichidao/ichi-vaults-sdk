@@ -423,6 +423,17 @@ const addressConfig: Record<SupportedChainId, Config> = {
       isAlgebra: true,
     },
   },
+  [SupportedChainId.real]: {
+    [SupportedDex.Pearl]: {
+      factoryAddress: '0x860F3881aCBbF05D48a324C5b8ca9004D31A146C',
+      depositGuard: {
+        address: '0x89FFdaa18b296d9F0CF02fBD88e5c633FEFA5f34',
+        version: 2,
+      },
+      vaultDeployerAddress: '0xBAd0700365De39C932b905002604B0A22aA4Bb77',
+      isAlgebra: false,
+    },
+  },
   [SupportedChainId.scroll]: {
     [SupportedDex.UniswapV3]: {
       factoryAddress: '0x9FAb4bdD4E05f5C023CCC85D2071b49791D7418F',
