@@ -101,6 +101,14 @@ export const graphUrls: Record<SupportedChainId, dexGraph> = {
       supportsCollectFees: true,
     },
   },
+  [SupportedChainId.berachain_bartio]: {
+    [SupportedDex.Kodiak]: {
+      url: 'https://api.goldsky.com/api/public/project_clynrq1h8gam301xx6vgngo9p/subgraphs/ichi-org/berachain-bartio-v1-kodiak/gn',
+      publishedUrl:
+        'https://api.goldsky.com/api/public/project_clynrq1h8gam301xx6vgngo9p/subgraphs/ichi-org/berachain-bartio-v1-kodiak/gn',
+      supportsCollectFees: true,
+    },
+  },
   [SupportedChainId.blast]: {
     [SupportedDex.Fenix]: {
       url: 'https://api.goldsky.com/api/public/project_clxadvm41bujy01ui2qalezdn/subgraphs/blast-v1-fenix/1.0.0/gn',
@@ -200,6 +208,13 @@ export const graphUrls: Record<SupportedChainId, dexGraph> = {
       supportsCollectFees: true,
     },
   },
+  [SupportedChainId.haven1_devnet]: {
+    [SupportedDex.Haven1]: {
+      url: 'none',
+      publishedUrl: 'none',
+      supportsCollectFees: false,
+    },
+  },
   [SupportedChainId.hedera]: {
     [SupportedDex.SaucerSwap]: {
       url: 'none',
@@ -270,6 +285,14 @@ export const graphUrls: Record<SupportedChainId, dexGraph> = {
       url: 'https://subgraph-api.mantle.xyz/api/public/0adbe4aa-15df-48ae-aead-f7a80732986d/subgraphs/ichi-org/mantle-v1-crust/v0.0.2/gn',
       publishedUrl:
         'https://subgraph-api.mantle.xyz/api/public/0adbe4aa-15df-48ae-aead-f7a80732986d/subgraphs/ichi-org/mantle-v1-crust/v0.0.2/gn',
+      supportsCollectFees: true,
+    },
+  },
+  [SupportedChainId.mode]: {
+    [SupportedDex.Kim]: {
+      url: 'https://api.goldsky.com/api/public/project_clynrq1h8gam301xx6vgngo9p/subgraphs/ichi-org/mode-v1-kim/gn',
+      publishedUrl:
+        'https://api.goldsky.com/api/public/project_clynrq1h8gam301xx6vgngo9p/subgraphs/ichi-org/mode-v1-kim/gn',
       supportsCollectFees: true,
     },
   },
