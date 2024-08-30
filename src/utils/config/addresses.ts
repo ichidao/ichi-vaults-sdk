@@ -147,6 +147,17 @@ const addressConfig: Record<SupportedChainId, Config> = {
       isAlgebra: false,
     },
   },
+  [SupportedChainId.berachain_bartio]: {
+    [SupportedDex.Kodiak]: {
+      factoryAddress: '0xb42D5956cDe4386B65C087CfCD16910aB6114F15',
+      depositGuard: {
+        address: '0x131c03ca881B7cC66d7a5120A9273ebf675C241D',
+        version: 2,
+      },
+      vaultDeployerAddress: '0x249397Aa78bE5955DBc2102DF31B3FB2A92B1AA8',
+      isAlgebra: false,
+    },
+  },
   [SupportedChainId.blast]: {
     [SupportedDex.Fenix]: {
       factoryAddress: '0xb42D5956cDe4386B65C087CfCD16910aB6114F15',
@@ -294,6 +305,17 @@ const addressConfig: Record<SupportedChainId, Config> = {
       isAlgebra: false,
     },
   },
+  [SupportedChainId.haven1_devnet]: {
+    [SupportedDex.Haven1]: {
+      factoryAddress: '0xbBB97d634460DACCA0d41E249510Bb741ef46ad3',
+      depositGuard: {
+        address: '0x0e44F5cdaBefe34d5B729acFa0a79971FFBC0E7e',
+        version: 2,
+      },
+      vaultDeployerAddress: '0x9D821cb8b2D02115cEFe677E61582b6275770cbF',
+      isAlgebra: false,
+    },
+  },
   [SupportedChainId.hedera]: {
     [SupportedDex.SaucerSwap]: {
       factoryAddress: '0xb62399d23d1c81f08ea445a42d7f15cc12090a71',
@@ -372,6 +394,18 @@ const addressConfig: Record<SupportedChainId, Config> = {
       },
       vaultDeployerAddress: '0x75178e0a2829B73E3AE4C21eE64F4B684085392a',
       isAlgebra: false,
+    },
+  },
+  [SupportedChainId.mode]: {
+    [SupportedDex.Kim]: {
+      factoryAddress: '0x9FAb4bdD4E05f5C023CCC85D2071b49791D7418F',
+      depositGuard: {
+        address: '0x2E76A8D053f839A04235341dF1f25235437fEDd6',
+        version: 2,
+      },
+      vaultDeployerAddress: '0x124871b2FC05fD96521238cA2Bd01B770FBf1E37',
+      isAlgebra: true,
+      ammVersion: 'algebraIntegral',
     },
   },
   [SupportedChainId.mantle]: {
