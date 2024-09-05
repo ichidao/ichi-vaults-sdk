@@ -291,7 +291,6 @@ export async function depositNativeToken(
     chainId === SupportedChainId.hedera
       ? '0x0000000000000000000000000000000000163b5a'
       : await depositGuardContract.WRAPPED_NATIVE();
-  console.log({ wrappedNative }, { depositToken });
   if (wrappedNative.toLowerCase() !== depositToken.toLowerCase()) {
     throw new Error('Deposit token is not wrapped native token');
   }
