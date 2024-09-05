@@ -287,7 +287,11 @@ export async function depositNativeToken(
     throw new Error(`Deposit Guard not found for vault ${vaultAddress} on chain ${chainId} and dex ${dex}`);
   }
   const depositGuardContract = getDepositGuardContract(depositGuardAddress, signer);
-  const wrappedNative = await depositGuardContract.WRAPPED_NATIVE();
+  const wrappedNative =
+    chainId === SupportedChainId.hedera
+      ? '0x0000000000000000000000000000000000163b5a'
+      : await depositGuardContract.WRAPPED_NATIVE();
+  console.log({ wrappedNative }, { depositToken });
   if (wrappedNative.toLowerCase() !== depositToken.toLowerCase()) {
     throw new Error('Deposit token is not wrapped native token');
   }
@@ -299,9 +303,9 @@ export async function depositNativeToken(
 
   const maxGasLimit = getGasLimit(chainId);
 
-  // if (chainId === SupportedChainId.hedera){
-  //   depositAmount = depositAmount.mul(BigNumber.from(1e10));
-  // }
+  if (chainId === SupportedChainId.hedera) {
+    depositAmount = depositAmount.mul(BigNumber.from(1e10));
+  }
 
   // the first call: get estimated LP amount
   let lpAmount = await depositGuardContract.callStatic.forwardNativeDepositToICHIVault(

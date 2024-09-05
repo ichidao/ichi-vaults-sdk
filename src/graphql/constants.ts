@@ -217,9 +217,9 @@ export const graphUrls: Record<SupportedChainId, dexGraph> = {
   },
   [SupportedChainId.hedera]: {
     [SupportedDex.SaucerSwap]: {
-      url: 'none',
-      publishedUrl: 'none',
-      supportsCollectFees: false,
+      url: 'https://mainnet-thegraph.swirldslabs.com/subgraphs/name/ichi-org/hedera-v1-saucerswap',
+      publishedUrl: 'https://mainnet-thegraph.swirldslabs.com/subgraphs/name/ichi-org/hedera-v1-saucerswap',
+      supportsCollectFees: true,
     },
   },
   [SupportedChainId.hedera_testnet]: {
