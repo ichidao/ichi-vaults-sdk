@@ -1257,28 +1257,6 @@ type UserAmountsInVault = {
 }
 ```
 
-### UserAmountsBN
-
-```typescript
-type UserAmountsBN =
-  [BigNumber, BigNumber] & { amount0: BigNumber; amount1: BigNumber };
-```
-
-### UserAmounts
-
-```typescript
-type UserAmounts = [string, string] & { amount0: string; amount1: string };
-```
-
-### UserAmountsInVault
-
-```typescript
-type UserAmountsInVault = {
-  vaultAddress: string;
-  userAmounts: UserAmounts;
-}
-```
-
 ### UserAmountsInVaultBN
 
 ```typescript
@@ -1318,6 +1296,10 @@ type VaultPositionsInfo = {
     tickUpper: number,
     priceLower: number,
     priceUpper: number,
+    liquidity: string;
+    amountToken0: string;
+    amountToken1: string;
+    positionTvl: number; // in deposit tokens
   } [],
 }
 ```
