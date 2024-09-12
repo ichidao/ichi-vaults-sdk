@@ -87,7 +87,7 @@ export async function getUserBalance(
     : _getUserBalance(accountAddress, vaultAddress, jsonProvider);
 }
 
-async function sendUserBalancesQueryRequest(
+export async function sendUserBalancesQueryRequest(
   url: string,
   accountAddress: string,
   query: string,

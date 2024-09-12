@@ -35,6 +35,9 @@ import {
   isVaultTokenApproved,
   withdrawNativeToken,
   getVaultsByPool,
+  getVaultPositions,
+  getSupportedDexes,
+  getChainsForDex,
 } from '../index';
 import formatBigInt from '../utils/formatBigInt';
 import parseBigInt from '../utils/parseBigInt';
@@ -49,15 +52,15 @@ const provider = new Web3Provider(hdWalletProvider, {
 const account = process.env.ACCOUNT!;
 
 const vault = {
-  address: '0x629dFc05Be606e773B1830d2616FA627C0d07f08',
+  address: '0x0def612e7a7b51ca7ee38f7905da809bd3491268',
   chainId: SupportedChainId.bsc,
-  dex: SupportedDex.Thena,
+  dex: SupportedDex.Pancakeswap,
 };
 
 const pool = {
   address: '0x1123E75b71019962CD4d21b0F3018a6412eDb63C',
   chainId: SupportedChainId.bsc,
-  dex: SupportedDex.Thena,
+  dex: SupportedDex.Pancakeswap,
 };
 
 const tokens = {
@@ -76,7 +79,6 @@ describe('Vault', () => {
 
   it('getVaultMetrics', async () => {
     const metrics = await getVaultMetrics(vault.address, provider, vault.dex);
-    console.log({ metrics });
     expect(Number(metrics[0]?.avgDtr)).toBeGreaterThan(0);
   });
 
@@ -233,7 +235,13 @@ describe('Vault', () => {
 
     expect(Number(lpPriceChange[0]?.timeInterval)).toEqual(1);
   });
+  it('getVaultPositions', async () => {
+    const positions = await getVaultPositions(vault.address, provider, vault.dex);
+    expect(positions.currentPrice).toBeGreaterThanOrEqual(0);
+  });
+});
 
+describe('Withdraws', () => {
   it.skip('withdraw:deposited', async () => {
     await withdraw(account, sharesToWithdraw, vault.address, provider, vault.dex)
       .then((e) => e.wait())
@@ -313,5 +321,16 @@ describe('GraphQL', () => {
     const vaults = await getVaultsByPool(pool.address, pool.chainId, pool.dex);
 
     expect(vaults).toBeTruthy();
+  });
+});
+
+describe('Dexes', () => {
+  it('getSupportedDexes', async () => {
+    const dexes = getSupportedDexes(vault.chainId);
+    expect(dexes.length).toBeGreaterThan(0);
+  });
+  it('getChainsForDex', async () => {
+    const chains = getChainsForDex(vault.dex);
+    expect(chains.length).toBeGreaterThan(0);
   });
 });

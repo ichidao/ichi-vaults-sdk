@@ -36,6 +36,9 @@ This sdk contains collection of functions to interact with IchiVault's smart con
         * [`getIchiVaultInfo()`](#24-getIchiVaultInfo)
         * [`getVaultsByTokens()`](#25-getVaultsByTokens)
         * [`getVaultsByPool()`](#26-getVaultsByPool)
+        * [`getVaultPositions()`](#27-getVaultPositions)
+        * [`getSupportedDexes()`](#28-getSupportedDexes)
+        * [`getChainsForDex()`](#29-getChainsForDex)
 
 ## Installation
 Install with
@@ -1026,6 +1029,67 @@ if (vaults.length === 0) {
 }
 ```
 
+#### 27. `getVaultPositions()`
+
+| param | type |  default | required
+| -------- | -------- | -------- | --------
+| vaultAddress   | string | - | true |
+| jsonProvider      | [JsonRpcProvider](https://github.com/ethers-io/ethers.js/blob/f97b92bbb1bde22fcc44100af78d7f31602863ab/packages/providers/src.ts/json-rpc-provider.ts#L393) | - | true
+| dex   | SupportedDex | - | true
+
+<br/>
+This function returns an object of type VaultPositionsInfo.
+
+```typescript
+import { Web3Provider } from '@ethersproject/providers';
+import { getVaultPositions, SupportedDex } from '@ichidao/ichi-vaults-sdk';
+
+const web3Provider = new Web3Provider(YOUR_WEB3_PROVIDER);
+const vaultAddress = "0x3ac9...a5f132";
+const dex = SupportedDex.UniswapV3;
+
+const vaultPositions: VaultPositionsInfo = await getVaultPositions(
+    vaultAddress,
+    web3Provider,
+    dex
+);
+const currentTick = vaultPositions.currentTick;
+```
+
+#### 28. `getSupportedDexes()`
+
+| param | type |  default | required
+| -------- | -------- | -------- | --------
+| chainId   | SupportedChainId | - | true |
+
+<br/>
+This function returns all supported dexes for chain specified by chainId. Result is an array of SupportedDex.
+
+```typescript
+import { getSupportedDexes, SupportedChainId, SupportedDex } from '@ichidao/ichi-vaults-sdk';
+
+const chainId = SupportedChainId.polygon;
+
+const dexes: SupportedDex[] = getSupportedDexes(chainId);
+```
+
+#### 29. `getChainsForDex()`
+
+| param | type |  default | required
+| -------- | -------- | -------- | --------
+| dex   | SupportedDex | - | true |
+
+<br/>
+This function returns all supported chains for the specified dex. Result is an array of SupportedChainId.
+
+```typescript
+import { getChainsForDex, SupportedChainId, SupportedDex } from '@ichidao/ichi-vaults-sdk';
+
+const dex = SupportedChainId.UniswapV3;
+
+const chains: SupportedChainId[] = getChainsForDex(dex);
+```
+
 ## Types
 
 ### SupportedChainId
@@ -1240,4 +1304,20 @@ type UserBalanceInVaultBN = {
   vaultAddress: string;
   shares: BigNumber;
 };
+```
+
+### VaultPositionsInfo
+
+```typescript
+
+type VaultPositionsInfo = {
+  currentTick: number,
+  currentPrice: number,
+  positions: {
+    tickLower: number,
+    tickUpper: number,
+    priceLower: number,
+    priceUpper: number,
+  } [],
+}
 ```
