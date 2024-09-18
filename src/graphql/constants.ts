@@ -20,6 +20,12 @@ export const graphUrls: Record<SupportedChainId, dexGraph> = {
         'https://gateway-arbitrum.network.thegraph.com/api/[api-key]/subgraphs/id/EHrAjHvipRZ6oUpdxjMMQmmtTBGEgTeLfAbcGmwDP5MS',
       supportsCollectFees: false,
     },
+    [SupportedDex.Pancakeswap]: {
+      url: 'https://api.studio.thegraph.com/query/88584/arbitrum-v1-pancakeswap/version/latest',
+      publishedUrl:
+        'https://gateway-arbitrum.network.thegraph.com/api/[api-key]/subgraphs/id/5LbeEUUQSCgL9H4H1YqF6ef71z2BFnEYdkJF7ETPby6H',
+      supportsCollectFees: true,
+    },
     [SupportedDex.Ramses]: {
       url: 'https://api.studio.thegraph.com/query/88584/arbitrum-v1-ramses/version/latest',
       publishedUrl:
@@ -95,7 +101,7 @@ export const graphUrls: Record<SupportedChainId, dexGraph> = {
       supportsCollectFees: true,
     },
     [SupportedDex.UniswapV3]: {
-      url: 'https://api.studio.thegraph.com/query/88584/base-v1/v0.0.3',
+      url: 'https://api.studio.thegraph.com/query/88584/base-v1/version/latest',
       publishedUrl:
         'https://gateway-arbitrum.network.thegraph.com/api/[api-key]/subgraphs/id/2RW5ke8ps9rAjPaAxxQpe8rFexLWWMLL5ySzwLZPnG6g',
       supportsCollectFees: true,
@@ -251,13 +257,13 @@ export const graphUrls: Record<SupportedChainId, dexGraph> = {
       supportsCollectFees: true,
     },
     [SupportedDex.Metavault]: {
-      url: 'https://api.studio.thegraph.com/query/88584/linea-v1-metavault/v0.0.3',
+      url: 'https://api.studio.thegraph.com/query/88584/linea-v1-metavault/version/latest',
       publishedUrl:
         'https://gateway-arbitrum.network.thegraph.com/api/[api-key]/subgraphs/id/CVBmJy2wVp3NPZQRzwHjboNyfVKsp2jaQoXZbFx1rR2A',
       supportsCollectFees: true,
     },
     [SupportedDex.Nile]: {
-      url: 'https://api.studio.thegraph.com/query/88584/linea-v1-nile/v0.0.4',
+      url: 'https://api.studio.thegraph.com/query/88584/linea-v1-nile/version/latest',
       publishedUrl:
         'https://gateway-arbitrum.network.thegraph.com/api/[api-key]/subgraphs/id/3vrWez6BeB5jnvzXh9Vs9rbUSWmSKNbwDTcnuHQTbehu',
       supportsCollectFees: true,
@@ -321,7 +327,7 @@ export const graphUrls: Record<SupportedChainId, dexGraph> = {
   },
   [SupportedChainId.scroll]: {
     [SupportedDex.Metavault]: {
-      url: 'https://api.studio.thegraph.com/query/88584/scroll-v1-metavault/v0.0.3',
+      url: 'https://api.studio.thegraph.com/query/88584/scroll-v1-metavault/version/latest',
       publishedUrl:
         'https://gateway-arbitrum.network.thegraph.com/api/[api-key]/subgraphs/id/J9ftF7FnUTbLDxxTXza1ekix2w39dspgpiFiquRK1qL',
       supportsCollectFees: true,
