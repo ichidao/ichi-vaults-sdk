@@ -164,6 +164,12 @@ export const graphUrls: Record<SupportedChainId, dexGraph> = {
     },
   },
   [SupportedChainId.celo]: {
+    [SupportedDex.Ubeswap]: {
+      url: 'https://api.studio.thegraph.com/query/88584/celo-v1-ubeswap/version/latest',
+      publishedUrl:
+        'https://gateway-arbitrum.network.thegraph.com/api/[api-key]/subgraphs/id/8N5VoyCYnFxFVLiMgNWXR9dMtcRrTRC1DjHwNeq5DzNY',
+      supportsCollectFees: true,
+    },
     [SupportedDex.UniswapV3]: {
       url: 'https://api.studio.thegraph.com/query/88584/celo-v1/version/latest',
       publishedUrl:

@@ -239,6 +239,15 @@ const addressConfig: Record<SupportedChainId, Config> = {
     },
   },
   [SupportedChainId.celo]: {
+    [SupportedDex.Ubeswap]: {
+      factoryAddress: '0x8D05f6870106707BaeCFCf5C0570DB7a583eb92A',
+      depositGuard: {
+        address: '0x238394541dE407Fd494e455eF17C9D991F4FBEd8',
+        version: 2,
+      },
+      vaultDeployerAddress: '0xfAcD9c86f7766A5171bb0F9927De808929429A47',
+      isAlgebra: false,
+    },
     [SupportedDex.UniswapV3]: {
       factoryAddress: '0x9FAb4bdD4E05f5C023CCC85D2071b49791D7418F',
       depositGuard: {

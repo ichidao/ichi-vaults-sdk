@@ -1165,6 +1165,7 @@ enum SupportedDex {
   Thena = 'Thena',
   Thirdfy = 'Thirdfy',
   Thruster = 'Thruster',
+  Ubeswap = 'Ubeswap',
   UniswapV3 = 'Uniswap V3',
   Velocore = 'Velocore',
   Voltage = 'Voltage',
