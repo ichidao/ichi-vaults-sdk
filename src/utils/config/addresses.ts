@@ -158,9 +158,9 @@ const addressConfig: Record<SupportedChainId, Config> = {
   },
   [SupportedChainId.berachain_bartio]: {
     [SupportedDex.Kodiak]: {
-      factoryAddress: '0xb42D5956cDe4386B65C087CfCD16910aB6114F15',
+      factoryAddress: '0xCa8310832053de4909fe1A6C89C7200D033CBB76',
       depositGuard: {
-        address: '0x131c03ca881B7cC66d7a5120A9273ebf675C241D',
+        address: '0x0Dad5a47adbec92E7472F6F34AC066798dEdEE40',
         version: 2,
       },
       vaultDeployerAddress: '0x249397Aa78bE5955DBc2102DF31B3FB2A92B1AA8',
