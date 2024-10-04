@@ -252,8 +252,8 @@ export async function depositNativeToken(
   overrides?: Overrides,
 ): Promise<ContractTransaction> {
   const { chainId, vault } = await validateVaultData(vaultAddress, jsonProvider, dex);
-  if (chainId === SupportedChainId.celo){
-    throw new Error(`This function is not supported on chain ${chainId}`)
+  if (chainId === SupportedChainId.celo) {
+    throw new Error(`This function is not supported on chain ${chainId}`);
   }
   if (addressConfig[chainId as SupportedChainId][dex]?.depositGuard.version !== 2) {
     throw new Error(`Unsupported function for vault ${vaultAddress} on chain ${chainId} and dex ${dex}`);
