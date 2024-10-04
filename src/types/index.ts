@@ -32,6 +32,7 @@ export enum SupportedChainId {
   polygon = 137,
   polygon_zkevm = 1101,
   real = 111188,
+  rootstock = 30,
   scroll = 534352,
   skale_europa = 2046399126,
   taiko = 167000,

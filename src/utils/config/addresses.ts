@@ -486,6 +486,17 @@ const addressConfig: Record<SupportedChainId, Config> = {
       isAlgebra: false,
     },
   },
+  [SupportedChainId.rootstock]: {
+    [SupportedDex.UniswapV3]: {
+      factoryAddress: '0x8cCd02E769e6A668a447Bd15e134C31bEccd8182',
+      depositGuard: {
+        address: '0x74C85FF93D0ff3B5E48c119390EF75A43D78d549',
+        version: 2,
+      },
+      vaultDeployerAddress: '0x9708b4a2BDd23C8c432F04972AaDE12e4a346447',
+      isAlgebra: false,
+    },
+  },
   [SupportedChainId.scroll]: {
     [SupportedDex.UniswapV3]: {
       factoryAddress: '0x9FAb4bdD4E05f5C023CCC85D2071b49791D7418F',
