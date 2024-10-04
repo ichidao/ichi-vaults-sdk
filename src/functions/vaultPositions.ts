@@ -64,11 +64,15 @@ export async function getVaultPositions(
     const priceAtLimitUpper = getPriceInDepositToken(isInv, tokenDecimals, limitUpper);
     const currentPrice = getPriceInDepositToken(isInv, tokenDecimals, currentTick);
     const basePositionTvl = !isInv
-    ? Number(formatBigInt(basePosition.amount0, decimals0)) + Number(formatBigInt(basePosition.amount1, decimals1)) * currentPrice
-    : Number(formatBigInt(basePosition.amount1, decimals1)) + Number(formatBigInt(basePosition.amount0, decimals0)) * currentPrice;
+      ? Number(formatBigInt(basePosition.amount0, decimals0)) +
+        Number(formatBigInt(basePosition.amount1, decimals1)) * currentPrice
+      : Number(formatBigInt(basePosition.amount1, decimals1)) +
+        Number(formatBigInt(basePosition.amount0, decimals0)) * currentPrice;
     const limitPositionTvl = !isInv
-    ? Number(formatBigInt(limitPosition.amount0, decimals0)) + Number(formatBigInt(limitPosition.amount1, decimals1)) * currentPrice
-    : Number(formatBigInt(limitPosition.amount1, decimals1)) + Number(formatBigInt(limitPosition.amount0, decimals0)) * currentPrice;
+      ? Number(formatBigInt(limitPosition.amount0, decimals0)) +
+        Number(formatBigInt(limitPosition.amount1, decimals1)) * currentPrice
+      : Number(formatBigInt(limitPosition.amount1, decimals1)) +
+        Number(formatBigInt(limitPosition.amount0, decimals0)) * currentPrice;
 
     return {
       currentTick,

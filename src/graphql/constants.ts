@@ -331,6 +331,14 @@ export const graphUrls: Record<SupportedChainId, dexGraph> = {
       supportsCollectFees: true,
     },
   },
+  [SupportedChainId.rootstock]: {
+    [SupportedDex.UniswapV3]: {
+      url: 'https://api.studio.thegraph.com/query/88584/rootstock-v1/version/latest',
+      publishedUrl:
+        'https://gateway-arbitrum.network.thegraph.com/api/[api-key]/subgraphs/id/BAvYHGJeD743cE3eg3UXYmjuEjtz72CCJ94Vp1zbFHhY',
+      supportsCollectFees: true,
+    },
+  },
   [SupportedChainId.scroll]: {
     [SupportedDex.Metavault]: {
       url: 'https://api.studio.thegraph.com/query/88584/scroll-v1-metavault/version/latest',
