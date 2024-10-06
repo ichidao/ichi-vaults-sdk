@@ -303,9 +303,9 @@ const addressConfig: Record<SupportedChainId, Config> = {
   },
   [SupportedChainId.flare]: {
     [SupportedDex.SparkDex]: {
-      factoryAddress: '0x9FAb4bdD4E05f5C023CCC85D2071b49791D7418F',
+      factoryAddress: '0x85a4dd4ed356A7976a8302b1b690202d58583c55',
       depositGuard: {
-        address: '0xbb7A3d439abf42Cf39837f9102F987bab3Ee2e73',
+        address: '0x4F15CED4dD9B8eF545809431c177a3ae46A29c37',
         version: 2,
       },
       vaultDeployerAddress: '0x2d1918dBa43d55B9F0E2596aecC74826BbB7d668',
