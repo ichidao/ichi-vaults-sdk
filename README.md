@@ -1161,6 +1161,7 @@ enum SupportedDex {
   Retro = 'Retro',
   SaucerSwap = 'SaucerSwap',
   SparkDex = 'SparkDex',
+  SparkDexV1 = 'SparkDexV1',
   SpiritSwap = 'SpiritSwap',
   Sushiswap = 'SushiSwap',
   Thena = 'Thena',
