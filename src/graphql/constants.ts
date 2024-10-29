@@ -119,7 +119,7 @@ export const graphUrls: Record<SupportedChainId, dexGraph> = {
     [SupportedDex.Fenix]: {
       url: 'https://api.goldsky.com/api/public/project_clxadvm41bujy01ui2qalezdn/subgraphs/blast-v1-fenix/1.0.0/gn',
       publishedUrl:
-        'https://gateway-arbitrum.network.thegraph.com/api/[api-key]/subgraphs/id/G9BZYDTLCdJxoETspoVtVzTeuzYgn8h5bYmq7ydLUr6a',
+        'https://api.goldsky.com/api/public/project_clxadvm41bujy01ui2qalezdn/subgraphs/blast-v1-fenix/1.0.0/gn',
       supportsCollectFees: true,
     },
     [SupportedDex.Thruster]: {
@@ -208,6 +208,12 @@ export const graphUrls: Record<SupportedChainId, dexGraph> = {
   [SupportedChainId.flare]: {
     [SupportedDex.SparkDex]: {
       url: 'https://api.goldsky.com/api/public/project_clynrq1h8gam301xx6vgngo9p/subgraphs/ichi-org/flare-v2-sparkdex/gn',
+      publishedUrl:
+        'https://api.goldsky.com/api/public/project_clynrq1h8gam301xx6vgngo9p/subgraphs/ichi-org/flare-v2-sparkdex/gn',
+      supportsCollectFees: true,
+    },
+    [SupportedDex.SparkDexV1]: {
+      url: 'https://api.goldsky.com/api/public/project_clynrq1h8gam301xx6vgngo9p/subgraphs/ichi-org/flare-v1-sparkdex/gn',
       publishedUrl:
         'https://api.goldsky.com/api/public/project_clynrq1h8gam301xx6vgngo9p/subgraphs/ichi-org/flare-v2-sparkdex/gn',
       supportsCollectFees: true,

@@ -311,6 +311,15 @@ const addressConfig: Record<SupportedChainId, Config> = {
       vaultDeployerAddress: '0x2d1918dBa43d55B9F0E2596aecC74826BbB7d668',
       isAlgebra: false,
     },
+    [SupportedDex.SparkDexV1]: {
+      factoryAddress: '0x9FAb4bdD4E05f5C023CCC85D2071b49791D7418F',
+      depositGuard: {
+        address: '0x4F15CED4dD9B8eF545809431c177a3ae46A29c37',
+        version: 2,
+      },
+      vaultDeployerAddress: '0x2d1918dBa43d55B9F0E2596aecC74826BbB7d668',
+      isAlgebra: false,
+    },
   },
   [SupportedChainId.fuse]: {
     [SupportedDex.Voltage]: {
