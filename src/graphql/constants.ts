@@ -215,7 +215,7 @@ export const graphUrls: Record<SupportedChainId, dexGraph> = {
     [SupportedDex.SparkDexV1]: {
       url: 'https://api.goldsky.com/api/public/project_clynrq1h8gam301xx6vgngo9p/subgraphs/ichi-org/flare-v1-sparkdex/gn',
       publishedUrl:
-        'https://api.goldsky.com/api/public/project_clynrq1h8gam301xx6vgngo9p/subgraphs/ichi-org/flare-v1-sparkdex/gn',
+        'https://api.goldsky.com/api/public/project_clynrq1h8gam301xx6vgngo9p/subgraphs/ichi-org/flare-v2-sparkdex/gn',
       supportsCollectFees: true,
     },
   },
@@ -396,6 +396,14 @@ export const graphUrls: Record<SupportedChainId, dexGraph> = {
       publishedUrl:
         'https://gateway-arbitrum.network.thegraph.com/api/[api-key]/subgraphs/id/EsPs6Mz2akM2Hbqm66jTb4YrnW1cjHVDnoqcJV2Xvitt',
       supportsCollectFees: true,
+    },
+  },
+  [SupportedChainId.zircuit]: {
+    [SupportedDex.Ocelex]: {
+      url: 'none',
+      publishedUrl:
+        'none',
+      supportsCollectFees: false,
     },
   },
   [SupportedChainId.zksync_era]: {

@@ -314,7 +314,7 @@ const addressConfig: Record<SupportedChainId, Config> = {
     [SupportedDex.SparkDexV1]: {
       factoryAddress: '0x9FAb4bdD4E05f5C023CCC85D2071b49791D7418F',
       depositGuard: {
-        address: '0xbb7A3d439abf42Cf39837f9102F987bab3Ee2e73',
+        address: '0x4F15CED4dD9B8eF545809431c177a3ae46A29c37',
         version: 2,
       },
       vaultDeployerAddress: '0x2d1918dBa43d55B9F0E2596aecC74826BbB7d668',
@@ -582,6 +582,17 @@ const addressConfig: Record<SupportedChainId, Config> = {
       vaultDeployerAddress: '0x412840Fd29A78428d3dbAeca811414c08b554599',
       isAlgebra: true,
       ammVersion: 'algebraIntegral',
+    },
+  },
+  [SupportedChainId.zircuit]: {
+    [SupportedDex.Ocelex]: {
+      factoryAddress: '0x1A58D4CFF22C7E2e0c4cCf4a0010b87822d024A1',
+      depositGuard: {
+        address: '0x259743Ff627313D55b6a15735bD40Aa9aC4D6aDE',
+        version: 2,
+      },
+      vaultDeployerAddress: '0x8fC4aFAA9B4C3cbE97F08e040e945411EFb18993',
+      isAlgebra: true,
     },
   },
   [SupportedChainId.zksync_era]: {
