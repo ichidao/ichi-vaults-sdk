@@ -392,6 +392,14 @@ export const graphUrls: Record<SupportedChainId, dexGraph> = {
       supportsCollectFees: true,
     },
   },
+  [SupportedChainId.zircuit]: {
+    [SupportedDex.Ocelex]: {
+      url: 'none',
+      publishedUrl:
+        'none',
+      supportsCollectFees: false,
+    },
+  },
   [SupportedChainId.zksync_era]: {
     [SupportedDex.Pancakeswap]: {
       url: 'https://api.studio.thegraph.com/query/88584/zksync-v1-pancakeswap/version/latest',

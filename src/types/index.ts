@@ -39,6 +39,7 @@ export enum SupportedChainId {
   taiko_hekla = 167009,
   unreal = 18233,
   x_layer_testnet = 195,
+  zircuit = 48900,
   zksync_era_testnet = 280,
   zksync_era = 324,
 }
@@ -61,6 +62,7 @@ export enum SupportedDex {
   Lynex = 'Lynex',
   Metavault = 'Metavault',
   Nile = 'Nile',
+  Ocelex = 'Ocelex',
   Pancakeswap = 'PancakeSwap',
   Pearl = 'Pearl',
   Quickswap = 'QuickSwap',

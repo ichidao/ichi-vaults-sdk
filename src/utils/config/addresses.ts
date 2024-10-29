@@ -575,6 +575,17 @@ const addressConfig: Record<SupportedChainId, Config> = {
       ammVersion: 'algebraIntegral',
     },
   },
+  [SupportedChainId.zircuit]: {
+    [SupportedDex.Ocelex]: {
+      factoryAddress: '0x1A58D4CFF22C7E2e0c4cCf4a0010b87822d024A1',
+      depositGuard: {
+        address: '0x259743Ff627313D55b6a15735bD40Aa9aC4D6aDE',
+        version: 2,
+      },
+      vaultDeployerAddress: '0x8fC4aFAA9B4C3cbE97F08e040e945411EFb18993',
+      isAlgebra: true,
+    },
+  },
   [SupportedChainId.zksync_era]: {
     [SupportedDex.Pancakeswap]: {
       factoryAddress: '0x8a76c26E0089111989C14EF56b9733aa38B94148',
