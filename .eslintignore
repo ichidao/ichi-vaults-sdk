@@ -1,1 +1,4 @@
-.\abis
+dist/
+build/
+out/
+abis/

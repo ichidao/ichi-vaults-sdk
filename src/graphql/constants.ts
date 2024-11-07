@@ -102,7 +102,7 @@ export const graphUrls: Record<SupportedChainId, dexGraph> = {
     },
     [SupportedDex.Pancakeswap]: {
       url: 'https://api.studio.thegraph.com/query/88584/base-v1-pancakeswap/version/latest',
-      publishedUrl: 
+      publishedUrl:
         'https://gateway-arbitrum.network.thegraph.com/api/[api-key]/subgraphs/id/AWny6b9W1v63MPFqeCSFQJt5dMP7xX1nzSCJd2zh8Dgd',
       supportsCollectFees: true,
     },
@@ -407,8 +407,7 @@ export const graphUrls: Record<SupportedChainId, dexGraph> = {
   [SupportedChainId.zircuit]: {
     [SupportedDex.Ocelex]: {
       url: 'none',
-      publishedUrl:
-        'none',
+      publishedUrl: 'none',
       supportsCollectFees: false,
     },
   },
