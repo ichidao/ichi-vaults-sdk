@@ -123,9 +123,9 @@ export const graphUrls: Record<SupportedChainId, dexGraph> = {
   },
   [SupportedChainId.blast]: {
     [SupportedDex.Fenix]: {
-      url: 'https://api.goldsky.com/api/public/project_clxadvm41bujy01ui2qalezdn/subgraphs/blast-v1-fenix/1.0.0/gn',
+      url: 'https://api.goldsky.com/api/public/project_clxadvm41bujy01ui2qalezdn/subgraphs/ichi-new-subgraph/0.0.1/gn',
       publishedUrl:
-        'https://api.goldsky.com/api/public/project_clxadvm41bujy01ui2qalezdn/subgraphs/blast-v1-fenix/1.0.0/gn',
+        'https://api.goldsky.com/api/public/project_clxadvm41bujy01ui2qalezdn/subgraphs/ichi-new-subgraph/0.0.1/gn',
       supportsCollectFees: true,
     },
     [SupportedDex.Thruster]: {
