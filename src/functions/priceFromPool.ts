@@ -14,7 +14,7 @@ import {
   getIchiVaultContract,
   getUniswapV3PoolContract,
 } from '../contracts';
-import addressConfig from '../utils/config/addresses';
+import { addressConfig } from '../utils/config/addresses';
 import { _getTotalAmounts, _getTotalSupply } from './_totalBalances';
 
 export async function getSqrtPriceFromPool(

@@ -15,17 +15,26 @@ import {
   UserBalanceInVault,
   UserBalanceInVaultBN,
   UserBalances,
+  VaultShares,
   ichiVaultDecimals,
 } from '../types';
 import formatBigInt from '../utils/formatBigInt';
 // eslint-disable-next-line import/no-cycle
 import { getChainByProvider, validateVaultData } from './vault';
-import { getTotalAmounts } from './totalBalances';
 import { UserBalancesQueryData } from '../types/vaultQueryData';
 import { userBalancesQuery } from '../graphql/queries';
 import parseBigInt from '../utils/parseBigInt';
 import getGraphUrls from '../utils/getGraphUrls';
 import { _getTotalAmounts, _getTotalSupply, getTokenDecimals } from './_totalBalances';
+import {
+  decodeDecimalsResult,
+  decodeTotalAmountsResult,
+  decodeTotalSupplyResult,
+  encodeDecimalsCall,
+  encodeTotalAmountsCall,
+  encodeTotalSupplyCall,
+  multicall,
+} from '../utils/multicallUtils';
 
 const promises: Record<string, Promise<any>> = {};
 
@@ -251,7 +260,6 @@ export async function getAllUserAmounts(
   const { chainId } = await getChainByProvider(jsonProvider);
   const { publishedUrl, url } = getGraphUrls(chainId, dex, true);
 
-  let shares: UserBalanceInVaultBN[];
   const key = `${chainId + accountAddress}-balances`;
   if (!Object.prototype.hasOwnProperty.call(promises, key)) {
     try {
@@ -277,84 +285,71 @@ export async function getAllUserAmounts(
 
   try {
     const balances = await promises[key];
-    if (balances) {
-      const userBalances = ((await promises[key]) as UserBalances).vaultShares;
-      shares = userBalances.map((balance) => {
-        return { vaultAddress: balance.vault.id, shares: parseBigInt(balance.vaultShareBalance, ichiVaultDecimals) };
-      });
+    if (balances?.vaultShares?.length) {
+      // Prepare multicall calls
+      const calls = balances.vaultShares.flatMap((share: VaultShares) => [
+        encodeTotalAmountsCall(share.vault.id),
+        encodeTotalSupplyCall(share.vault.id),
+        encodeDecimalsCall(share.vault.tokenA),
+        encodeDecimalsCall(share.vault.tokenB),
+      ]);
 
-      const totalSupplyBnPromises = shares.map((vault) => {
-        const vaultContract = getIchiVaultContract(vault.vaultAddress, jsonProvider);
-        return vaultContract.totalSupply();
-      });
-      const totalSuppliesBN = await Promise.all(totalSupplyBnPromises);
+      // Execute multicall
+      const signer = jsonProvider.getSigner(accountAddress);
+      const results = await multicall(calls, chainId, signer);
 
-      const totalAmountsBnPromises = shares.map((vault) => {
-        return getTotalAmounts(vault.vaultAddress, jsonProvider, dex, true);
-      });
-      const totalAmountsBN = await Promise.all(totalAmountsBnPromises);
+      // Process results
+      const processedResults = balances.vaultShares.map((share: VaultShares, index: number) => {
+        const baseIndex = index * 4;
+        const totalAmounts = decodeTotalAmountsResult(results[baseIndex], share.vault.id);
+        const totalSupply = decodeTotalSupplyResult(results[baseIndex + 1], share.vault.id);
+        const token0Decimals = decodeDecimalsResult(results[baseIndex + 2], share.vault.tokenA);
+        const token1Decimals = decodeDecimalsResult(results[baseIndex + 3], share.vault.tokenB);
 
-      const token0DecimalsPromises = userBalances.map((vault) => {
-        const token0decimals = getTokenDecimals(vault.vault.tokenA, jsonProvider, chainId);
-        return token0decimals;
-      });
-      const token0Decimals = await Promise.all(token0DecimalsPromises);
+        const userBalance = parseBigInt(share.vaultShareBalance, ichiVaultDecimals);
 
-      const token1DecimalsPromises = userBalances.map((vault) => {
-        const token1decimals = getTokenDecimals(vault.vault.tokenB, jsonProvider, chainId);
-        return token1decimals;
-      });
-      const token1Decimals = await Promise.all(token1DecimalsPromises);
+        if (!totalSupply.isZero()) {
+          const amount0 = userBalance.mul(totalAmounts.total0).div(totalSupply);
+          const amount1 = userBalance.mul(totalAmounts.total1).div(totalSupply);
 
-      const amounts = shares.map((vault, index) => {
-        const userBalance = vault.shares;
-        const vaultTotalAmountsBN = totalAmountsBN[index];
-        const vaultTotalSupplyBN = totalSuppliesBN[index];
-        if (!vaultTotalSupplyBN.isZero()) {
-          const amount0 = userBalance.mul(vaultTotalAmountsBN[0]).div(vaultTotalSupplyBN);
-          const amount1 = userBalance.mul(vaultTotalAmountsBN[1]).div(vaultTotalSupplyBN);
-          const userAmountsBN = {
-            amount0,
-            amount1,
-            0: amount0,
-            1: amount1,
-          } as UserAmountsBN;
           if (!raw) {
-            const vaultToken0Decimals = token0Decimals[index];
-            const vaultToken1Decimals = token1Decimals[index];
             const userAmounts = {
-              amount0: formatBigInt(amount0, vaultToken0Decimals),
-              amount1: formatBigInt(amount1, vaultToken1Decimals),
-              0: formatBigInt(amount0, vaultToken0Decimals),
-              1: formatBigInt(amount1, vaultToken1Decimals),
+              amount0: formatBigInt(amount0, token0Decimals),
+              amount1: formatBigInt(amount1, token1Decimals),
+              0: formatBigInt(amount0, token0Decimals),
+              1: formatBigInt(amount1, token1Decimals),
             } as UserAmounts;
-            return { vaultAddress: vault.vaultAddress, userAmounts };
+            return { vaultAddress: share.vault.id, userAmounts };
           } else {
-            return { vaultAddress: vault.vaultAddress, userAmounts: userAmountsBN };
+            const userAmountsBN = {
+              amount0,
+              amount1,
+              0: amount0,
+              1: amount1,
+            } as UserAmountsBN;
+            return { vaultAddress: share.vault.id, userAmounts: userAmountsBN };
           }
-        } else if (!raw) {
-          return {
-            vaultAddress: vault.vaultAddress,
-            userAmounts: {
-              amount0: '0',
-              amount1: '0',
-              0: '0',
-              1: '0',
-            },
-          } as UserAmountsInVault;
         } else {
           return {
-            vaultAddress: vault.vaultAddress,
-            userAmounts: {
-              amount0: BigNumber.from(0),
-              amount1: BigNumber.from(0),
-              0: BigNumber.from(0),
-              1: BigNumber.from(0),
-            },
-          } as UserAmountsInVaultBN;
+            vaultAddress: share.vault.id,
+            userAmounts: !raw
+              ? {
+                  amount0: '0',
+                  amount1: '0',
+                  0: '0',
+                  1: '0',
+                }
+              : {
+                  amount0: BigNumber.from(0),
+                  amount1: BigNumber.from(0),
+                  0: BigNumber.from(0),
+                  1: BigNumber.from(0),
+                },
+          } as UserAmountsInVault | UserAmountsInVaultBN;
         }
       });
-      return amounts;
+
+      return processedResults;
     } else {
       return [];
     }

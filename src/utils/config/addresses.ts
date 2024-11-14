@@ -15,7 +15,7 @@ export type SupportedDexConfig = {
 
 export type Config = { [key in SupportedDex]?: SupportedDexConfig };
 
-const addressConfig: Record<SupportedChainId, Config> = {
+export const addressConfig: Record<SupportedChainId, Config> = {
   [SupportedChainId.arbitrum]: {
     [SupportedDex.UniswapV3]: {
       factoryAddress: '0xfBf38920cCbCFF7268Ad714ae5F9Fad6dF607065',
@@ -637,4 +637,38 @@ const addressConfig: Record<SupportedChainId, Config> = {
   },
 };
 
-export default addressConfig;
+export const MULTICALL_ADDRESSES: Partial<Record<SupportedChainId, string>> = {
+  [SupportedChainId.mainnet]: '0x1F98415757620B543A52E61c46B32eB19261F984',
+  [SupportedChainId.flare]: '0x921aCCA39e8D3519A503EE4A11b56d6eEACbb2Aa',
+  [SupportedChainId.rootstock]: '0x8CF119F15575CAb4beb427Fb485087e71a96Fbaa',
+  [SupportedChainId.arbitrum]: '0xd9e7c0932a7D3e40Db3Fe78d95A3ED375a37Ab1a',
+  [SupportedChainId.haven1_devnet]: '0xe573920139a208989d83C57ea48837C6285F2cd3',
+  [SupportedChainId.fantom]: '0xd9e7c0932a7D3e40Db3Fe78d95A3ED375a37Ab1a',
+  [SupportedChainId.hedera_testnet]: '0x0B10E483AAC4340256772754d23131B6E0Dc31EA',
+  [SupportedChainId.hedera]: '0x0B10E483AAC4340256772754d23131B6E0Dc31EA',
+  [SupportedChainId.mantle]: '0xf5bb4e61ccAC9080fb520e5F69224eE85a4D588F',
+  [SupportedChainId.mode]: '0x481BE66De423B6a0Df368b526713bA632EF23ADd',
+  [SupportedChainId.zircuit]: '0x89EC5589c030FcEf8c29E7EeC491D2E73b53A623',
+  [SupportedChainId.zksync_era_testnet]: '0x8A23CB45E5F4d5a1b2DB673663Ea2aAedc48acff',
+  [SupportedChainId.zksync_era]: '0x95071cBD09184083E7F732a710c2e30c9882Fd5f',
+  [SupportedChainId.polygon_zkevm]: '0xe05b539447B17630Cb087473F6b50E5c5f73FDeb',
+  [SupportedChainId.polygon]: '0xFb6021617c03dcEF189C3f783C56e3D9ff284919',
+  [SupportedChainId.fuse]: '0x607F5841eFf0505d3c7A868558aD4562fD176C8F',
+  [SupportedChainId.bsc]: '0x74d8b6407b8f33b40d7a1e34375176394f59afe6',
+  [SupportedChainId.evmos]: '0x8a4A5eEC59899F2d23B08f0188d6eB540cF4EccC',
+  [SupportedChainId.arthera]: '0x15fCbF9bC0797567053A8265b7E6f4eC43EA7327',
+  [SupportedChainId.arthera_testnet]: '0xEC250E6856e14A494cb1f0abC61d72348c79F418',
+  [SupportedChainId.unreal]: '0xe573920139a208989d83C57ea48837C6285F2cd3',
+  [SupportedChainId.real]: '0xbBB97d634460DACCA0d41E249510Bb741ef46ad3',
+  [SupportedChainId.base]: '0x091e99cb1C49331a94dD62755D168E941AbD0693',
+  [SupportedChainId.linea]: '0xe573920139a208989d83C57ea48837C6285F2cd3',
+  [SupportedChainId.berachain_bartio]: '0x932E1908461De58b0891E5022431dc995Cb95C5E',
+  [SupportedChainId.blast]: '0xdC7f370de7631cE9e2c2e1DCDA6B3B5744Cf4705',
+  [SupportedChainId.taiko]: '0xaF0C5CBbCEfB685BF3200684d2aE19B8eA6186ca',
+  [SupportedChainId.scroll]: '0xC1D2e074C38FdD5CA965000668420C80316F0915',
+  [SupportedChainId.blast_sepolia_testnet]: '0xEc27362204a1D02e9803d0eB4904e8df470b2B39',
+  [SupportedChainId.x_layer_testnet]: '0x7B4553a35D3020064cB464a8D75a4735FfdA15Bd',
+  [SupportedChainId.celo]: '0x633987602DE5C4F337e3DbF265303A1080324204',
+  [SupportedChainId.kava]: '0x481BE66De423B6a0Df368b526713bA632EF23ADd',
+  [SupportedChainId.skale_europa]: '0x15bA62A09E6e295A696D02f8E4B80a8a13bF3785',
+};
