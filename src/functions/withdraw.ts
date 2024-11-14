@@ -10,7 +10,7 @@ import { IchiVault, SupportedChainId, SupportedDex, ichiVaultDecimals } from '..
 import { getGasLimit, calculateGasMargin } from '../types/calculateGasMargin';
 // eslint-disable-next-line import/no-cycle
 import { validateVaultData } from './vault';
-import addressConfig from '../utils/config/addresses';
+import { addressConfig } from '../utils/config/addresses';
 import amountWithSlippage from '../utils/amountWithSlippage';
 import { getUserBalance } from './userBalances';
 import getVaultDeployer from './vaultBasics';

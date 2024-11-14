@@ -110,7 +110,7 @@ export interface IchiVault {
   fee?: string;
 }
 
-type VaultShares = {
+export type VaultShares = {
   vault: {
     id: string;
     tokenA: string;

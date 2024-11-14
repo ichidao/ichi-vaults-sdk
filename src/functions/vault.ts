@@ -7,7 +7,7 @@ import { VaultQueryData, VaultsByPoolQueryData, VaultsByTokensQueryData } from '
 import { getIchiVaultContract } from '../contracts';
 import { vaultByPoolQuery, vaultByTokensQuery, vaultQuery, vaultQueryAlgebra } from '../graphql/queries';
 import getGraphUrls from '../utils/getGraphUrls';
-import addressConfig from '../utils/config/addresses';
+import { addressConfig } from '../utils/config/addresses';
 import cache from '../utils/cache';
 
 async function getVaultInfoFromContract(vaultAddress: string, jsonProvider: JsonRpcProvider): Promise<IchiVault> {
@@ -55,6 +55,7 @@ async function sendVaultsByPoolQueryRequest(url: string, poolAddress: string, qu
 
 function noHoldersCount(dex: SupportedDex, chainId: SupportedChainId): boolean {
   return (
+    dex === SupportedDex.Fenix ||
     dex === SupportedDex.Henjin ||
     dex === SupportedDex.Thirdfy ||
     (dex === SupportedDex.Sushiswap && chainId === SupportedChainId.skale_europa) ||

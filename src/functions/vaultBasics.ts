@@ -1,5 +1,5 @@
 import { SupportedDex, SupportedChainId } from '../types';
-import addressConfig from '../utils/config/addresses';
+import { addressConfig } from '../utils/config/addresses';
 
 export default function getVaultDeployer(vaultAddress: string, chainId: SupportedChainId, dex: SupportedDex): string {
   let vaultDeployerAddress = addressConfig[chainId as SupportedChainId]![dex]?.vaultDeployerAddress;

@@ -24,7 +24,7 @@ import {
   getUniswapV3PoolContract,
 } from '../contracts';
 import formatBigInt from '../utils/formatBigInt';
-import addressConfig from '../utils/config/addresses';
+import { addressConfig } from '../utils/config/addresses';
 import { getAverageDtr, getDtrAtFeeCollectionEvent, getDtrAtTransactionEvent } from './calculateDtr';
 import { getTotalFeesAmountInBaseTokens } from './calculateFees';
 import { getLpPriceAt } from './calculateApr';
