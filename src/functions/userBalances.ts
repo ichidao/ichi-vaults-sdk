@@ -106,10 +106,12 @@ export async function sendUserBalancesQueryRequest(
   }).then(({ user }) => user);
 }
 function storeResult(key: string, result: any) {
+  const cacheTtl =
+    process.env.CACHE_TTL && !Number.isNaN(process.env.CACHE_TTL) ? Number(process.env.CACHE_TTL) : 120000; // 120000 = 2min
   promises[key] = Promise.resolve(result);
   setTimeout(() => {
     delete promises[key];
-  }, 120000); // 120000 ms = 2 minutes
+  }, cacheTtl);
 }
 
 export async function getAllUserBalances(
@@ -260,7 +262,7 @@ export async function getAllUserAmounts(
   const { chainId } = await getChainByProvider(jsonProvider);
   const { publishedUrl, url } = getGraphUrls(chainId, dex, true);
 
-  const key = `${chainId + accountAddress}-balances`;
+  const key = `${chainId + accountAddress}-all-user-amounts`;
   if (!Object.prototype.hasOwnProperty.call(promises, key)) {
     try {
       if (publishedUrl) {

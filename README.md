@@ -559,7 +559,7 @@ const amountsBN: [BigNumber, BigNumber] & {amount0: BigNumber, amount1: BigNumbe
 | raw   | true | undefined | false |
 
 <br/>
-This function returns user balances for all vaults on the specified decentralized exchange (DEX).
+This function returns user balances for all vaults on the specified decentralized exchange (DEX). The result is cached for 2 minutes by default. You can set your own cache TTL by adding the CACHE_TTL environment variable in millisecond. For example, CACHE_TTL = 60000 is 1 minute.
 
 ```typescript
 import { Web3Provider } from '@ethersproject/providers';
@@ -595,7 +595,7 @@ const userBalancesInVaultsBN: UserBalanceInVaultBN[] = await getAllUserBalances(
 | raw   | true | undefined | false |
 
 <br/>
-This function returns user token amounts in all vaults on the specified decentralized exchange (DEX).
+This function returns user token amounts in all vaults on the specified decentralized exchange (DEX). The result is cached for 2 minutes by default. You can set your own cache TTL by adding the CACHE_TTL environment variable in millisecond. For example, CACHE_TTL = 60000 is 1 minute.
 
 ```typescript
 import { Web3Provider } from '@ethersproject/providers';
