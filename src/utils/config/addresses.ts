@@ -146,6 +146,16 @@ export const addressConfig: Record<SupportedChainId, Config> = {
       vaultDeployerAddress: '0x7d11De61c219b70428Bb3199F0DD88bA9E76bfEE',
       isAlgebra: false,
     },
+    [SupportedDex.Kim]: {
+      factoryAddress: '0x28cF3b462a1ADdE87fe7144d110BcF0D464C97b7',
+      depositGuard: {
+        address: '0xd8Bb912F45681C2e637F884aAE14C6c784aB1cF0',
+        version: 2,
+      },
+      vaultDeployerAddress: '0x7d11De61c219b70428Bb3199F0DD88bA9E76bfEE',
+      isAlgebra: true,
+      ammVersion: 'algebraIntegral',
+    },
     [SupportedDex.Pancakeswap]: {
       factoryAddress: '0x24430E837efB64EF87bb32be03437fc6005EEF74',
       depositGuard: {
@@ -166,6 +176,16 @@ export const addressConfig: Record<SupportedChainId, Config> = {
     },
   },
   [SupportedChainId.berachain_bartio]: {
+    [SupportedDex.Honeypot]: {
+      factoryAddress: '0x0aC9e4a0423eec93357e2B0F83ef8c6469FD47F7',
+      depositGuard: {
+        address: '0xD360846137c2be74c6B7624A06A809Ca3aD4e014',
+        version: 2,
+      },
+      vaultDeployerAddress: '0x249397Aa78bE5955DBc2102DF31B3FB2A92B1AA8',
+      isAlgebra: true,
+      ammVersion: 'algebraIntegral',
+    },
     [SupportedDex.Kodiak]: {
       factoryAddress: '0xCa8310832053de4909fe1A6C89C7200D033CBB76',
       depositGuard: {
