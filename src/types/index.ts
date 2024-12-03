@@ -55,6 +55,7 @@ export enum SupportedDex {
   Forge = 'Forge',
   Haven1 = 'Haven1',
   Henjin = 'Henjin',
+  Honeypot = 'Honeypot',
   Kim = 'Kim',
   Kinetix = 'Kinetix',
   Kodiak = 'Kodiak',

@@ -100,6 +100,12 @@ export const graphUrls: Record<SupportedChainId, dexGraph> = {
         'https://gateway-arbitrum.network.thegraph.com/api/[api-key]/subgraphs/id/FeWJod9KKVkeRrC7MB54cJNu9qYhoyNzDYPa8D62U2AS',
       supportsCollectFees: true,
     },
+    [SupportedDex.Kim]: {
+      url: 'https://api.studio.thegraph.com/query/88584/base-v1-kim/version/latest',
+      publishedUrl:
+        'https://gateway-arbitrum.network.thegraph.com/api/[api-key]/subgraphs/id/BWxqY53LHYaYVCHiAjv8mHNPWL3HKaNbZoXt48CnthCw',
+      supportsCollectFees: true,
+    },
     [SupportedDex.Pancakeswap]: {
       url: 'https://api.studio.thegraph.com/query/88584/base-v1-pancakeswap/version/latest',
       publishedUrl:
@@ -114,6 +120,12 @@ export const graphUrls: Record<SupportedChainId, dexGraph> = {
     },
   },
   [SupportedChainId.berachain_bartio]: {
+    [SupportedDex.Honeypot]: {
+      url: 'https://api.goldsky.com/api/public/project_clynrq1h8gam301xx6vgngo9p/subgraphs/ichi-org/berachain-bartio-v1-honeypot/gn',
+      publishedUrl:
+        'https://api.goldsky.com/api/public/project_clynrq1h8gam301xx6vgngo9p/subgraphs/ichi-org/berachain-bartio-v1-honeypot/gn',
+      supportsCollectFees: true,
+    },
     [SupportedDex.Kodiak]: {
       url: 'https://api.goldsky.com/api/public/project_clynrq1h8gam301xx6vgngo9p/subgraphs/ichi-org/berachain-bartio-v1-kodiak/gn',
       publishedUrl:
