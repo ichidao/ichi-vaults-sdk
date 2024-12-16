@@ -273,6 +273,13 @@ export const graphUrls: Record<SupportedChainId, dexGraph> = {
       supportsCollectFees: true,
     },
   },
+  [SupportedChainId.ink]: {
+    [SupportedDex.Reservoir]: {
+      url: 'none',
+      publishedUrl: 'none',
+      supportsCollectFees: false,
+    },
+  },
   [SupportedChainId.linea]: {
     [SupportedDex.Linehub]: {
       url: 'https://api.studio.thegraph.com/query/88584/linea-v1-linehub/v0.0.3',
