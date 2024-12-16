@@ -394,6 +394,17 @@ export const addressConfig: Record<SupportedChainId, Config> = {
       isAlgebra: false,
     },
   },
+  [SupportedChainId.ink]: {
+    [SupportedDex.Reservoir]: {
+      factoryAddress: '0x53511764DE94CdA43CbBadFFCca3F29D2EFAB0F8',
+      depositGuard: {
+        address: '0x355F8B466defa96F8cc084d6A2f3C27fe5Abc9FD',
+        version: 2,
+      },
+      vaultDeployerAddress: '0xcBd1F70235904d3764f5d159022BA0281536E3E8',
+      isAlgebra: false,
+    },
+  },
   [SupportedChainId.kava]: {
     [SupportedDex.Kinetix]: {
       factoryAddress: '0x2d2c72C4dC71AA32D64e5142e336741131A73fc0',
