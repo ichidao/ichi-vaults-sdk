@@ -25,6 +25,7 @@ export enum SupportedChainId {
   hedera = 295,
   hedera_testnet = 296,
   ink = 57073,
+  ink_sepolia = 763373,
   kava = 2222,
   linea = 59144,
   mainnet = 1,

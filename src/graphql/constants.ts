@@ -266,18 +266,25 @@ export const graphUrls: Record<SupportedChainId, dexGraph> = {
       supportsCollectFees: false,
     },
   },
-  [SupportedChainId.kava]: {
-    [SupportedDex.Kinetix]: {
-      url: 'https://the-graph.kava.io/subgraphs/name/ichi-org/kava-v1-kinetix',
-      publishedUrl: 'https://the-graph.kava.io/subgraphs/name/ichi-org/kava-v1-kinetix',
-      supportsCollectFees: true,
-    },
-  },
   [SupportedChainId.ink]: {
     [SupportedDex.Reservoir]: {
       url: 'none',
       publishedUrl: 'none',
       supportsCollectFees: false,
+    },
+  },
+  [SupportedChainId.ink_sepolia]: {
+    [SupportedDex.UniswapV3]: {
+      url: 'https://api.goldsky.com/api/public/project_clynrq1h8gam301xx6vgngo9p/subgraphs/open-v3/ink-sepolia-v1/gn',
+      publishedUrl: 'https://api.goldsky.com/api/public/project_clynrq1h8gam301xx6vgngo9p/subgraphs/open-v3/ink-sepolia-v1/gn',
+      supportsCollectFees: true,
+    },
+  },
+  [SupportedChainId.kava]: {
+    [SupportedDex.Kinetix]: {
+      url: 'https://the-graph.kava.io/subgraphs/name/ichi-org/kava-v1-kinetix',
+      publishedUrl: 'https://the-graph.kava.io/subgraphs/name/ichi-org/kava-v1-kinetix',
+      supportsCollectFees: true,
     },
   },
   [SupportedChainId.linea]: {
