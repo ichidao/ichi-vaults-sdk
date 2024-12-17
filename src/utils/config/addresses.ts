@@ -405,6 +405,17 @@ export const addressConfig: Record<SupportedChainId, Config> = {
       isAlgebra: false,
     },
   },
+  [SupportedChainId.ink_sepolia]: {
+    [SupportedDex.UniswapV3]: {
+      factoryAddress: '0x259743Ff627313D55b6a15735bD40Aa9aC4D6aDE',
+      depositGuard: {
+        address: '0xCa8310832053de4909fe1A6C89C7200D033CBB76',
+        version: 2,
+      },
+      vaultDeployerAddress: '0xC5901f39c510c6D8c4d7b692608A6AA8982E4C3f',
+      isAlgebra: false,
+    },
+  },
   [SupportedChainId.kava]: {
     [SupportedDex.Kinetix]: {
       factoryAddress: '0x2d2c72C4dC71AA32D64e5142e336741131A73fc0',
@@ -677,6 +688,8 @@ export const MULTICALL_ADDRESSES: Partial<Record<SupportedChainId, string>> = {
   [SupportedChainId.fantom]: '0xd9e7c0932a7D3e40Db3Fe78d95A3ED375a37Ab1a',
   [SupportedChainId.hedera_testnet]: '0x0B10E483AAC4340256772754d23131B6E0Dc31EA',
   [SupportedChainId.hedera]: '0x0B10E483AAC4340256772754d23131B6E0Dc31EA',
+  [SupportedChainId.ink]: "0xcfEA11557Bc9cB71bc6916e09fC8493D668b8d53",
+  [SupportedChainId.ink_sepolia]: "0x27404A54D594Aa6307C3f9Be102646363d6279a1",
   [SupportedChainId.mantle]: '0xf5bb4e61ccAC9080fb520e5F69224eE85a4D588F',
   [SupportedChainId.mode]: '0x481BE66De423B6a0Df368b526713bA632EF23ADd',
   [SupportedChainId.zircuit]: '0x89EC5589c030FcEf8c29E7EeC491D2E73b53A623',
