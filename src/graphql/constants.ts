@@ -268,9 +268,9 @@ export const graphUrls: Record<SupportedChainId, dexGraph> = {
   },
   [SupportedChainId.ink]: {
     [SupportedDex.Reservoir]: {
-      url: 'none',
-      publishedUrl: 'none',
-      supportsCollectFees: false,
+      url: 'https://api.goldsky.com/api/public/project_clynrq1h8gam301xx6vgngo9p/subgraphs/thedeep/ink-v1/gn',
+      publishedUrl: 'https://api.goldsky.com/api/public/project_clynrq1h8gam301xx6vgngo9p/subgraphs/thedeep/ink-v1/gn',
+      supportsCollectFees: true,
     },
   },
   [SupportedChainId.ink_sepolia]: {
