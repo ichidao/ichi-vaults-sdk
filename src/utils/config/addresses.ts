@@ -396,9 +396,9 @@ export const addressConfig: Record<SupportedChainId, Config> = {
   },
   [SupportedChainId.ink]: {
     [SupportedDex.Reservoir]: {
-      factoryAddress: '0x53511764DE94CdA43CbBadFFCca3F29D2EFAB0F8',
+      factoryAddress: '0x65CD1f0ac298519BE4891B5812053e00BD2074AC',
       depositGuard: {
-        address: '0x355F8B466defa96F8cc084d6A2f3C27fe5Abc9FD',
+        address: '0x51339a25FB3f8351c43b4B552AF82C1B234FED93',
         version: 2,
       },
       vaultDeployerAddress: '0xcBd1F70235904d3764f5d159022BA0281536E3E8',
