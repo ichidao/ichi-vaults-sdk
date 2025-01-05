@@ -403,7 +403,7 @@ export const graphUrls: Record<SupportedChainId, dexGraph> = {
     [SupportedDex.Equalizer]: {
       url: 'https://api.studio.thegraph.com/query/88584/sonic-v1-equalizer/version/latest',
       publishedUrl:
-        'https://gateway-arbitrum.network.thegraph.com/api/[api-key]/subgraphs/id/QmPzG2zpwJ5Mqmk8tAc9dDEeCLFnDSMNKSi6AHTAM4gkNR',
+        'https://gateway-arbitrum.network.thegraph.com/api/[api-key]/subgraphs/id/nPdJMpi6vnGWYWwLXwkmtGe7qW6oUC28pmYPmWz2eY1',
       supportsCollectFees: true,
     },
     [SupportedDex.SwapX]: {
