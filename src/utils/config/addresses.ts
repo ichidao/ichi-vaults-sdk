@@ -588,6 +588,27 @@ export const addressConfig: Record<SupportedChainId, Config> = {
       isAlgebra: false,
     },
   },
+  [SupportedChainId.sonic]: {
+    [SupportedDex.Equalizer]: {
+      factoryAddress: '0x7D18F2D60E4fd6F485419727515807d09A542eb9',
+      depositGuard: {
+        address: '0x4c8c0D2Ca19a97896AA9135449e6d6471a53FC5f',
+        version: 2,
+      },
+      vaultDeployerAddress: '0x0b2a31D95B1a4c8b1e772599ffcB8875FB4e2d33',
+      isAlgebra: false,
+    },
+    [SupportedDex.SwapX]: {
+      factoryAddress: '0x34513e8A327987Bb44acF5A925a7f3b4092d8b5F',
+      depositGuard: {
+        address: '0x65CD1f0ac298519BE4891B5812053e00BD2074AC',
+        version: 2,
+      },
+      vaultDeployerAddress: '0x0b2a31D95B1a4c8b1e772599ffcB8875FB4e2d33',
+      isAlgebra: true,
+      ammVersion: 'algebraIntegral',
+    },
+  },
   [SupportedChainId.taiko]: {
     [SupportedDex.Henjin]: {
       factoryAddress: '0x9FAb4bdD4E05f5C023CCC85D2071b49791D7418F',
@@ -692,6 +713,7 @@ export const MULTICALL_ADDRESSES: Partial<Record<SupportedChainId, string>> = {
   [SupportedChainId.ink_sepolia]: "0x27404A54D594Aa6307C3f9Be102646363d6279a1",
   [SupportedChainId.mantle]: '0xf5bb4e61ccAC9080fb520e5F69224eE85a4D588F',
   [SupportedChainId.mode]: '0x481BE66De423B6a0Df368b526713bA632EF23ADd',
+  [SupportedChainId.sonic]: '0x9B500c0a544B870D9C4c441147dCaEf599e542E7',
   [SupportedChainId.zircuit]: '0x89EC5589c030FcEf8c29E7EeC491D2E73b53A623',
   [SupportedChainId.zksync_era_testnet]: '0x8A23CB45E5F4d5a1b2DB673663Ea2aAedc48acff',
   [SupportedChainId.zksync_era]: '0x95071cBD09184083E7F732a710c2e30c9882Fd5f',
