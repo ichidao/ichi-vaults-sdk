@@ -399,6 +399,20 @@ export const graphUrls: Record<SupportedChainId, dexGraph> = {
       supportsCollectFees: true,
     },
   },
+  [SupportedChainId.sonic]: {
+    [SupportedDex.Equalizer]: {
+      url: 'https://api.studio.thegraph.com/query/88584/sonic-v1-equalizer/version/latest',
+      publishedUrl:
+        'https://gateway-arbitrum.network.thegraph.com/api/[api-key]/subgraphs/id/QmPzG2zpwJ5Mqmk8tAc9dDEeCLFnDSMNKSi6AHTAM4gkNR',
+      supportsCollectFees: true,
+    },
+    [SupportedDex.SwapX]: {
+      url: 'https://api.studio.thegraph.com/query/88584/sonic-v1-swapx/version/latest',
+      publishedUrl:
+        'https://gateway-arbitrum.network.thegraph.com/api/[api-key]/subgraphs/id/Gw1DrPbd1pBNorCWEfyb9i8txJ962qYqqPtuyX6iEH8u',
+      supportsCollectFees: true,
+    },
+  },
   [SupportedChainId.taiko]: {
     [SupportedDex.Henjin]: {
       url: 'https://api.goldsky.com/api/public/project_clvwe2yydw1n701uh6yple20i/subgraphs/henjin-ichi/1.0.0/gn',
