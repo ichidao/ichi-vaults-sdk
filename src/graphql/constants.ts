@@ -100,6 +100,12 @@ export const graphUrls: Record<SupportedChainId, dexGraph> = {
         'https://gateway-arbitrum.network.thegraph.com/api/[api-key]/subgraphs/id/FeWJod9KKVkeRrC7MB54cJNu9qYhoyNzDYPa8D62U2AS',
       supportsCollectFees: true,
     },
+    [SupportedDex.Henjin]: {
+      url: 'https://api.studio.thegraph.com/query/88584/base-v1-henjin/version/latest',
+      publishedUrl:
+        'https://gateway-arbitrum.network.thegraph.com/api/[api-key]/subgraphs/id/BBF1RTBGjEhMzoHg7WV4HYKj3rXxE6BZJGYe4n6BgkMv',
+      supportsCollectFees: true,
+    },
     [SupportedDex.Kim]: {
       url: 'https://api.studio.thegraph.com/query/88584/base-v1-kim/version/latest',
       publishedUrl:
