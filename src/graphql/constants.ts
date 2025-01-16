@@ -288,7 +288,8 @@ export const graphUrls: Record<SupportedChainId, dexGraph> = {
   [SupportedChainId.ink_sepolia]: {
     [SupportedDex.UniswapV3]: {
       url: 'https://api.goldsky.com/api/public/project_clynrq1h8gam301xx6vgngo9p/subgraphs/open-v3/ink-sepolia-v1/gn',
-      publishedUrl: 'https://api.goldsky.com/api/public/project_clynrq1h8gam301xx6vgngo9p/subgraphs/open-v3/ink-sepolia-v1/gn',
+      publishedUrl:
+        'https://api.goldsky.com/api/public/project_clynrq1h8gam301xx6vgngo9p/subgraphs/open-v3/ink-sepolia-v1/gn',
       supportsCollectFees: true,
     },
   },
