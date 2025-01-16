@@ -54,6 +54,7 @@ export enum SupportedDex {
   Cleo = 'Cleo',
   Crust = 'Crust',
   Equalizer = 'Equalizer',
+  Equalizer2Thick = 'Equalizer2Thick',
   Fenix = 'Fenix',
   Forge = 'Forge',
   Haven1 = 'Haven1',
