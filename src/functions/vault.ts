@@ -79,12 +79,9 @@ export async function getIchiVaultInfo(
   const includeHoldersCount = !noHoldersCount(dex, chainId);
 
   const { url, publishedUrl } = getGraphUrls(chainId, dex);
-  // Equalizer vaults on Sonic don't have fee in subgraph, although it's not an algebra deployment
-  const isSonicEqualizer = chainId === SupportedChainId.sonic && dex === SupportedDex.Equalizer;
-  const thisQuery =
-    addressConfig[chainId][dex]?.isAlgebra || isSonicEqualizer
-      ? vaultQueryAlgebra(includeHoldersCount)
-      : vaultQuery(includeHoldersCount);
+  const thisQuery = addressConfig[chainId][dex]?.isAlgebra || addressConfig[chainId][dex]?.is2Thick
+    ? vaultQueryAlgebra(includeHoldersCount)
+    : vaultQuery(includeHoldersCount);
   if (url === 'none' && jsonProvider) {
     const result = await getVaultInfoFromContract(vaultAddress, jsonProvider);
     cache.set(key, result, ttl);
