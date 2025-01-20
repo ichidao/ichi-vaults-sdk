@@ -124,6 +124,12 @@ export const graphUrls: Record<SupportedChainId, dexGraph> = {
         'https://gateway-arbitrum.network.thegraph.com/api/[api-key]/subgraphs/id/AWny6b9W1v63MPFqeCSFQJt5dMP7xX1nzSCJd2zh8Dgd',
       supportsCollectFees: true,
     },
+    [SupportedDex.Trebleswap]: {
+      url: 'https://api.studio.thegraph.com/query/88584/base-v1-trebleswap/version/latest',
+      publishedUrl:
+        'https://gateway-arbitrum.network.thegraph.com/api/[api-key]/subgraphs/id/AdkJodYmr7P6xa221cwdhPBT3xZF3g7FftcrbRV4y75u',
+      supportsCollectFees: true,
+    },
     [SupportedDex.UniswapV3]: {
       url: 'https://api.studio.thegraph.com/query/88584/base-v1/version/latest',
       publishedUrl:
