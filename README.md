@@ -1175,6 +1175,7 @@ enum SupportedDex {
   Thena = 'Thena',
   Thirdfy = 'Thirdfy',
   Thruster = 'Thruster',
+  Trebleswap = 'Trebleswap',
   Ubeswap = 'Ubeswap',
   UniswapV3 = 'Uniswap V3',
   Velocore = 'Velocore',
