@@ -30,15 +30,13 @@ This sdk contains collection of functions to interact with IchiVault's smart con
         * [`getFeesCollected()`](#18-getFeesCollected)
         * [`getFeesCollectedInfo()`](#19-getFeesCollectedInfo)
         * [`getAverageDepositTokenRatios()`](#20-getAverageDepositTokenRatios)
-        * [`getLpApr()`](#21-getLpApr)
-        * [`getLpPriceChange()`](#22-getLpPriceChange)
-        * [`getVaultMetrics()`](#23-getVaultMetrics)
-        * [`getIchiVaultInfo()`](#24-getIchiVaultInfo)
-        * [`getVaultsByTokens()`](#25-getVaultsByTokens)
-        * [`getVaultsByPool()`](#26-getVaultsByPool)
-        * [`getVaultPositions()`](#27-getVaultPositions)
-        * [`getSupportedDexes()`](#28-getSupportedDexes)
-        * [`getChainsForDex()`](#29-getChainsForDex)
+        * [`getVaultMetrics()`](#21-getVaultMetrics)
+        * [`getIchiVaultInfo()`](#22-getIchiVaultInfo)
+        * [`getVaultsByTokens()`](#23-getVaultsByTokens)
+        * [`getVaultsByPool()`](#24-getVaultsByPool)
+        * [`getVaultPositions()`](#25-getVaultPositions)
+        * [`getSupportedDexes()`](#26-getSupportedDexes)
+        * [`getChainsForDex()`](#27-getChainsForDex)
 
 ## Installation
 Install with
@@ -832,83 +830,7 @@ const averageDtr: AverageDepositTokenRatio[] = await getAverageDepositTokenRatio
 )
 ```
 
-#### 21. `getLpApr()`
-
-| param | type |  default | required
-| -------- | -------- | -------- | --------
-| vaultAddress   | string | - | true |
-| jsonProvider      | [JsonRpcProvider](https://github.com/ethers-io/ethers.js/blob/f97b92bbb1bde22fcc44100af78d7f31602863ab/packages/providers/src.ts/json-rpc-provider.ts#L393) | - | true
-| dex   | SupportedDex | - | true
-| timeIntervals   | number[] | [1, 7, 30] | false |
-
-<br/>
-The getLpApr() function returns an array of VaultApr objects representing the Annual Percentage Rate (APR) for the periods of time specified by the 'timeIntervals' parameter.
-If 'timeIntervals' is not specified, it returns VaultApr objects for time periods of 1, 7, and 30 days.
-
-```typescript
-import { Web3Provider } from '@ethersproject/providers';
-import { getLpApr, SupportedDex, VaultApr } from '@ichidao/ichi-vaults-sdk';
-
-const web3Provider = new Web3Provider(YOUR_WEB3_PROVIDER);
-const vaultAddress = "0x3ac9...a5f132";
-const dex = SupportedDex.UniswapV3;
-const days = [2, 5, 14, 60];
-
-const averageDtr: VaultApr[] = await getLpApr(
-    vaultAddress,
-    web3Provider,
-    dex
-)
-
-// - or -
-
-const averageDtr: VaultApr[] = await getLpApr(
-    vaultAddress,
-    web3Provider,
-    dex,
-    days
-)
-```
-
-#### 22. `getLpPriceChange()`
-
-| param | type |  default | required
-| -------- | -------- | -------- | --------
-| vaultAddress   | string | - | true |
-| jsonProvider      | [JsonRpcProvider](https://github.com/ethers-io/ethers.js/blob/f97b92bbb1bde22fcc44100af78d7f31602863ab/packages/providers/src.ts/json-rpc-provider.ts#L393) | - | true
-| dex   | SupportedDex | - | true
-| timeIntervals   | number[] | [1, 7, 30] | false |
-
-<br/>
-The getLpPriceChange() function returns an array of PriceChange objects representing the relative LP (vault token) price change in percentages for the periods of time specified by the 'timeIntervals' parameter.
-If 'timeIntervals' is not specified, it returns PriceChange objects for time periods of 1, 7, and 30 days.
-
-```typescript
-import { Web3Provider } from '@ethersproject/providers';
-import { getLpPriceChange, SupportedDex } from '@ichidao/ichi-vaults-sdk';
-
-const web3Provider = new Web3Provider(YOUR_WEB3_PROVIDER);
-const vaultAddress = "0x3ac9...a5f132";
-const dex = SupportedDex.UniswapV3;
-const days = [2, 5, 14, 60];
-
-const lpPriceChange: PriceChange[] = await getLpPriceChange(
-    vaultAddress,
-    web3Provider,
-    dex
-)
-
-// - or -
-
-const lpPriceChange: PriceChange[] = await getLpPriceChange(
-    vaultAddress,
-    web3Provider,
-    dex,
-    days
-)
-```
-
-#### 23. `getVaultMetrics()`
+#### 21. `getVaultMetrics()`
 
 | param | type |  default | required
 | -------- | -------- | -------- | --------
@@ -946,7 +868,7 @@ const vaultMetrics: VaultMetrics[] = await getVaultMetrics(
 )
 ```
 
-#### 24. `getIchiVaultInfo()`
+#### 22. `getIchiVaultInfo()`
 
 | param | type |  default | required
 | -------- | -------- | -------- | --------
@@ -972,7 +894,7 @@ if (vaultInfo) {
 }
 ```
 
-#### 25. `getVaultsByTokens()`
+#### 23. `getVaultsByTokens()`
 
 | param | type |  default | required
 | -------- | -------- | -------- | --------
@@ -1002,7 +924,7 @@ if (vaults.length === 0) {
 
 ```
 
-#### 26. `getVaultsByPool()`
+#### 24. `getVaultsByPool()`
 
 | param | type |  default | required
 | -------- | -------- | -------- | --------
@@ -1029,7 +951,7 @@ if (vaults.length === 0) {
 }
 ```
 
-#### 27. `getVaultPositions()`
+#### 25. `getVaultPositions()`
 
 | param | type |  default | required
 | -------- | -------- | -------- | --------
@@ -1056,7 +978,7 @@ const vaultPositions: VaultPositionsInfo = await getVaultPositions(
 const currentTick = vaultPositions.currentTick;
 ```
 
-#### 28. `getSupportedDexes()`
+#### 26. `getSupportedDexes()`
 
 | param | type |  default | required
 | -------- | -------- | -------- | --------
@@ -1073,7 +995,7 @@ const chainId = SupportedChainId.polygon;
 const dexes: SupportedDex[] = getSupportedDexes(chainId);
 ```
 
-#### 29. `getChainsForDex()`
+#### 27. `getChainsForDex()`
 
 | param | type |  default | required
 | -------- | -------- | -------- | --------
