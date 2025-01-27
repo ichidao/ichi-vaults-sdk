@@ -81,6 +81,7 @@ export enum SupportedDex {
   Sushiswap = 'SushiSwap',
   SwapX = 'SwapX',
   Thena = 'Thena',
+  ThenaV3Fees = 'ThenaV3Fees',
   Thirdfy = 'Thirdfy',
   Thruster = 'Thruster',
   Trebleswap = 'Trebleswap',
