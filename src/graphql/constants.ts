@@ -198,6 +198,12 @@ export const graphUrls: Record<SupportedChainId, dexGraph> = {
         'https://gateway-arbitrum.network.thegraph.com/api/[api-key]/subgraphs/id/6x5DWy8Tnber9jND8qbxjtCtus11tkkjd6r2qJphoLvf',
       supportsCollectFees: true,
     },
+    [SupportedDex.ThenaV3Fees]: {
+      url: 'https://api.studio.thegraph.com/query/88584/bsc-v3-thena-fees/version/latest',
+      publishedUrl:
+        'https://gateway-arbitrum.network.thegraph.com/api/[api-key]/subgraphs/id/CUDHBLjeeqpprHGZeesTi9kxtjsZTQnJrvuT4Sm8nyx5',
+      supportsCollectFees: true,
+    },
   },
   [SupportedChainId.celo]: {
     [SupportedDex.Ubeswap]: {
