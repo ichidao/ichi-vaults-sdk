@@ -206,6 +206,17 @@ export const addressConfig: Record<SupportedChainId, Config> = {
       isAlgebra: false,
     },
   },
+  [SupportedChainId.berachain]: {
+    [SupportedDex.Kodiak]: {
+      factoryAddress: '0x8cCd02E769e6A668a447Bd15e134C31bEccd8182',
+      depositGuard: {
+        address: '0xc0c6D4178410849eC9765B4267A73F4F64241832',
+        version: 2,
+      },
+      vaultDeployerAddress: '0x9Fbba6c87923af2561A2391198166b51Cf5736E8',
+      isAlgebra: false,
+    },
+  },
   [SupportedChainId.berachain_bartio]: {
     [SupportedDex.Honeypot]: {
       factoryAddress: '0x0aC9e4a0423eec93357e2B0F83ef8c6469FD47F7',
@@ -747,6 +758,7 @@ export const MULTICALL_ADDRESSES: Partial<Record<SupportedChainId, string>> = {
   [SupportedChainId.flare]: '0x921aCCA39e8D3519A503EE4A11b56d6eEACbb2Aa',
   [SupportedChainId.rootstock]: '0x8CF119F15575CAb4beb427Fb485087e71a96Fbaa',
   [SupportedChainId.arbitrum]: '0xd9e7c0932a7D3e40Db3Fe78d95A3ED375a37Ab1a',
+  [SupportedChainId.berachain]: '0x89ff70257bc747F310bB538eeFC46aDD763e75d8',
   [SupportedChainId.haven1_devnet]: '0xe573920139a208989d83C57ea48837C6285F2cd3',
   [SupportedChainId.fantom]: '0xd9e7c0932a7D3e40Db3Fe78d95A3ED375a37Ab1a',
   [SupportedChainId.hedera_testnet]: '0x0B10E483AAC4340256772754d23131B6E0Dc31EA',
