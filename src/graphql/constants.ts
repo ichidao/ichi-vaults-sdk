@@ -137,6 +137,14 @@ export const graphUrls: Record<SupportedChainId, dexGraph> = {
       supportsCollectFees: true,
     },
   },
+  [SupportedChainId.berachain]: {
+    [SupportedDex.Kodiak]: {
+      url: 'https://api.studio.thegraph.com/query/88584/berachain-v1-kodiak/version/latest',
+      publishedUrl:
+        'https://gateway-arbitrum.network.thegraph.com/api/[api-key]/subgraphs/id/7P9DAPWihEJ3QHrR9eeEp3KAP9FgTTo2SnzAaXXPQSau',
+      supportsCollectFees: true,
+    },
+  },
   [SupportedChainId.berachain_bartio]: {
     [SupportedDex.Honeypot]: {
       url: 'https://api.goldsky.com/api/public/project_clynrq1h8gam301xx6vgngo9p/subgraphs/ichi-org/berachain-bartio-v1-honeypot/gn',

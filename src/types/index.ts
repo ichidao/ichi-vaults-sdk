@@ -11,6 +11,7 @@ export enum SupportedChainId {
   arthera = 10242,
   arthera_testnet = 10243,
   base = 8453,
+  berachain = 80094,
   berachain_bartio = 80084,
   blast = 81457,
   blast_sepolia_testnet = 168587773,
