@@ -78,10 +78,10 @@ export async function getIchiVaultInfo(
 
   const includeHoldersCount = !noHoldersCount(dex, chainId);
 
-  const { url, publishedUrl } = getGraphUrls(chainId, dex);
+  const { url, publishedUrl, version } = getGraphUrls(chainId, dex);
   const thisQuery = addressConfig[chainId][dex]?.isAlgebra || addressConfig[chainId][dex]?.is2Thick
-    ? vaultQueryAlgebra(includeHoldersCount)
-    : vaultQuery(includeHoldersCount);
+    ? vaultQueryAlgebra(includeHoldersCount, version)
+    : vaultQuery(includeHoldersCount, version);
   if (url === 'none' && jsonProvider) {
     const result = await getVaultInfoFromContract(vaultAddress, jsonProvider);
     cache.set(key, result, ttl);
@@ -90,8 +90,9 @@ export async function getIchiVaultInfo(
   try {
     if (publishedUrl) {
       const result = await sendVaultQueryRequest(publishedUrl, vaultAddress, thisQuery);
-      cache.set(key, result, ttl);
-      return result;
+      const normalizedResult = normalizeVaultData(result);
+      cache.set(key, normalizedResult, ttl);
+      return normalizedResult;
     }
     throw new Error(`Published URL is invalid for ${vaultAddress}`);
   } catch (error) {
@@ -100,8 +101,9 @@ export async function getIchiVaultInfo(
     }
     try {
       const result = await sendVaultQueryRequest(url, vaultAddress, thisQuery);
-      cache.set(key, result, ttl);
-      return result;
+      const normalizedResult = normalizeVaultData(result);
+      cache.set(key, normalizedResult, ttl);
+      return normalizedResult;
     } catch (error2) {
       console.error('Request to public graph URL failed:', error2);
       if (jsonProvider) {
@@ -128,11 +130,13 @@ async function getVaultsByTokensAB(
   }
 
   const ttl = 3600000;
-  const { url, publishedUrl } = getGraphUrls(chainId, dex, true);
+  const { url, publishedUrl, version } = getGraphUrls(chainId, dex, true);
+
+  const strVaultByTokensQuery = vaultByTokensQuery(version);
 
   try {
     if (publishedUrl) {
-      const result = await sendVaultsByTokensRequest(publishedUrl, tokenA, tokenB, vaultByTokensQuery);
+      const result = await sendVaultsByTokensRequest(publishedUrl, tokenA, tokenB, strVaultByTokensQuery);
       cache.set(key, result, ttl);
       return result;
     } else {
@@ -143,7 +147,7 @@ async function getVaultsByTokensAB(
       console.error('Request to published graph URL failed:', error);
     }
     try {
-      const result = await sendVaultsByTokensRequest(url, tokenA, tokenB, vaultByTokensQuery);
+      const result = await sendVaultsByTokensRequest(url, tokenA, tokenB, strVaultByTokensQuery);
       cache.set(key, result, ttl);
       return result;
     } catch (error2) {
@@ -230,4 +234,22 @@ export async function getChainByProvider(jsonProvider: JsonRpcProvider): Promise
   }
 
   return { chainId };
+}
+
+function normalizeVaultData(vaultData: any): IchiVault {
+  // If it's a v2 response (has token0/token1)
+  if ('token0' in vaultData && 'token1' in vaultData) {
+    return {
+      id: vaultData.id,
+      tokenA: vaultData.token0,
+      tokenB: vaultData.token1,
+      allowTokenA: vaultData.allowToken0,
+      allowTokenB: vaultData.allowToken1,
+      fee: vaultData.fee,
+      holdersCount: vaultData.holdersCount
+    };
+  }
+  
+  // If it's a v1 response (already has tokenA/tokenB)
+  return vaultData;
 }

@@ -1,7 +1,25 @@
 // eslint-disable-next-line import/no-unresolved
 import { gql } from 'graphql-request';
 
-export function vaultQuery(includeHoldersCount: boolean) {
+export function vaultQuery(includeHoldersCount: boolean, version: number = 1) {
+  // Version 2 uses token0/token1 instead of tokenA/tokenB
+  if (version === 2) {
+    return gql`
+      query ($vaultAddress: String!) {
+        ichiVault(id: $vaultAddress) {
+          id
+          token0
+          token1
+          allowToken0
+          allowToken1
+          fee
+          ${includeHoldersCount ? 'holdersCount' : ''}
+        }
+      }
+    `;
+  }
+  
+  // Default to version 1
   return gql`
     query ($vaultAddress: String!) {
       ichiVault(id: $vaultAddress) {
@@ -17,7 +35,24 @@ export function vaultQuery(includeHoldersCount: boolean) {
   `;
 }
 
-export function vaultQueryAlgebra(includeHoldersCount: boolean) {
+export function vaultQueryAlgebra(includeHoldersCount: boolean, version: number = 1) {
+  // Version 2 uses token0/token1 instead of tokenA/tokenB
+  if (version === 2) {
+    return gql`
+      query ($vaultAddress: String!) {
+        ichiVault(id: $vaultAddress) {
+          id
+          token0
+          token1
+          allowToken0
+          allowToken1
+          ${includeHoldersCount ? 'holdersCount' : ''}
+        }
+      }
+    `;
+  }
+
+  // Default to version 1
   return gql`
     query ($vaultAddress: String!) {
       ichiVault(id: $vaultAddress) {
@@ -32,17 +67,34 @@ export function vaultQueryAlgebra(includeHoldersCount: boolean) {
   `;
 }
 
-export const vaultByTokensQuery = gql`
-  query ($addressTokenA: String!, $addressTokenB: String!) {
-    ichiVaults(where: { tokenA: $addressTokenA, tokenB: $addressTokenB }) {
-      id
-      tokenA
-      tokenB
-      allowTokenA
-      allowTokenB
-    }
+export function vaultByTokensQuery(version: number = 1) {
+  // Version 2 uses token0/token1 instead of tokenA/tokenB
+  if (version === 2) {
+    return gql`
+      query ($addressTokenA: String!, $addressTokenB: String!) {
+        ichiVaults(where: { token0: $addressTokenA, token1: $addressTokenB }) {
+          id
+          token0
+          token1
+          allowToken0
+          allowToken1
+        }
+      }
+    `;
   }
-`;
+
+  return gql`
+    query ($addressTokenA: String!, $addressTokenB: String!) {
+      ichiVaults(where: { tokenA: $addressTokenA, tokenB: $addressTokenB }) {
+        id
+        tokenA
+        tokenB
+        allowTokenA
+        allowTokenB
+      }
+    }
+  `;
+}
 
 export const vaultByPoolQuery = gql`
   query ($poolAddress: String!) {
@@ -214,17 +266,35 @@ export const allEventsNoCollectFeesQuery = (page: number) => gql`
   }
 `;
 
-export const userBalancesQuery = gql`
-  query ($accountAddress: String!) {
-    user(id: $accountAddress) {
-      vaultShares {
-        vault {
-          id
-          tokenA
-          tokenB
+export function userBalancesQuery(version:number = 1) {
+  if (version === 2) {
+    return  gql`
+      query ($accountAddress: String!) {
+        user(id: $accountAddress) {
+          vaultShares {
+            vault {
+              id
+              token0
+              token1
+            }
+            vaultShareBalance
+          }
         }
-        vaultShareBalance
+      }
+    `;
+  }
+  return  gql`
+    query ($accountAddress: String!) {
+      user(id: $accountAddress) {
+        vaultShares {
+          vault {
+            id
+            tokenA
+            tokenB
+          }
+          vaultShareBalance
+        }
       }
     }
-  }
-`;
+  `;
+}
