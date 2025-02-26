@@ -424,7 +424,7 @@ export const addressConfig: Record<SupportedChainId, Config> = {
     },
   },
   [SupportedChainId.haven1_devnet]: {
-    [SupportedDex.Haven1]: {
+    [SupportedDex.hSwap]: {
       factoryAddress: '0xbBB97d634460DACCA0d41E249510Bb741ef46ad3',
       depositGuard: {
         address: '0x0e44F5cdaBefe34d5B729acFa0a79971FFBC0E7e',
