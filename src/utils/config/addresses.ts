@@ -216,6 +216,16 @@ export const addressConfig: Record<SupportedChainId, Config> = {
       vaultDeployerAddress: '0x9Fbba6c87923af2561A2391198166b51Cf5736E8',
       isAlgebra: false,
     },
+    [SupportedDex.Wasabee]: {
+      factoryAddress: '0x7d125D0766C968353454b7A67bB2D61a97E5665d',
+      depositGuard: {
+        address: '0x3bE78614342C7763d87520b2502085761Aa4e5f8',
+        version: 2,
+      },
+      vaultDeployerAddress: '0x9Fbba6c87923af2561A2391198166b51Cf5736E8',
+      isAlgebra: true,
+      ammVersion: 'algebraIntegral',
+    },
   },
   [SupportedChainId.berachain_bartio]: {
     [SupportedDex.Honeypot]: {

@@ -90,6 +90,7 @@ export enum SupportedDex {
   UniswapV3 = 'Uniswap V3',
   Velocore = 'Velocore',
   Voltage = 'Voltage',
+  Wasabee = 'Wasabee',
   XSwap = 'XSwap',
 }
 

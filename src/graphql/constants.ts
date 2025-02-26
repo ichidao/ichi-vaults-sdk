@@ -8,6 +8,7 @@ type GraphQL = {
   url: string;
   publishedUrl: string;
   supportsCollectFees: boolean;
+  version?: number; // version 2 uses token0/1 instead of tokenA/B, supports vault fee APRs
 };
 type dexGraph = PartialRecord<SupportedDex, GraphQL>;
 
@@ -143,6 +144,13 @@ export const graphUrls: Record<SupportedChainId, dexGraph> = {
       publishedUrl:
         'https://gateway-arbitrum.network.thegraph.com/api/[api-key]/subgraphs/id/7P9DAPWihEJ3QHrR9eeEp3KAP9FgTTo2SnzAaXXPQSau',
       supportsCollectFees: true,
+    },
+    [SupportedDex.Wasabee]: {
+      url: 'https://api.studio.thegraph.com/query/88584/berachain-v2-wasabee/version/latest',
+      publishedUrl:
+        'https://gateway-arbitrum.network.thegraph.com/api/[api-key]/subgraphs/id/8hmju8E9uZRmMAFGv2j4cGHF6GFVm8ederosj7hF4gsw',
+      supportsCollectFees: true,
+      version: 2,
     },
   },
   [SupportedChainId.berachain_bartio]: {

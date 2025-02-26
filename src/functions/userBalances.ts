@@ -134,14 +134,15 @@ export async function getAllUserBalances(
   raw?: true,
 ) {
   const { chainId } = await getChainByProvider(jsonProvider);
-  const { publishedUrl, url } = getGraphUrls(chainId, dex, true);
+  const { publishedUrl, url, version } = getGraphUrls(chainId, dex, true);
 
   let shares: UserBalanceInVault[];
   const key = `${chainId + accountAddress}-balances`;
   if (!Object.prototype.hasOwnProperty.call(promises, key)) {
+    const strUserBalancesQuery = userBalancesQuery(version);
     try {
       if (publishedUrl) {
-        const result = await sendUserBalancesQueryRequest(publishedUrl, accountAddress, userBalancesQuery);
+        const result = await sendUserBalancesQueryRequest(publishedUrl, accountAddress, strUserBalancesQuery);
         storeResult(key, result);
       } else {
         throw new Error(`Published URL is invalid for dex ${dex} on chain ${chainId}`);
@@ -151,7 +152,7 @@ export async function getAllUserBalances(
         console.error('Request to published graph URL failed:', error);
       }
       try {
-        const result = await sendUserBalancesQueryRequest(url, accountAddress, userBalancesQuery);
+        const result = await sendUserBalancesQueryRequest(url, accountAddress, strUserBalancesQuery);
         storeResult(key, result);
       } catch (error2) {
         console.error('Request to public graph URL failed:', error2);
@@ -260,13 +261,14 @@ export async function getAllUserAmounts(
   raw?: true,
 ) {
   const { chainId } = await getChainByProvider(jsonProvider);
-  const { publishedUrl, url } = getGraphUrls(chainId, dex, true);
+  const { publishedUrl, url, version } = getGraphUrls(chainId, dex, true);
 
   const key = `${chainId + accountAddress}-all-user-amounts`;
   if (!Object.prototype.hasOwnProperty.call(promises, key)) {
+    const strUserBalancesQuery = userBalancesQuery(version);
     try {
       if (publishedUrl) {
-        const result = await sendUserBalancesQueryRequest(publishedUrl, accountAddress, userBalancesQuery);
+        const result = await sendUserBalancesQueryRequest(publishedUrl, accountAddress, strUserBalancesQuery);
         storeResult(key, result);
       } else {
         throw new Error(`Published URL is invalid for dex ${dex} on chain ${chainId}`);
@@ -276,7 +278,7 @@ export async function getAllUserAmounts(
         console.error('Request to published graph URL failed:', error);
       }
       try {
-        const result = await sendUserBalancesQueryRequest(url, accountAddress, userBalancesQuery);
+        const result = await sendUserBalancesQueryRequest(url, accountAddress, strUserBalancesQuery);
         storeResult(key, result);
       } catch (error2) {
         console.error('Request to public graph URL failed:', error2);
@@ -287,76 +289,100 @@ export async function getAllUserAmounts(
 
   try {
     const balances = await promises[key];
-    if (balances?.vaultShares?.length) {
-      // Prepare multicall calls
-      const calls = balances.vaultShares.flatMap((share: VaultShares) => [
-        encodeTotalAmountsCall(share.vault.id),
-        encodeTotalSupplyCall(share.vault.id),
-        encodeDecimalsCall(share.vault.tokenA),
-        encodeDecimalsCall(share.vault.tokenB),
-      ]);
-
-      // Execute multicall
-      const signer = jsonProvider.getSigner(accountAddress);
-      const results = await multicall(calls, chainId, signer);
-
-      // Process results
-      const processedResults = balances.vaultShares.map((share: VaultShares, index: number) => {
-        const baseIndex = index * 4;
-        const totalAmounts = decodeTotalAmountsResult(results[baseIndex], share.vault.id);
-        const totalSupply = decodeTotalSupplyResult(results[baseIndex + 1], share.vault.id);
-        const token0Decimals = decodeDecimalsResult(results[baseIndex + 2], share.vault.tokenA);
-        const token1Decimals = decodeDecimalsResult(results[baseIndex + 3], share.vault.tokenB);
-
-        const userBalance = parseBigInt(share.vaultShareBalance, ichiVaultDecimals);
-
-        if (!totalSupply.isZero()) {
-          const amount0 = userBalance.mul(totalAmounts.total0).div(totalSupply);
-          const amount1 = userBalance.mul(totalAmounts.total1).div(totalSupply);
-
-          if (!raw) {
-            const userAmounts = {
-              amount0: formatBigInt(amount0, token0Decimals),
-              amount1: formatBigInt(amount1, token1Decimals),
-              0: formatBigInt(amount0, token0Decimals),
-              1: formatBigInt(amount1, token1Decimals),
-            } as UserAmounts;
-            return { vaultAddress: share.vault.id, userAmounts };
-          } else {
-            const userAmountsBN = {
-              amount0,
-              amount1,
-              0: amount0,
-              1: amount1,
-            } as UserAmountsBN;
-            return { vaultAddress: share.vault.id, userAmounts: userAmountsBN };
-          }
-        } else {
-          return {
-            vaultAddress: share.vault.id,
-            userAmounts: !raw
-              ? {
-                  amount0: '0',
-                  amount1: '0',
-                  0: '0',
-                  1: '0',
-                }
-              : {
-                  amount0: BigNumber.from(0),
-                  amount1: BigNumber.from(0),
-                  0: BigNumber.from(0),
-                  1: BigNumber.from(0),
-                },
-          } as UserAmountsInVault | UserAmountsInVaultBN;
-        }
-      });
-
-      return processedResults;
-    } else {
+    if (!balances?.vaultShares?.length) {
       return [];
     }
+
+    // Prepare multicall calls
+    const calls = balances.vaultShares.flatMap((share: VaultShares) => {
+      // Normalize token naming by checking which properties exist
+      const token0Address = getTokenAddress(share.vault, 0);
+      const token1Address = getTokenAddress(share.vault, 1);
+
+      return [
+        encodeTotalAmountsCall(share.vault.id),
+        encodeTotalSupplyCall(share.vault.id),
+        encodeDecimalsCall(token0Address),
+        encodeDecimalsCall(token1Address),
+      ]
+    });
+
+    // Execute multicall
+    const signer = jsonProvider.getSigner(accountAddress);
+    const results = await multicall(calls, chainId, signer);
+
+    // Process results
+    const processedResults = balances.vaultShares.map((share: VaultShares, index: number) => {
+      const baseIndex = index * 4;
+      const totalAmounts = decodeTotalAmountsResult(results[baseIndex], share.vault.id);
+      const totalSupply = decodeTotalSupplyResult(results[baseIndex + 1], share.vault.id);
+
+      const token0Address = getTokenAddress(share.vault, 0);
+      const token1Address = getTokenAddress(share.vault, 1);
+
+      const token0Decimals = decodeDecimalsResult(results[baseIndex + 2], token0Address);
+      const token1Decimals = decodeDecimalsResult(results[baseIndex + 3], token1Address);
+
+      const userBalance = parseBigInt(share.vaultShareBalance, ichiVaultDecimals);
+
+      if (!totalSupply.isZero()) {
+        const amount0 = userBalance.mul(totalAmounts.total0).div(totalSupply);
+        const amount1 = userBalance.mul(totalAmounts.total1).div(totalSupply);
+
+        if (!raw) {
+          const userAmounts = {
+            amount0: formatBigInt(amount0, token0Decimals),
+            amount1: formatBigInt(amount1, token1Decimals),
+            0: formatBigInt(amount0, token0Decimals),
+            1: formatBigInt(amount1, token1Decimals),
+          } as UserAmounts;
+          return { vaultAddress: share.vault.id, userAmounts };
+        } else {
+          const userAmountsBN = {
+            amount0,
+            amount1,
+            0: amount0,
+            1: amount1,
+          } as UserAmountsBN;
+          return { vaultAddress: share.vault.id, userAmounts: userAmountsBN };
+        }
+      } else {
+        return {
+          vaultAddress: share.vault.id,
+          userAmounts: !raw
+            ? {
+                amount0: '0',
+                amount1: '0',
+                0: '0',
+                1: '0',
+              }
+            : {
+                amount0: BigNumber.from(0),
+                amount1: BigNumber.from(0),
+                0: BigNumber.from(0),
+                1: BigNumber.from(0),
+              },
+        } as UserAmountsInVault | UserAmountsInVaultBN;
+      }
+    });
+
+    return processedResults;
   } catch (error) {
     console.error('Could not get user amounts');
     throw error;
+  }
+}
+
+/**
+ * Helper function to get token address regardless of naming convention (token0/1 or tokenA/B)
+ * @param vault The vault object from API
+ * @param index Token index (0 or 1)
+ * @returns Token address
+ */
+function getTokenAddress(vault: any, index: number): string {
+  if (index === 0) {
+    return vault.token0 || vault.tokenA || '';
+  } else {
+    return vault.token1 || vault.tokenB || '';
   }
 }
