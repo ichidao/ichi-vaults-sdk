@@ -18,7 +18,7 @@ export function vaultQuery(includeHoldersCount: boolean, version: number = 1) {
       }
     `;
   }
-  
+
   // Default to version 1
   return gql`
     query ($vaultAddress: String!) {
@@ -266,9 +266,9 @@ export const allEventsNoCollectFeesQuery = (page: number) => gql`
   }
 `;
 
-export function userBalancesQuery(version:number = 1) {
+export function userBalancesQuery(version: number = 1) {
   if (version === 2) {
-    return  gql`
+    return gql`
       query ($accountAddress: String!) {
         user(id: $accountAddress) {
           vaultShares {
@@ -283,7 +283,7 @@ export function userBalancesQuery(version:number = 1) {
       }
     `;
   }
-  return  gql`
+  return gql`
     query ($accountAddress: String!) {
       user(id: $accountAddress) {
         vaultShares {
@@ -298,3 +298,14 @@ export function userBalancesQuery(version:number = 1) {
     }
   `;
 }
+
+export const feeAprQuery = gql`
+  query ($vaultAddress: String!) {
+    ichiVault(id: $vaultAddress) {
+      feeApr_1d
+      feeApr_3d
+      feeApr_7d
+      feeApr_30d
+    }
+  }
+`;

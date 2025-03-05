@@ -4,10 +4,12 @@
 import { request } from 'graphql-request';
 import {
   CollectFeesQueryData,
+  FeeAprQueryResponse,
   RebalancesQueryData,
   VaultDepositsQueryData,
   VaultWithdrawsQueryData,
 } from '../types/vaultQueryData';
+import { feeAprQuery } from './queries';
 
 export async function sendAllEventsQueryRequest(
   url: string,
@@ -67,4 +69,10 @@ export async function sendWithdrawsQueryRequest(
     vaultAddress,
     createdAtTimestamp_gt,
   }).then(({ vaultWithdraws }) => vaultWithdraws);
+}
+
+export async function sendFeeAprQueryRequest(url: string, vaultAddress: string): Promise<FeeAprQueryResponse> {
+  return request<FeeAprQueryResponse, { vaultAddress: string }>(url, feeAprQuery, {
+    vaultAddress: vaultAddress.toLowerCase(),
+  });
 }

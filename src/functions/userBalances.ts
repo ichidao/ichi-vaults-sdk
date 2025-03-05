@@ -38,6 +38,20 @@ import {
 
 const promises: Record<string, Promise<any>> = {};
 
+/**
+ * Helper function to get token address regardless of naming convention (token0/1 or tokenA/B)
+ * @param vault The vault object from API
+ * @param index Token index (0 or 1)
+ * @returns Token address
+ */
+function getTokenAddress(vault: any, index: number): string {
+  if (index === 0) {
+    return vault.token0 || vault.tokenA || '';
+  } else {
+    return vault.token1 || vault.tokenB || '';
+  }
+}
+
 // eslint-disable-next-line no-underscore-dangle
 async function _getUserBalance(
   accountAddress: string,
@@ -304,7 +318,7 @@ export async function getAllUserAmounts(
         encodeTotalSupplyCall(share.vault.id),
         encodeDecimalsCall(token0Address),
         encodeDecimalsCall(token1Address),
-      ]
+      ];
     });
 
     // Execute multicall
@@ -370,19 +384,5 @@ export async function getAllUserAmounts(
   } catch (error) {
     console.error('Could not get user amounts');
     throw error;
-  }
-}
-
-/**
- * Helper function to get token address regardless of naming convention (token0/1 or tokenA/B)
- * @param vault The vault object from API
- * @param index Token index (0 or 1)
- * @returns Token address
- */
-function getTokenAddress(vault: any, index: number): string {
-  if (index === 0) {
-    return vault.token0 || vault.tokenA || '';
-  } else {
-    return vault.token1 || vault.tokenB || '';
   }
 }

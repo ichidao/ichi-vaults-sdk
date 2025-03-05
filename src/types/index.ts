@@ -186,6 +186,13 @@ export type VaultApr = {
   apr: number | null; // percent
 };
 
+export type FeeAprData = {
+  feeApr_1d: number | null;
+  feeApr_3d: number | null;
+  feeApr_7d: number | null;
+  feeApr_30d: number | null;
+};
+
 export type PriceChange = {
   timeInterval: number; // in days
   priceChange: number | null;
