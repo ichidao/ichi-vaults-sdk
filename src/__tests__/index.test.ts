@@ -38,6 +38,7 @@ import {
   getVaultPositions,
   getSupportedDexes,
   getChainsForDex,
+  getFeeAprs,
 } from '../index';
 import formatBigInt from '../utils/formatBigInt';
 import parseBigInt from '../utils/parseBigInt';
@@ -76,6 +77,13 @@ const bigAmount = '1000';
 
 describe('Vault', () => {
   let share: string | null = null;
+
+  it('getFeeAprs', async () => {
+    const feeAprs = await getFeeAprs(vault.address, provider, vault.dex);
+    if (feeAprs) {
+      expect(Number(feeAprs.feeApr_1d)).toBeGreaterThanOrEqual(0);
+    }
+  });
 
   it('getVaultMetrics', async () => {
     const metrics = await getVaultMetrics(vault.address, provider, vault.dex);

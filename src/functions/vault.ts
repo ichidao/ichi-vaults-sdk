@@ -10,6 +10,24 @@ import getGraphUrls from '../utils/getGraphUrls';
 import { addressConfig } from '../utils/config/addresses';
 import cache from '../utils/cache';
 
+function normalizeVaultData(vaultData: any): IchiVault {
+  // If it's a v2 response (has token0/token1)
+  if ('token0' in vaultData && 'token1' in vaultData) {
+    return {
+      id: vaultData.id,
+      tokenA: vaultData.token0,
+      tokenB: vaultData.token1,
+      allowTokenA: vaultData.allowToken0,
+      allowTokenB: vaultData.allowToken1,
+      fee: vaultData.fee,
+      holdersCount: vaultData.holdersCount,
+    };
+  }
+
+  // If it's a v1 response (already has tokenA/tokenB)
+  return vaultData;
+}
+
 async function getVaultInfoFromContract(vaultAddress: string, jsonProvider: JsonRpcProvider): Promise<IchiVault> {
   const vault: IchiVault = {
     id: vaultAddress,
@@ -79,9 +97,10 @@ export async function getIchiVaultInfo(
   const includeHoldersCount = !noHoldersCount(dex, chainId);
 
   const { url, publishedUrl, version } = getGraphUrls(chainId, dex);
-  const thisQuery = addressConfig[chainId][dex]?.isAlgebra || addressConfig[chainId][dex]?.is2Thick
-    ? vaultQueryAlgebra(includeHoldersCount, version)
-    : vaultQuery(includeHoldersCount, version);
+  const thisQuery =
+    addressConfig[chainId][dex]?.isAlgebra || addressConfig[chainId][dex]?.is2Thick
+      ? vaultQueryAlgebra(includeHoldersCount, version)
+      : vaultQuery(includeHoldersCount, version);
   if (url === 'none' && jsonProvider) {
     const result = await getVaultInfoFromContract(vaultAddress, jsonProvider);
     cache.set(key, result, ttl);
@@ -234,22 +253,4 @@ export async function getChainByProvider(jsonProvider: JsonRpcProvider): Promise
   }
 
   return { chainId };
-}
-
-function normalizeVaultData(vaultData: any): IchiVault {
-  // If it's a v2 response (has token0/token1)
-  if ('token0' in vaultData && 'token1' in vaultData) {
-    return {
-      id: vaultData.id,
-      tokenA: vaultData.token0,
-      tokenB: vaultData.token1,
-      allowTokenA: vaultData.allowToken0,
-      allowTokenB: vaultData.allowToken1,
-      fee: vaultData.fee,
-      holdersCount: vaultData.holdersCount
-    };
-  }
-  
-  // If it's a v1 response (already has tokenA/tokenB)
-  return vaultData;
 }

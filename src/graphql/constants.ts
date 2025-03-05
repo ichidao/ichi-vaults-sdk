@@ -288,7 +288,8 @@ export const graphUrls: Record<SupportedChainId, dexGraph> = {
   [SupportedChainId.haven1_devnet]: {
     [SupportedDex.hSwap]: {
       url: 'https://api.haven1.0xgraph.xyz/api/public/4ba4443d-fa4a-4ec0-be0d-ba1a189c2277/subgraphs/ichi-staging-v2/v0.0.1/gn',
-      publishedUrl: 'https://api.haven1.0xgraph.xyz/api/public/4ba4443d-fa4a-4ec0-be0d-ba1a189c2277/subgraphs/ichi-staging-v2/v0.0.1/gn',
+      publishedUrl:
+        'https://api.haven1.0xgraph.xyz/api/public/4ba4443d-fa4a-4ec0-be0d-ba1a189c2277/subgraphs/ichi-staging-v2/v0.0.1/gn',
       supportsCollectFees: true,
       version: 2,
     },

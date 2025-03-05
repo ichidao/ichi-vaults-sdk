@@ -29,14 +29,15 @@ This sdk contains collection of functions to interact with IchiVault's smart con
         * [`getTotalAmounts()`](#17-getTotalAmounts)
         * [`getFeesCollected()`](#18-getFeesCollected)
         * [`getFeesCollectedInfo()`](#19-getFeesCollectedInfo)
-        * [`getAverageDepositTokenRatios()`](#20-getAverageDepositTokenRatios)
-        * [`getVaultMetrics()`](#21-getVaultMetrics)
-        * [`getIchiVaultInfo()`](#22-getIchiVaultInfo)
-        * [`getVaultsByTokens()`](#23-getVaultsByTokens)
-        * [`getVaultsByPool()`](#24-getVaultsByPool)
-        * [`getVaultPositions()`](#25-getVaultPositions)
-        * [`getSupportedDexes()`](#26-getSupportedDexes)
-        * [`getChainsForDex()`](#27-getChainsForDex)
+        * [`getFeeAprs()`](#20-getFeeAprs)
+        * [`getAverageDepositTokenRatios()`](#21-getAverageDepositTokenRatios)
+        * [`getVaultMetrics()`](#22-getVaultMetrics)
+        * [`getIchiVaultInfo()`](#23-getIchiVaultInfo)
+        * [`getVaultsByTokens()`](#24-getVaultsByTokens)
+        * [`getVaultsByPool()`](#25-getVaultsByPool)
+        * [`getVaultPositions()`](#26-getVaultPositions)
+        * [`getSupportedDexes()`](#27-getSupportedDexes)
+        * [`getChainsForDex()`](#28-getChainsForDex)
 
 ## Installation
 Install with
@@ -792,7 +793,30 @@ const feesInfo: FeesInfo[] = await getFeesCollectedInfo(
 )
 ```
 
-#### 20. `getAverageDepositTokenRatios()`
+#### 20. `getFeeAprs()`
+
+| param | type |  default | required
+| -------- | -------- | -------- | --------
+| vaultAddress   | string | - | true |
+| jsonProvider      | [JsonRpcProvider](https://github.com/ethers-io/ethers.js/blob/f97b92bbb1bde22fcc44100af78d7f31602863ab/packages/providers/src.ts/json-rpc-provider.ts#L393) | - | true
+| dex   | SupportedDex | - | true
+
+<br/>
+The getFeeAprs() function calculates and returns fee Annual Percentage Rates (APRs) for the specified vault over different standard time periods. It returns an object of type FeeAprData containing APR values for 1 day, 3 days, 7 days, and 30 days.
+
+```typescript
+import { Web3Provider } from '@ethersproject/providers';
+import { getFeeAprs, SupportedDex } from '@ichidao/ichi-vaults-sdk';
+
+const web3Provider = new Web3Provider(YOUR_WEB3_PROVIDER);
+const vaultAddress = "0x3ac9...a5f132";
+const dex = SupportedDex.hSwap;
+
+const feeAprs = await getFeeAprs(vaultAddress, provider, dex);
+console.log(`1-day Fee APR: ${feeAprs.feeApr_1d}%`);
+```
+
+#### 21. `getAverageDepositTokenRatios()`
 
 | param | type |  default | required
 | -------- | -------- | -------- | --------
@@ -830,7 +854,7 @@ const averageDtr: AverageDepositTokenRatio[] = await getAverageDepositTokenRatio
 )
 ```
 
-#### 21. `getVaultMetrics()`
+#### 22. `getVaultMetrics()`
 
 | param | type |  default | required
 | -------- | -------- | -------- | --------
@@ -868,7 +892,7 @@ const vaultMetrics: VaultMetrics[] = await getVaultMetrics(
 )
 ```
 
-#### 22. `getIchiVaultInfo()`
+#### 23. `getIchiVaultInfo()`
 
 | param | type |  default | required
 | -------- | -------- | -------- | --------
@@ -894,7 +918,7 @@ if (vaultInfo) {
 }
 ```
 
-#### 23. `getVaultsByTokens()`
+#### 24. `getVaultsByTokens()`
 
 | param | type |  default | required
 | -------- | -------- | -------- | --------
@@ -924,7 +948,7 @@ if (vaults.length === 0) {
 
 ```
 
-#### 24. `getVaultsByPool()`
+#### 25. `getVaultsByPool()`
 
 | param | type |  default | required
 | -------- | -------- | -------- | --------
@@ -951,7 +975,7 @@ if (vaults.length === 0) {
 }
 ```
 
-#### 25. `getVaultPositions()`
+#### 26. `getVaultPositions()`
 
 | param | type |  default | required
 | -------- | -------- | -------- | --------
@@ -978,7 +1002,7 @@ const vaultPositions: VaultPositionsInfo = await getVaultPositions(
 const currentTick = vaultPositions.currentTick;
 ```
 
-#### 26. `getSupportedDexes()`
+#### 27. `getSupportedDexes()`
 
 | param | type |  default | required
 | -------- | -------- | -------- | --------
@@ -995,7 +1019,7 @@ const chainId = SupportedChainId.polygon;
 const dexes: SupportedDex[] = getSupportedDexes(chainId);
 ```
 
-#### 27. `getChainsForDex()`
+#### 28. `getChainsForDex()`
 
 | param | type |  default | required
 | -------- | -------- | -------- | --------
@@ -1149,6 +1173,17 @@ type VaultApr  = {
   timeInterval: number; // in days
   apr: number; // percent
 }
+```
+
+### FeeAprData
+
+```typescript
+export type FeeAprData = {
+  feeApr_1d: number | null;
+  feeApr_3d: number | null;
+  feeApr_7d: number | null;
+  feeApr_30d: number | null;
+};
 ```
 
 ### PriceChange
