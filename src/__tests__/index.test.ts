@@ -78,7 +78,7 @@ const bigAmount = '1000';
 describe('Vault', () => {
   let share: string | null = null;
 
-  it.skip('getFeeAprs', async () => {
+  it('getFeeAprs', async () => {
     const feeAprs = await getFeeAprs(vault.address, provider, vault.dex);
     if (feeAprs) {
       expect(Number(feeAprs.feeApr_1d)).toBeGreaterThanOrEqual(0);

@@ -206,6 +206,18 @@ export const addressConfig: Record<SupportedChainId, Config> = {
       isAlgebra: false,
     },
   },
+  [SupportedChainId.base_sepolia]: {
+    [SupportedDex.Thirdfy]: {
+      factoryAddress: '0x50893Df23638dB2607A3d398EaC6c65CDf847bB7',
+      depositGuard: {
+        address: '0xEb6EA277d7b0a876444dab30eEF0f154F406CfB4',
+        version: 2,
+      },
+      vaultDeployerAddress: '0xAe781EB26fcA1486032e8A37FAae0C610979C7a1',
+      isAlgebra: true,
+      ammVersion: 'algebraIntegral',
+    },
+  },
   [SupportedChainId.berachain]: {
     [SupportedDex.Kodiak]: {
       factoryAddress: '0x8cCd02E769e6A668a447Bd15e134C31bEccd8182',
@@ -466,6 +478,15 @@ export const addressConfig: Record<SupportedChainId, Config> = {
       vaultDeployerAddress: '0xcBd1F70235904d3764f5d159022BA0281536E3E8',
       isAlgebra: false,
     },
+    // [SupportedDex.Velodrome]: {
+    //   factoryAddress: '0x2A3EB890dC0902c7Ca6CC71a1E9670463b32a3f0',
+    //   depositGuard: {
+    //     address: '0x388C3aC7039b2C1522B9Fb423e6D4271aca708D1',
+    //     version: 2,
+    //   },
+    //   vaultDeployerAddress: '0xcBd1F70235904d3764f5d159022BA0281536E3E8',
+    //   isAlgebra: false,
+    // },
   },
   [SupportedChainId.ink_sepolia]: {
     [SupportedDex.UniswapV3]: {
@@ -768,6 +789,7 @@ export const MULTICALL_ADDRESSES: Partial<Record<SupportedChainId, string>> = {
   [SupportedChainId.flare]: '0x921aCCA39e8D3519A503EE4A11b56d6eEACbb2Aa',
   [SupportedChainId.rootstock]: '0x8CF119F15575CAb4beb427Fb485087e71a96Fbaa',
   [SupportedChainId.arbitrum]: '0xd9e7c0932a7D3e40Db3Fe78d95A3ED375a37Ab1a',
+  [SupportedChainId.base_sepolia]: '0xd867e273eAbD6c853fCd0Ca0bFB6a3aE6491d2C1',
   [SupportedChainId.berachain]: '0x89ff70257bc747F310bB538eeFC46aDD763e75d8',
   [SupportedChainId.haven1_devnet]: '0xe573920139a208989d83C57ea48837C6285F2cd3',
   [SupportedChainId.fantom]: '0xd9e7c0932a7D3e40Db3Fe78d95A3ED375a37Ab1a',
