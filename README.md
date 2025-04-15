@@ -1046,6 +1046,7 @@ enum SupportedChainId {
   arthera = 10242,
   arthera_testnet = 10243,
   base = 8453,
+  base_sepolia = 84532,
   berachain = 80094,
   berachain = 80084,
   blast = 81457,
