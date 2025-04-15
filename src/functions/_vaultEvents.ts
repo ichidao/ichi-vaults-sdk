@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 /* eslint-disable camelcase */
 /* eslint-disable no-await-in-loop */
 /* eslint-disable radix */
@@ -25,7 +26,6 @@ import {
   sendWithdrawsQueryRequest,
 } from '../graphql/functions';
 
-// eslint-disable-next-line no-underscore-dangle
 export async function _getAllEvents(
   vaultAddress: string,
   chainId: SupportedChainId,
@@ -40,7 +40,6 @@ export async function _getAllEvents(
 
   const ttl = 120000;
   const { publishedUrl, url } = getGraphUrls(chainId, dex, true);
-
   const currTimestamp = Date.now();
   const startTimestamp = days
     ? parseInt(((currTimestamp - daysToMilliseconds(days)) / 1000).toString()).toString()
@@ -51,12 +50,28 @@ export async function _getAllEvents(
 
   const allEvents = [] as Fees[];
   let endOfData = false;
-  let page = 0;
+
+  // Track last timestamp for each entity type
+  const lastTimestamps = {
+    rebalances: startTimestamp,
+    collectFees: startTimestamp,
+    deposits: startTimestamp,
+    withdraws: startTimestamp,
+  };
+
+  // Track whether each entity type has more data
+  const hasMoreData = {
+    rebalances: true,
+    collectFees: supportsCollectFees,
+    deposits: true,
+    withdraws: true,
+  };
+
   while (!endOfData) {
     let result;
     try {
       if (publishedUrl) {
-        result = await sendAllEventsQueryRequest(publishedUrl, vaultAddress, startTimestamp, query(page));
+        result = await sendAllEventsQueryRequest(publishedUrl, vaultAddress, startTimestamp, query(lastTimestamps));
       } else {
         throw new Error(`Published URL is invalid for dex ${dex} on chain ${chainId}`);
       }
@@ -65,32 +80,75 @@ export async function _getAllEvents(
         console.error('Request to published graph URL failed:', error);
       }
       try {
-        result = await sendAllEventsQueryRequest(url, vaultAddress, startTimestamp, query(page));
+        result = await sendAllEventsQueryRequest(url, vaultAddress, startTimestamp, query(lastTimestamps));
       } catch (error2) {
         console.error('Request to public graph URL failed:', error2);
-        throw new Error(`Could not get rebalances for vault ${vaultAddress} on chain ${chainId}`);
+        throw new Error(`Could not get events for vault ${vaultAddress} on chain ${chainId}`);
       }
     }
+
     if (result) {
-      allEvents.push(...result.vaultRebalances);
-      if (supportsCollectFees) allEvents.push(...result.vaultCollectFees);
-      allEvents.push(...result.vaultDeposits);
-      allEvents.push(...result.vaultWithdraws);
-      page += 1;
-      if (
-        result.vaultRebalances.length < 1000 &&
-        (result.vaultCollectFees?.length < 1000 || !supportsCollectFees) &&
-        result.vaultDeposits.length < 1000 &&
-        result.vaultWithdraws.length < 1000
-      ) {
-        endOfData = true;
+      // Add the results to our collection
+      if (result.vaultRebalances && result.vaultRebalances.length > 0) {
+        allEvents.push(...result.vaultRebalances);
+        // Update cursor for next query
+        lastTimestamps.rebalances = result.vaultRebalances[result.vaultRebalances.length - 1].createdAtTimestamp;
+
+        // Check if we've reached the end for this entity
+        if (result.vaultRebalances.length < 1000) {
+          hasMoreData.rebalances = false;
+        }
+      } else {
+        hasMoreData.rebalances = false;
       }
+
+      if (supportsCollectFees && result.vaultCollectFees && result.vaultCollectFees.length > 0) {
+        allEvents.push(...result.vaultCollectFees);
+        // Update cursor for next query
+        lastTimestamps.collectFees = result.vaultCollectFees[result.vaultCollectFees.length - 1].createdAtTimestamp;
+
+        // Check if we've reached the end for this entity
+        if (result.vaultCollectFees.length < 1000) {
+          hasMoreData.collectFees = false;
+        }
+      } else {
+        hasMoreData.collectFees = false;
+      }
+
+      if (result.vaultDeposits && result.vaultDeposits.length > 0) {
+        allEvents.push(...result.vaultDeposits);
+        // Update cursor for next query
+        lastTimestamps.deposits = result.vaultDeposits[result.vaultDeposits.length - 1].createdAtTimestamp;
+
+        // Check if we've reached the end for this entity
+        if (result.vaultDeposits.length < 1000) {
+          hasMoreData.deposits = false;
+        }
+      } else {
+        hasMoreData.deposits = false;
+      }
+
+      if (result.vaultWithdraws && result.vaultWithdraws.length > 0) {
+        allEvents.push(...result.vaultWithdraws);
+        // Update cursor for next query
+        lastTimestamps.withdraws = result.vaultWithdraws[result.vaultWithdraws.length - 1].createdAtTimestamp;
+
+        // Check if we've reached the end for this entity
+        if (result.vaultWithdraws.length < 1000) {
+          hasMoreData.withdraws = false;
+        }
+      } else {
+        hasMoreData.withdraws = false;
+      }
+
+      // Check if we've reached the end for all entity types
+      endOfData = !Object.values(hasMoreData).some((hasMore) => hasMore);
     } else {
       endOfData = true;
     }
   }
-  cache.set(key, allEvents, ttl);
 
+  cache.set(key, allEvents, ttl);
   return allEvents;
 }
 
@@ -117,12 +175,18 @@ export async function _getRebalances(
 
   const rebalances = [] as Fees[];
   let endOfData = false;
-  let page = 0;
+  let lastTimestamp = startTimestamp;
+
   while (!endOfData) {
     let result;
     try {
       if (publishedUrl) {
-        result = await sendRebalancesQueryRequest(publishedUrl, vaultAddress, startTimestamp, rebalancesQuery(page));
+        result = await sendRebalancesQueryRequest(
+          publishedUrl,
+          vaultAddress,
+          startTimestamp,
+          rebalancesQuery(lastTimestamp),
+        );
       } else {
         throw new Error(`Published URL is invalid for dex ${dex} on chain ${chainId}`);
       }
@@ -131,17 +195,21 @@ export async function _getRebalances(
         console.error('Request to published graph URL failed:', error);
       }
       try {
-        result = await sendRebalancesQueryRequest(url, vaultAddress, startTimestamp, rebalancesQuery(page));
+        result = await sendRebalancesQueryRequest(url, vaultAddress, startTimestamp, rebalancesQuery(lastTimestamp));
       } catch (error2) {
         console.error('Request to public graph URL failed:', error2);
         throw new Error(`Could not get rebalances for vault ${vaultAddress} on chain ${chainId}`);
       }
     }
-    if (result) {
+
+    if (result && result.length > 0) {
       rebalances.push(...result);
-      page += 1;
+
       if (result.length < 1000) {
         endOfData = true;
+      } else {
+        // Update the cursor to the timestamp of the last item
+        lastTimestamp = result[result.length - 1].createdAtTimestamp;
       }
     } else {
       endOfData = true;
@@ -182,7 +250,8 @@ export async function _getFeesCollectedEvents(
 
   const otherFees = [] as Fees[];
   let endOfData = false;
-  let page = 0;
+  let lastTimestamp = startTimestamp;
+
   while (!endOfData) {
     let result;
     try {
@@ -191,7 +260,7 @@ export async function _getFeesCollectedEvents(
           publishedUrl,
           vaultAddress,
           startTimestamp,
-          vaultCollectFeesQuery(page),
+          vaultCollectFeesQuery(lastTimestamp),
         );
       } else {
         throw new Error(`Published URL is invalid for dex ${dex} on chain ${chainId}`);
@@ -201,17 +270,25 @@ export async function _getFeesCollectedEvents(
         console.error('Request to published graph URL failed:', error);
       }
       try {
-        result = await sendCollectFeesQueryRequest(url, vaultAddress, startTimestamp, vaultCollectFeesQuery(page));
+        result = await sendCollectFeesQueryRequest(
+          url,
+          vaultAddress,
+          startTimestamp,
+          vaultCollectFeesQuery(lastTimestamp),
+        );
       } catch (error2) {
         console.error('Request to public graph URL failed:', error2);
         throw new Error(`Could not get collected fees for vault ${vaultAddress} on chain ${chainId}`);
       }
     }
-    if (result) {
+    if (result && result.length > 0) {
       otherFees.push(...result);
-      page += 1;
+
       if (result.length < 1000) {
         endOfData = true;
+      } else {
+        // Update the cursor to the timestamp of the last item
+        lastTimestamp = result[result.length - 1].createdAtTimestamp;
       }
     } else {
       endOfData = true;
@@ -245,12 +322,18 @@ export async function _getDeposits(
 
   const depositEvents = [] as VaultTransactionEvent[];
   let endOfData = false;
-  let page = 0;
+  let lastTimestamp = startTimestamp;
+
   while (!endOfData) {
     let result;
     try {
       if (publishedUrl) {
-        result = await sendDepositsQueryRequest(publishedUrl, vaultAddress, startTimestamp, vaultDepositsQuery(page));
+        result = await sendDepositsQueryRequest(
+          publishedUrl,
+          vaultAddress,
+          startTimestamp,
+          vaultDepositsQuery(lastTimestamp),
+        );
       } else {
         throw new Error(`Published URL is invalid for dex ${dex} on chain ${chainId}`);
       }
@@ -259,17 +342,21 @@ export async function _getDeposits(
         console.error('Request to published graph URL failed:', error);
       }
       try {
-        result = await sendDepositsQueryRequest(url, vaultAddress, startTimestamp, vaultDepositsQuery(page));
+        result = await sendDepositsQueryRequest(url, vaultAddress, startTimestamp, vaultDepositsQuery(lastTimestamp));
       } catch (error2) {
         console.error('Request to public graph URL failed:', error2);
         throw new Error(`Could not get deposits for vault ${vaultAddress} on chain ${chainId}`);
       }
     }
-    if (result) {
+
+    if (result && result.length > 0) {
       depositEvents.push(...result);
-      page += 1;
+
       if (result.length < 1000) {
         endOfData = true;
+      } else {
+        // Update the cursor to the timestamp of the last item
+        lastTimestamp = result[result.length - 1].createdAtTimestamp;
       }
     } else {
       endOfData = true;
@@ -303,12 +390,18 @@ export async function _getWithdraws(
 
   const withdrawEvents = [] as VaultTransactionEvent[];
   let endOfData = false;
-  let page = 0;
+  let lastTimestamp = startTimestamp;
+
   while (!endOfData) {
     let result;
     try {
       if (publishedUrl) {
-        result = await sendWithdrawsQueryRequest(publishedUrl, vaultAddress, startTimestamp, vaultWithdrawsQuery(page));
+        result = await sendWithdrawsQueryRequest(
+          publishedUrl,
+          vaultAddress,
+          startTimestamp,
+          vaultWithdrawsQuery(lastTimestamp),
+        );
       } else {
         throw new Error(`Published URL is invalid for dex ${dex} on chain ${chainId}`);
       }
@@ -317,17 +410,21 @@ export async function _getWithdraws(
         console.error('Request to published graph URL failed:', error);
       }
       try {
-        result = await sendWithdrawsQueryRequest(url, vaultAddress, startTimestamp, vaultWithdrawsQuery(page));
+        result = await sendWithdrawsQueryRequest(url, vaultAddress, startTimestamp, vaultWithdrawsQuery(lastTimestamp));
       } catch (error2) {
         console.error('Request to public graph URL failed:', error2);
         throw new Error(`Could not get withdraws for vault ${vaultAddress} on chain ${chainId}`);
       }
     }
-    if (result) {
+
+    if (result && result.length > 0) {
       withdrawEvents.push(...result);
-      page += 1;
+
       if (result.length < 1000) {
         endOfData = true;
+      } else {
+        // Update the cursor to the timestamp of the last item
+        lastTimestamp = result[result.length - 1].createdAtTimestamp;
       }
     } else {
       endOfData = true;

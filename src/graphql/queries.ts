@@ -104,11 +104,17 @@ export const vaultByPoolQuery = gql`
   }
 `;
 
-export const rebalancesQuery = (page: number) => gql`
+export const rebalancesQuery = (lastTimestamp: string) => gql`
   query ($vaultAddress: String!, $createdAtTimestamp_gt: String!) {
-    vaultRebalances(first:1000, skip: ${
-      page * 1000
-    }, where: { vault: $vaultAddress, createdAtTimestamp_gt: $createdAtTimestamp_gt }) {
+    vaultRebalances(
+      first: 1000,
+      where: {
+        vault: $vaultAddress,
+        createdAtTimestamp_gt: ${lastTimestamp ? `"${lastTimestamp}"` : '$createdAtTimestamp_gt'}
+      },
+      orderBy: createdAtTimestamp,
+      orderDirection: asc
+    ) {
       feeAmount0
       feeAmount1
       totalAmount0
@@ -121,11 +127,18 @@ export const rebalancesQuery = (page: number) => gql`
   }
 `;
 
-export const vaultCollectFeesQuery = (page: number) => gql`
+export const vaultCollectFeesQuery = (lastTimestamp: string) => gql`
   query ($vaultAddress: String!, $createdAtTimestamp_gt: String!) {
-    vaultCollectFees(first: 1000, skip: ${
-      page * 1000
-    }, where: { vault: $vaultAddress, createdAtTimestamp_gt: $createdAtTimestamp_gt }) {
+    vaultCollectFees(
+      first: 1000,
+      where: {
+        vault: $vaultAddress,
+        createdAtTimestamp_gt: $createdAtTimestamp_gt,
+        ${lastTimestamp ? `createdAtTimestamp_gt: "${lastTimestamp}"` : ''}
+      },
+      orderBy: createdAtTimestamp,
+      orderDirection: asc
+    ) {
       feeAmount0
       feeAmount1
       totalAmount0
@@ -138,11 +151,17 @@ export const vaultCollectFeesQuery = (page: number) => gql`
   }
 `;
 
-export const vaultDepositsQuery = (page: number) => gql`
+export const vaultDepositsQuery = (lastTimestamp: string) => gql`
   query ($vaultAddress: String!, $createdAtTimestamp_gt: String!) {
-    vaultDeposits(first: 1000, skip: ${
-      page * 1000
-    }, where: { vault: $vaultAddress, createdAtTimestamp_gt: $createdAtTimestamp_gt }) {
+    vaultDeposits(
+      first: 1000,
+      where: {
+        vault: $vaultAddress,
+        createdAtTimestamp_gt: ${lastTimestamp ? `"${lastTimestamp}"` : '$createdAtTimestamp_gt'}
+      },
+      orderBy: createdAtTimestamp,
+      orderDirection: asc
+    ) {
       vault
       createdAtTimestamp
       totalAmount0
@@ -155,11 +174,17 @@ export const vaultDepositsQuery = (page: number) => gql`
   }
 `;
 
-export const vaultWithdrawsQuery = (page: number) => gql`
+export const vaultWithdrawsQuery = (lastTimestamp: string) => gql`
   query ($vaultAddress: String!, $createdAtTimestamp_gt: String!) {
-    vaultWithdraws(first: 1000, skip: ${
-      page * 1000
-    }, where: { vault: $vaultAddress, createdAtTimestamp_gt: $createdAtTimestamp_gt }) {
+    vaultWithdraws(
+      first: 1000,
+      where: {
+        vault: $vaultAddress,
+        createdAtTimestamp_gt: ${lastTimestamp ? `"${lastTimestamp}"` : '$createdAtTimestamp_gt'}
+      },
+      orderBy: createdAtTimestamp,
+      orderDirection: asc
+    ) {
       createdAtTimestamp
       totalAmount0
       totalAmount1
@@ -172,11 +197,24 @@ export const vaultWithdrawsQuery = (page: number) => gql`
   }
 `;
 
-export const allEventsQuery = (page: number) => gql`
+export const allEventsQuery = (lastTimestamps: {
+  rebalances?: string;
+  collectFees?: string;
+  deposits?: string;
+  withdraws?: string;
+}) => gql`
   query ($vaultAddress: String!, $createdAtTimestamp_gt: String!) {
-    vaultRebalances(first:1000, skip: ${
-      page * 1000
-    }, where: { vault: $vaultAddress, createdAtTimestamp_gt: $createdAtTimestamp_gt }) {
+    vaultRebalances(
+      first: 1000,
+      where: {
+        vault: $vaultAddress,
+        createdAtTimestamp_gt: ${
+          lastTimestamps.rebalances ? `"${lastTimestamps.rebalances}"` : '$createdAtTimestamp_gt'
+        }
+      },
+      orderBy: createdAtTimestamp,
+      orderDirection: asc
+    ) {
       feeAmount0
       feeAmount1
       totalAmount0
@@ -186,9 +224,17 @@ export const allEventsQuery = (page: number) => gql`
       sqrtPrice
       totalSupply
     },
-    vaultCollectFees(first: 1000, skip: ${
-      page * 1000
-    }, where: { vault: $vaultAddress, createdAtTimestamp_gt: $createdAtTimestamp_gt }) {
+    vaultCollectFees(
+      first: 1000,
+      where: {
+        vault: $vaultAddress,
+        createdAtTimestamp_gt: ${
+          lastTimestamps.collectFees ? `"${lastTimestamps.collectFees}"` : '$createdAtTimestamp_gt'
+        }
+      },
+      orderBy: createdAtTimestamp,
+      orderDirection: asc
+    ) {
       feeAmount0
       feeAmount1
       totalAmount0
@@ -198,9 +244,15 @@ export const allEventsQuery = (page: number) => gql`
       sqrtPrice
       totalSupply
     },
-    vaultDeposits(first: 1000, skip: ${
-      page * 1000
-    }, where: { vault: $vaultAddress, createdAtTimestamp_gt: $createdAtTimestamp_gt }) {
+    vaultDeposits(
+      first: 1000,
+      where: {
+        vault: $vaultAddress,
+        createdAtTimestamp_gt: ${lastTimestamps.deposits ? `"${lastTimestamps.deposits}"` : '$createdAtTimestamp_gt'}
+      },
+      orderBy: createdAtTimestamp,
+      orderDirection: asc
+    ) {
       vault
       createdAtTimestamp
       totalAmount0
@@ -210,9 +262,15 @@ export const allEventsQuery = (page: number) => gql`
       sqrtPrice
       totalSupply
     },
-    vaultWithdraws(first: 1000, skip: ${
-      page * 1000
-    }, where: { vault: $vaultAddress, createdAtTimestamp_gt: $createdAtTimestamp_gt }) {
+    vaultWithdraws(
+      first: 1000,
+      where: {
+        vault: $vaultAddress,
+        createdAtTimestamp_gt: ${lastTimestamps.withdraws ? `"${lastTimestamps.withdraws}"` : '$createdAtTimestamp_gt'}
+      },
+      orderBy: createdAtTimestamp,
+      orderDirection: asc
+    ) {
       createdAtTimestamp
       totalAmount0
       totalAmount1
@@ -225,11 +283,23 @@ export const allEventsQuery = (page: number) => gql`
   }
 `;
 
-export const allEventsNoCollectFeesQuery = (page: number) => gql`
+export const allEventsNoCollectFeesQuery = (lastTimestamps: {
+  rebalances?: string;
+  deposits?: string;
+  withdraws?: string;
+}) => gql`
   query ($vaultAddress: String!, $createdAtTimestamp_gt: String!) {
-    vaultRebalances(first:1000, skip: ${
-      page * 1000
-    }, where: { vault: $vaultAddress, createdAtTimestamp_gt: $createdAtTimestamp_gt }) {
+    vaultRebalances(
+      first: 1000,
+      where: {
+        vault: $vaultAddress,
+        createdAtTimestamp_gt: ${
+          lastTimestamps.rebalances ? `"${lastTimestamps.rebalances}"` : '$createdAtTimestamp_gt'
+        }
+      },
+      orderBy: createdAtTimestamp,
+      orderDirection: asc
+    ) {
       feeAmount0
       feeAmount1
       totalAmount0
@@ -239,9 +309,15 @@ export const allEventsNoCollectFeesQuery = (page: number) => gql`
       sqrtPrice
       totalSupply
     },
-    vaultDeposits(first: 1000, skip: ${
-      page * 1000
-    }, where: { vault: $vaultAddress, createdAtTimestamp_gt: $createdAtTimestamp_gt }) {
+    vaultDeposits(
+      first: 1000,
+      where: {
+        vault: $vaultAddress,
+        createdAtTimestamp_gt: ${lastTimestamps.deposits ? `"${lastTimestamps.deposits}"` : '$createdAtTimestamp_gt'}
+      },
+      orderBy: createdAtTimestamp,
+      orderDirection: asc
+    ) {
       vault
       createdAtTimestamp
       totalAmount0
@@ -251,9 +327,15 @@ export const allEventsNoCollectFeesQuery = (page: number) => gql`
       sqrtPrice
       totalSupply
     },
-    vaultWithdraws(first: 1000, skip: ${
-      page * 1000
-    }, where: { vault: $vaultAddress, createdAtTimestamp_gt: $createdAtTimestamp_gt }) {
+    vaultWithdraws(
+      first: 1000,
+      where: {
+        vault: $vaultAddress,
+        createdAtTimestamp_gt: ${lastTimestamps.withdraws ? `"${lastTimestamps.withdraws}"` : '$createdAtTimestamp_gt'}
+      },
+      orderBy: createdAtTimestamp,
+      orderDirection: asc
+    ) {
       createdAtTimestamp
       totalAmount0
       totalAmount1
