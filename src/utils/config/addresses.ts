@@ -206,6 +206,17 @@ export const addressConfig: Record<SupportedChainId, Config> = {
       isAlgebra: false,
     },
   },
+  [SupportedChainId.base_sepolia]: {
+    [SupportedDex.Thirdfy]: {
+      factoryAddress: '0x50893Df23638dB2607A3d398EaC6c65CDf847bB7',
+      depositGuard: {
+        address: '0xEb6EA277d7b0a876444dab30eEF0f154F406CfB4',
+        version: 2,
+      },
+      vaultDeployerAddress: '0xAe781EB26fcA1486032e8A37FAae0C610979C7a1',
+      isAlgebra: true,
+    },
+  },
   [SupportedChainId.berachain]: {
     [SupportedDex.Kodiak]: {
       factoryAddress: '0x8cCd02E769e6A668a447Bd15e134C31bEccd8182',

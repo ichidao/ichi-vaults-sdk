@@ -138,6 +138,14 @@ export const graphUrls: Record<SupportedChainId, dexGraph> = {
       supportsCollectFees: true,
     },
   },
+  [SupportedChainId.base_sepolia]: {
+    [SupportedDex.Thirdfy]: {
+      url: 'https://api.studio.thegraph.com/query/88584/base-sepolia-v2-thirdfy/version/latest',
+      publishedUrl:
+        'https://gateway-arbitrum.network.thegraph.com/api/[api-key]/subgraphs/id/9JrFqJq9MjKR2wibqcvpB98BywRqNuwgencrYGKBsqBD',
+      supportsCollectFees: true,
+    },
+  },
   [SupportedChainId.berachain]: {
     [SupportedDex.Kodiak]: {
       url: 'https://api.studio.thegraph.com/query/88584/berachain-v1-kodiak/version/latest',
