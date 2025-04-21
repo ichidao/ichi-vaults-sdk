@@ -435,6 +435,17 @@ export const addressConfig: Record<SupportedChainId, Config> = {
       isAlgebra: false,
     },
   },
+  [SupportedChainId.haven1]: {
+    [SupportedDex.hSwap]: {
+      factoryAddress: '0x53511764DE94CdA43CbBadFFCca3F29D2EFAB0F8',
+      depositGuard: {
+        address: '0xf0d899E6582CF2fd1A05F52C8e1b3a56feD9fdb9',
+        version: 2,
+      },
+      vaultDeployerAddress: '0x19ad5C1d7867115a0545DCA69884Aa2DA0bfb3B1',
+      isAlgebra: false,
+    },
+  },
   [SupportedChainId.haven1_devnet]: {
     [SupportedDex.hSwap]: {
       factoryAddress: '0xbBB97d634460DACCA0d41E249510Bb741ef46ad3',
