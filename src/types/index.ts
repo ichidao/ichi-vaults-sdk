@@ -23,6 +23,7 @@ export enum SupportedChainId {
   fantom = 250,
   flare = 14,
   fuse = 122,
+  haven1 = 8811,
   haven1_devnet = 8110,
   hedera = 295,
   hedera_testnet = 296,
