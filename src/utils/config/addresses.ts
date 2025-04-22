@@ -479,6 +479,17 @@ export const addressConfig: Record<SupportedChainId, Config> = {
       isAlgebra: false,
     },
   },
+  [SupportedChainId.hyperevm]: {
+    [SupportedDex.HyperSwap]: {
+      factoryAddress: '0x8cCd02E769e6A668a447Bd15e134C31bEccd8182',
+      depositGuard: {
+        address: '0x4858d61E83118f124b7dF3E908a3bb465540fFBc',
+        version: 2,
+      },
+      vaultDeployerAddress: '0xd71D9b66875C7d57AD630ee58F82e5e76B227aaB',
+      isAlgebra: false,
+    },
+  },
   [SupportedChainId.ink]: {
     [SupportedDex.Reservoir]: {
       factoryAddress: '0x65CD1f0ac298519BE4891B5812053e00BD2074AC',
@@ -806,6 +817,7 @@ export const MULTICALL_ADDRESSES: Partial<Record<SupportedChainId, string>> = {
   [SupportedChainId.fantom]: '0xd9e7c0932a7D3e40Db3Fe78d95A3ED375a37Ab1a',
   [SupportedChainId.hedera_testnet]: '0x0B10E483AAC4340256772754d23131B6E0Dc31EA',
   [SupportedChainId.hedera]: '0x0B10E483AAC4340256772754d23131B6E0Dc31EA',
+  [SupportedChainId.hyperevm]: "0xE8571fd6629DA6E488f7BbD83e729c20Fa9B97B4",
   [SupportedChainId.ink]: '0xcfEA11557Bc9cB71bc6916e09fC8493D668b8d53',
   [SupportedChainId.ink_sepolia]: '0x27404A54D594Aa6307C3f9Be102646363d6279a1',
   [SupportedChainId.mantle]: '0xf5bb4e61ccAC9080fb520e5F69224eE85a4D588F',
