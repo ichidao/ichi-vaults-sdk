@@ -326,6 +326,13 @@ export const graphUrls: Record<SupportedChainId, dexGraph> = {
       supportsCollectFees: false,
     },
   },
+  [SupportedChainId.hyperevm]: {
+    [SupportedDex.HyperSwap]: {
+      url: 'none',
+      publishedUrl: 'none',
+      supportsCollectFees: false,
+    },
+  },
   [SupportedChainId.ink]: {
     [SupportedDex.Reservoir]: {
       url: 'https://api.goldsky.com/api/public/project_clynrq1h8gam301xx6vgngo9p/subgraphs/thedeep/ink-v1/gn',
