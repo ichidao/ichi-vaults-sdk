@@ -11,24 +11,28 @@ import getPrice from '../utils/getPrice';
 import {
   getAlgebraIntegralPoolContract,
   getAlgebraPoolContract,
+  getClPoolContract,
   getIchiVaultContract,
   getUniswapV3PoolContract,
 } from '../contracts';
-import { addressConfig } from '../utils/config/addresses';
+import { addressConfig, AMM_VERSIONS } from '../utils/config/addresses';
 import { _getTotalAmounts, _getTotalSupply } from './_totalBalances';
 
 export async function getSqrtPriceFromPool(
-  vault: IchiVault,
+  poolAddress: string,
   jsonProvider: JsonRpcProvider,
   chainId: SupportedChainId,
   dex: SupportedDex,
 ): Promise<BigNumber> {
   try {
-    const vaultContract = getIchiVaultContract(vault.id, jsonProvider);
-    const poolAddress: string = await vaultContract.pool();
+    const dexConfig = addressConfig[chainId]?.[dex];
 
-    if (addressConfig[chainId as SupportedChainId]![dex]?.isAlgebra) {
-      if (addressConfig[chainId as SupportedChainId]![dex]?.ammVersion === 'algebraIntegral') {
+    if (!dexConfig) {
+      throw new Error(`Config not found for dex ${dex} on chain ${chainId}`);
+    }
+
+    if (dexConfig.isAlgebra) {
+      if (dexConfig.ammVersion === AMM_VERSIONS.ALGEBRA_INTEGRAL) {
         const poolContract = getAlgebraIntegralPoolContract(poolAddress, jsonProvider);
         const globalState = await poolContract.globalState();
         return globalState[0];
@@ -37,11 +41,31 @@ export async function getSqrtPriceFromPool(
         const globalState = await poolContract.globalState();
         return globalState.price;
       }
+    } else if (dexConfig.ammVersion === AMM_VERSIONS.VELODROME) {
+      const poolContract = getClPoolContract(poolAddress, jsonProvider);
+      const slot0 = await poolContract.slot0();
+      return slot0[0];
     } else {
       const poolContract = getUniswapV3PoolContract(poolAddress, jsonProvider);
       const slot0 = await poolContract.slot0();
       return slot0[0];
     }
+  } catch (e) {
+    console.error(`Could not get price from pool ${poolAddress}`);
+    throw e;
+  }
+}
+
+export async function getSqrtPriceFromVault(
+  vault: IchiVault,
+  jsonProvider: JsonRpcProvider,
+  chainId: SupportedChainId,
+  dex: SupportedDex,
+): Promise<BigNumber> {
+  try {
+    const vaultContract = getIchiVaultContract(vault.id, jsonProvider);
+    const poolAddress: string = await vaultContract.pool();
+    return await getSqrtPriceFromPool(poolAddress, jsonProvider, chainId, dex);
   } catch (e) {
     console.error(`Could not get price from vault ${vault.id} `);
     throw e;
@@ -59,7 +83,7 @@ export async function getCurrPrice(
   token1decimals: number,
 ): Promise<number> {
   try {
-    const sqrtPrice = await getSqrtPriceFromPool(vault, jsonProvider, chainId, dex);
+    const sqrtPrice = await getSqrtPriceFromVault(vault, jsonProvider, chainId, dex);
     const depositTokenDecimals = isVaultInverted ? token1decimals : token0decimals;
     const scarceTokenDecimals = isVaultInverted ? token0decimals : token1decimals;
     const price = getPrice(isVaultInverted, sqrtPrice, depositTokenDecimals, scarceTokenDecimals, 15);

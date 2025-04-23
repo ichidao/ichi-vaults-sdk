@@ -15,6 +15,8 @@ import {
   AlgebraPool,
   AlgebraIntegralPool,
   AlgebraIntegralPool__factory,
+  ClPool,
+  ClPool__factory,
 } from '../../abis/types';
 
 export function getERC20Contract(address: string, signerOrProvider: SignerOrProvider): ERC20 {
@@ -53,6 +55,14 @@ export function getAlgebraIntegralPoolContract(address: string, provider: JsonRp
     return AlgebraIntegralPool__factory.connect(address, provider);
   } catch (e) {
     console.error(`Couldn't create AlgebraIntegralPool contract with address: ${address}`);
+    throw e;
+  }
+}
+export function getClPoolContract(address: string, provider: JsonRpcProvider): ClPool {
+  try {
+    return ClPool__factory.connect(address, provider);
+  } catch (e) {
+    console.error(`Couldn't create ClPool contract with address: ${address}`);
     throw e;
   }
 }

@@ -1,10 +1,8 @@
 /* eslint-disable import/prefer-default-export */
 import { JsonRpcProvider } from '@ethersproject/providers';
-import { BigNumber } from 'ethers';
 import {
   DepositTokenRatio,
   Fees,
-  SupportedChainId,
   SupportedDex,
   TotalAmounts,
   VaultMetrics,
@@ -14,17 +12,11 @@ import {
 // eslint-disable-next-line import/no-cycle
 import { validateVaultData } from './vault';
 import { getTokenDecimals } from './_totalBalances';
-import { getCurrentDtr } from './priceFromPool';
+import { getCurrentDtr, getSqrtPriceFromPool } from './priceFromPool';
 import { daysToMilliseconds } from '../utils/timestamps';
 import getPrice from '../utils/getPrice';
-import {
-  getAlgebraIntegralPoolContract,
-  getAlgebraPoolContract,
-  getIchiVaultContract,
-  getUniswapV3PoolContract,
-} from '../contracts';
+import { getIchiVaultContract } from '../contracts';
 import formatBigInt from '../utils/formatBigInt';
-import { addressConfig } from '../utils/config/addresses';
 import { getAverageDtr, getDtrAtFeeCollectionEvent, getDtrAtTransactionEvent } from './calculateDtr';
 import { getTotalFeesAmountInBaseTokens } from './calculateFees';
 import { getLpPriceAt } from './calculateApr';
@@ -61,24 +53,9 @@ export async function getVaultMetrics(
       1: formatBigInt(totalAmountsBN.total1, decimals1),
     } as TotalAmounts;
 
-    let sqrtPrice: BigNumber;
     const poolAddress: string = await vaultContract.pool();
+    const sqrtPrice = await getSqrtPriceFromPool(poolAddress, jsonProvider, chainId, dex);
 
-    if (addressConfig[chainId as SupportedChainId]![dex]?.isAlgebra) {
-      if (addressConfig[chainId as SupportedChainId]![dex]?.ammVersion === 'algebraIntegral') {
-        const poolContract = getAlgebraIntegralPoolContract(poolAddress, jsonProvider);
-        const globalState = await poolContract.globalState();
-        sqrtPrice = globalState.price;
-      } else {
-        const poolContract = getAlgebraPoolContract(poolAddress, jsonProvider);
-        const globalState = await poolContract.globalState();
-        sqrtPrice = globalState.price;
-      }
-    } else {
-      const poolContract = getUniswapV3PoolContract(poolAddress, jsonProvider);
-      const slot0 = await poolContract.slot0();
-      sqrtPrice = slot0.sqrtPriceX96;
-    }
     const price = getPrice(isInv, sqrtPrice, depositTokenDecimals, scarceTokenDecimals, 15);
     currTvl = !isInv
       ? Number(totalAmounts.total0) + Number(totalAmounts.total1) * price

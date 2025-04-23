@@ -339,12 +339,13 @@ export const graphUrls: Record<SupportedChainId, dexGraph> = {
       publishedUrl: 'https://api.goldsky.com/api/public/project_clynrq1h8gam301xx6vgngo9p/subgraphs/thedeep/ink-v1/gn',
       supportsCollectFees: true,
     },
-    // [SupportedDex.Velodrome]: {
-    //   url: 'https://api.studio.thegraph.com/query/88584/ink-v2-velodrome/version/latest',
-    //   publishedUrl: 'https://gateway-arbitrum.network.thegraph.com/api/[api-key]/subgraphs/id/4pNAETEPCZKXYY8UEjRcdH7d1GHviYoLq7DXAaicgESr',
-    //   supportsCollectFees: true,
-    //   version: 2,
-    // },
+    [SupportedDex.Velodrome]: {
+      url: 'https://api.studio.thegraph.com/query/88584/ink-v2-velodrome/version/latest',
+      publishedUrl:
+        'https://gateway-arbitrum.network.thegraph.com/api/[api-key]/subgraphs/id/4pNAETEPCZKXYY8UEjRcdH7d1GHviYoLq7DXAaicgESr',
+      supportsCollectFees: true,
+      version: 2,
+    },
   },
   [SupportedChainId.ink_sepolia]: {
     [SupportedDex.UniswapV3]: {
