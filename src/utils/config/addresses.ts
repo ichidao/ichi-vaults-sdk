@@ -2,6 +2,11 @@ import { SupportedDex, SupportedChainId } from '../../types';
 
 export type AddressConfig = { [key in SupportedDex]?: string };
 
+export const AMM_VERSIONS = {
+  ALGEBRA_INTEGRAL: 'algebraIntegral',
+  VELODROME: 'velodrome',
+};
+
 export type SupportedDexConfig = {
   factoryAddress: string;
   depositGuard: {
@@ -64,7 +69,7 @@ export const addressConfig: Record<SupportedChainId, Config> = {
       },
       vaultDeployerAddress: '0xd466e09be665dDb3e1B3e2631413c6fa033E0e1e',
       isAlgebra: true,
-      ammVersion: 'algebraIntegral',
+      ammVersion: AMM_VERSIONS.ALGEBRA_INTEGRAL,
     },
   },
   [SupportedChainId.arthera_testnet]: {
@@ -76,7 +81,7 @@ export const addressConfig: Record<SupportedChainId, Config> = {
       },
       vaultDeployerAddress: '0x21222daEcAB7E64556ADED3EE7B891742E7e766b',
       isAlgebra: true,
-      ammVersion: 'algebraIntegral',
+      ammVersion: AMM_VERSIONS.ALGEBRA_INTEGRAL,
     },
   },
   [SupportedChainId.polygon]: {
@@ -165,7 +170,7 @@ export const addressConfig: Record<SupportedChainId, Config> = {
       },
       vaultDeployerAddress: '0x7d11De61c219b70428Bb3199F0DD88bA9E76bfEE',
       isAlgebra: true,
-      ammVersion: 'algebraIntegral',
+      ammVersion: AMM_VERSIONS.ALGEBRA_INTEGRAL,
     },
     [SupportedDex.Kim]: {
       factoryAddress: '0x28cF3b462a1ADdE87fe7144d110BcF0D464C97b7',
@@ -175,7 +180,7 @@ export const addressConfig: Record<SupportedChainId, Config> = {
       },
       vaultDeployerAddress: '0x7d11De61c219b70428Bb3199F0DD88bA9E76bfEE',
       isAlgebra: true,
-      ammVersion: 'algebraIntegral',
+      ammVersion: AMM_VERSIONS.ALGEBRA_INTEGRAL,
     },
     [SupportedDex.Pancakeswap]: {
       factoryAddress: '0x24430E837efB64EF87bb32be03437fc6005EEF74',
@@ -194,7 +199,7 @@ export const addressConfig: Record<SupportedChainId, Config> = {
       },
       vaultDeployerAddress: '0x7d11De61c219b70428Bb3199F0DD88bA9E76bfEE',
       isAlgebra: true,
-      ammVersion: 'algebraIntegral',
+      ammVersion: AMM_VERSIONS.ALGEBRA_INTEGRAL,
     },
     [SupportedDex.UniswapV3]: {
       factoryAddress: '0xaBe5B5AC472Ead17B4B4CaC7fAF42430748ab3b3',
@@ -215,7 +220,7 @@ export const addressConfig: Record<SupportedChainId, Config> = {
       },
       vaultDeployerAddress: '0xAe781EB26fcA1486032e8A37FAae0C610979C7a1',
       isAlgebra: true,
-      ammVersion: 'algebraIntegral',
+      ammVersion: AMM_VERSIONS.ALGEBRA_INTEGRAL,
     },
   },
   [SupportedChainId.berachain]: {
@@ -236,7 +241,7 @@ export const addressConfig: Record<SupportedChainId, Config> = {
       },
       vaultDeployerAddress: '0x9Fbba6c87923af2561A2391198166b51Cf5736E8',
       isAlgebra: true,
-      ammVersion: 'algebraIntegral',
+      ammVersion: AMM_VERSIONS.ALGEBRA_INTEGRAL,
     },
   },
   [SupportedChainId.berachain_bartio]: {
@@ -248,7 +253,7 @@ export const addressConfig: Record<SupportedChainId, Config> = {
       },
       vaultDeployerAddress: '0x249397Aa78bE5955DBc2102DF31B3FB2A92B1AA8',
       isAlgebra: true,
-      ammVersion: 'algebraIntegral',
+      ammVersion: AMM_VERSIONS.ALGEBRA_INTEGRAL,
     },
     [SupportedDex.Kodiak]: {
       factoryAddress: '0xCa8310832053de4909fe1A6C89C7200D033CBB76',
@@ -269,7 +274,7 @@ export const addressConfig: Record<SupportedChainId, Config> = {
       },
       vaultDeployerAddress: '0xaD7cf2b8ce5eB8b75dA393fc164C4F4502761379',
       isAlgebra: true,
-      ammVersion: 'algebraIntegral',
+      ammVersion: AMM_VERSIONS.ALGEBRA_INTEGRAL,
     },
     [SupportedDex.Thruster]: {
       factoryAddress: '0x2145B1CCe3A13AF4fBB14131f1F480fc121EAD93',
@@ -299,7 +304,7 @@ export const addressConfig: Record<SupportedChainId, Config> = {
       },
       vaultDeployerAddress: '0x4d999694f53614de3fd6748C0f5c7f0CdC16639b',
       isAlgebra: true,
-      ammVersion: 'algebraIntegral',
+      ammVersion: AMM_VERSIONS.ALGEBRA_INTEGRAL,
     },
   },
   [SupportedChainId.bsc]: {
@@ -338,7 +343,7 @@ export const addressConfig: Record<SupportedChainId, Config> = {
       },
       vaultDeployerAddress: '0x05cC3CA6E768a68A7f86b09e3ceE754437bd5f12',
       isAlgebra: true,
-      ammVersion: 'algebraIntegral',
+      ammVersion: AMM_VERSIONS.ALGEBRA_INTEGRAL,
     },
   },
   [SupportedChainId.celo]: {
@@ -401,7 +406,7 @@ export const addressConfig: Record<SupportedChainId, Config> = {
       },
       vaultDeployerAddress: '0xE495eFdf1d19668a27042D30ee22AC3C58b6fB6c',
       isAlgebra: true,
-      ammVersion: 'algebraIntegral',
+      ammVersion: AMM_VERSIONS.ALGEBRA_INTEGRAL,
     },
   },
   [SupportedChainId.flare]: {
@@ -500,15 +505,16 @@ export const addressConfig: Record<SupportedChainId, Config> = {
       vaultDeployerAddress: '0xcBd1F70235904d3764f5d159022BA0281536E3E8',
       isAlgebra: false,
     },
-    // [SupportedDex.Velodrome]: {
-    //   factoryAddress: '0x2A3EB890dC0902c7Ca6CC71a1E9670463b32a3f0',
-    //   depositGuard: {
-    //     address: '0x388C3aC7039b2C1522B9Fb423e6D4271aca708D1',
-    //     version: 2,
-    //   },
-    //   vaultDeployerAddress: '0xcBd1F70235904d3764f5d159022BA0281536E3E8',
-    //   isAlgebra: false,
-    // },
+    [SupportedDex.Velodrome]: {
+      factoryAddress: '0x2A3EB890dC0902c7Ca6CC71a1E9670463b32a3f0',
+      depositGuard: {
+        address: '0x388C3aC7039b2C1522B9Fb423e6D4271aca708D1',
+        version: 2,
+      },
+      vaultDeployerAddress: '0xcBd1F70235904d3764f5d159022BA0281536E3E8',
+      isAlgebra: false,
+      ammVersion: AMM_VERSIONS.VELODROME,
+    },
   },
   [SupportedChainId.ink_sepolia]: {
     [SupportedDex.UniswapV3]: {
@@ -588,7 +594,7 @@ export const addressConfig: Record<SupportedChainId, Config> = {
       },
       vaultDeployerAddress: '0x124871b2FC05fD96521238cA2Bd01B770FBf1E37',
       isAlgebra: true,
-      ammVersion: 'algebraIntegral',
+      ammVersion: AMM_VERSIONS.ALGEBRA_INTEGRAL,
     },
   },
   [SupportedChainId.mantle]: {
@@ -712,7 +718,7 @@ export const addressConfig: Record<SupportedChainId, Config> = {
       },
       vaultDeployerAddress: '0x0b2a31D95B1a4c8b1e772599ffcB8875FB4e2d33',
       isAlgebra: true,
-      ammVersion: 'algebraIntegral',
+      ammVersion: AMM_VERSIONS.ALGEBRA_INTEGRAL,
     },
   },
   [SupportedChainId.taiko]: {
@@ -724,7 +730,7 @@ export const addressConfig: Record<SupportedChainId, Config> = {
       },
       vaultDeployerAddress: '0xD639392f0fD8686E1739CE3E3174115e33E95a26',
       isAlgebra: true,
-      ammVersion: 'algebraIntegral',
+      ammVersion: AMM_VERSIONS.ALGEBRA_INTEGRAL,
     },
   },
   [SupportedChainId.taiko_hekla]: {
@@ -736,7 +742,7 @@ export const addressConfig: Record<SupportedChainId, Config> = {
       },
       vaultDeployerAddress: '0x92403A045a2C908920D6A7FD5A5591a01dB7EE6E',
       isAlgebra: true,
-      ammVersion: 'algebraIntegral',
+      ammVersion: AMM_VERSIONS.ALGEBRA_INTEGRAL,
     },
   },
   [SupportedChainId.unreal]: {
@@ -759,7 +765,7 @@ export const addressConfig: Record<SupportedChainId, Config> = {
       },
       vaultDeployerAddress: '0x412840Fd29A78428d3dbAeca811414c08b554599',
       isAlgebra: true,
-      ammVersion: 'algebraIntegral',
+      ammVersion: AMM_VERSIONS.ALGEBRA_INTEGRAL,
     },
   },
   [SupportedChainId.zircuit]: {
@@ -817,7 +823,7 @@ export const MULTICALL_ADDRESSES: Partial<Record<SupportedChainId, string>> = {
   [SupportedChainId.fantom]: '0xd9e7c0932a7D3e40Db3Fe78d95A3ED375a37Ab1a',
   [SupportedChainId.hedera_testnet]: '0x0B10E483AAC4340256772754d23131B6E0Dc31EA',
   [SupportedChainId.hedera]: '0x0B10E483AAC4340256772754d23131B6E0Dc31EA',
-  [SupportedChainId.hyperevm]: "0xE8571fd6629DA6E488f7BbD83e729c20Fa9B97B4",
+  [SupportedChainId.hyperevm]: '0xE8571fd6629DA6E488f7BbD83e729c20Fa9B97B4',
   [SupportedChainId.ink]: '0xcfEA11557Bc9cB71bc6916e09fC8493D668b8d53',
   [SupportedChainId.ink_sepolia]: '0x27404A54D594Aa6307C3f9Be102646363d6279a1',
   [SupportedChainId.mantle]: '0xf5bb4e61ccAC9080fb520e5F69224eE85a4D588F',
