@@ -1070,6 +1070,7 @@ enum SupportedChainId {
   mainnet = 1,
   mantle = 5000,
   mode = 34443,
+  monad_testnet = 10143,
   polygon = 137,
   polygon_zkevm = 1101,
   real = 111188,
@@ -1093,6 +1094,7 @@ enum SupportedChainId {
 enum SupportedDex {
   Agni = 'Agni',
   Ascent = 'Ascent',
+  Atlantis = 'Anlantis',
   Blueprint = 'Blueprint',
   Cleo = 'Cleo',
   Crust = 'Crust',
