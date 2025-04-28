@@ -422,6 +422,14 @@ export const graphUrls: Record<SupportedChainId, dexGraph> = {
       supportsCollectFees: true,
     },
   },
+  [SupportedChainId.monad_testnet]: {
+    [SupportedDex.Atlantis]: {
+      url: 'none',
+      publishedUrl:
+        'none',
+      supportsCollectFees: false,
+    },
+  },
   [SupportedChainId.polygon_zkevm]: {
     [SupportedDex.Pancakeswap]: {
       url: 'https://api.studio.thegraph.com/query/88584/zkevm-v1-pancakeswap/version/latest',
