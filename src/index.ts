@@ -12,4 +12,7 @@ export * from './functions/vaultTvl';
 export * from './functions/chains';
 export * from './functions/vaultPositions';
 export * from './functions/getFeeAprs';
+export * from './functions/rewardInfo';
+export * from './functions/userRewards';
+export * from './functions/claimRewards';
 export * from './types/index';

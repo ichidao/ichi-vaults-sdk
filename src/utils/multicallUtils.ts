@@ -4,7 +4,7 @@ import { Interface } from '@ethersproject/abi';
 import { BigNumber, Signer } from 'ethers';
 import { SupportedChainId } from '../types';
 import { MULTICALL_ADDRESSES } from './config/addresses';
-import { getERC20Contract, getIchiVaultContract } from '../contracts';
+import { getERC20Contract, getIchiVaultContract, getMultiFeeDistributorContract } from '../contracts';
 import multicallAbi from '../abis/multicall.json';
 
 interface Call {
@@ -69,6 +69,17 @@ export function encodeDecimalsCall(tokenAddress: string): Call {
   };
 }
 
+export function encodeFarmingRewardsCall(farmingContractAddress: string, userAddress: string): Call {
+  const farmingInterface = new Interface(
+    getMultiFeeDistributorContract(farmingContractAddress, null as any).interface.format(),
+  );
+  return {
+    target: farmingContractAddress,
+    gasLimit: 1000000,
+    callData: farmingInterface.encodeFunctionData('claimableRewards', [userAddress]),
+  };
+}
+
 export function decodeTotalAmountsResult(
   result: Result,
   vaultAddress: string,
@@ -98,4 +109,15 @@ export function decodeDecimalsResult(result: Result, tokenAddress: string): numb
   }
   const tokenInterface = new Interface(getERC20Contract(tokenAddress, null as any).interface.format());
   return tokenInterface.decodeFunctionResult('decimals', result.returnData)[0];
+}
+
+export function decodeFarmingRewardsResult(result: Result, farmingContractAddress: string): [string[], BigNumber[]] {
+  if (!result.success) {
+    throw new Error('Failed to get farming rewards');
+  }
+  const farmingInterface = new Interface(
+    getMultiFeeDistributorContract(farmingContractAddress, null as any).interface.format(),
+  );
+  const decoded = farmingInterface.decodeFunctionResult('claimableRewards', result.returnData);
+  return [decoded[0], decoded[1]]; // [token addresses array, amounts array]
 }

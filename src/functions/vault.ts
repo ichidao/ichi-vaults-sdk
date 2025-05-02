@@ -1,13 +1,17 @@
 // eslint-disable-next-line import/no-unresolved
 import { request } from 'graphql-request';
 import { JsonRpcProvider } from '@ethersproject/providers';
-import { SupportedDex, SupportedChainId, IchiVault } from '../types';
+import { SupportedDex, SupportedChainId, IchiVault, VaultWithRewards } from '../types';
 // eslint-disable-next-line import/no-cycle
-import { VaultQueryData, VaultsByPoolQueryData, VaultsByTokensQueryData } from '../types/vaultQueryData';
+import {
+  AllRewardVaultsQueryResponse,
+  VaultQueryData,
+  VaultsByPoolQueryData,
+  VaultsByTokensQueryData,
+} from '../types/vaultQueryData';
 import { getIchiVaultContract } from '../contracts';
-import { vaultByPoolQuery, vaultByTokensQuery, vaultQuery, vaultQueryAlgebra } from '../graphql/queries';
+import { allRewardVaults, getVaultQuery, vaultByPoolQuery, vaultByTokensQuery } from '../graphql/queries';
 import getGraphUrls from '../utils/getGraphUrls';
-import { addressConfig } from '../utils/config/addresses';
 import cache from '../utils/cache';
 
 function normalizeVaultData(vaultData: any): IchiVault {
@@ -21,6 +25,9 @@ function normalizeVaultData(vaultData: any): IchiVault {
       allowTokenB: vaultData.allowToken1,
       fee: vaultData.fee,
       holdersCount: vaultData.holdersCount,
+      farmingContract: vaultData.farmingContract?.id,
+      rewardToken: vaultData.farmingContract?.rewardToken,
+      rewardTokenDecimals: vaultData.farmingContract?.rewardTokenDecimals,
     };
   }
 
@@ -70,15 +77,8 @@ async function sendVaultsByPoolQueryRequest(url: string, poolAddress: string, qu
     poolAddress: poolAddress.toLowerCase(),
   }).then(({ deployICHIVaults }) => deployICHIVaults);
 }
-
-function noHoldersCount(dex: SupportedDex, chainId: SupportedChainId): boolean {
-  return (
-    dex === SupportedDex.Fenix ||
-    dex === SupportedDex.Henjin ||
-    dex === SupportedDex.Thirdfy ||
-    (dex === SupportedDex.Sushiswap && chainId === SupportedChainId.skale_europa) ||
-    (dex === SupportedDex.Velocore && chainId === SupportedChainId.zksync_era_testnet)
-  );
+async function sendAllRewardVaultsQueryRequest(url: string, query: string): Promise<VaultWithRewards[]> {
+  return request<AllRewardVaultsQueryResponse>(url, query).then(({ ichiVaults }) => ichiVaults);
 }
 
 export async function getIchiVaultInfo(
@@ -94,13 +94,9 @@ export async function getIchiVaultInfo(
     return cachedData as IchiVault;
   }
 
-  const includeHoldersCount = !noHoldersCount(dex, chainId);
+  const { url, publishedUrl } = getGraphUrls(chainId, dex);
+  const thisQuery = getVaultQuery(chainId, dex);
 
-  const { url, publishedUrl, version } = getGraphUrls(chainId, dex);
-  const thisQuery =
-    addressConfig[chainId][dex]?.isAlgebra || addressConfig[chainId][dex]?.is2Thick
-      ? vaultQueryAlgebra(includeHoldersCount, version)
-      : vaultQuery(includeHoldersCount, version);
   if (url === 'none' && jsonProvider) {
     const result = await getVaultInfoFromContract(vaultAddress, jsonProvider);
     cache.set(key, result, ttl);
@@ -253,4 +249,36 @@ export async function getChainByProvider(jsonProvider: JsonRpcProvider): Promise
   }
 
   return { chainId };
+}
+
+export async function getAllRewardVaults(chainId: SupportedChainId, dex: SupportedDex): Promise<VaultWithRewards[]> {
+  const key = `allvaults-${chainId}-${dex}`;
+  const cachedData = cache.get(key);
+  if (cachedData) {
+    return cachedData as VaultWithRewards[];
+  }
+
+  const { url, publishedUrl } = getGraphUrls(chainId, dex, true);
+  const ttl = 3600000;
+
+  try {
+    if (publishedUrl) {
+      const result = await sendAllRewardVaultsQueryRequest(publishedUrl, allRewardVaults);
+      cache.set(key, result, ttl);
+      return result;
+    }
+    throw new Error(`Published URL is invalid for dex ${dex} on chain ${chainId}`);
+  } catch (error) {
+    if (publishedUrl) {
+      console.error('Request to published graph URL failed:', error);
+    }
+    try {
+      const result = await sendAllRewardVaultsQueryRequest(url, allRewardVaults);
+      cache.set(key, result, ttl);
+      return result;
+    } catch (error2) {
+      console.error('Request to public graph URL failed:', error2);
+      throw new Error(`Could not get reward vaults on dex ${dex}`);
+    }
+  }
 }
