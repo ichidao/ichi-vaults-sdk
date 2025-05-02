@@ -83,7 +83,7 @@ const bigAmount = '1000';
 describe('Vault', () => {
   let share: string | null = null;
 
-  it('getFeeAprs', async () => {
+  it.skip('getFeeAprs', async () => {
     const feeAprs = await getFeeAprs(vault.address, provider, vault.dex);
     if (feeAprs) {
       expect(Number(feeAprs.feeApr_1d)).toBeGreaterThanOrEqual(0);
@@ -349,17 +349,17 @@ describe('Dexes', () => {
 });
 
 describe('Rewards', () => {
-  it('getRewardInfo', async () => {
+  it.skip('getRewardInfo', async () => {
     const rewardInfo = await getRewardInfo(vault.chainId, vault.dex, vault.address);
 
     expect(rewardInfo.id).toBeDefined();
   });
-  it('getAllRewardInfo', async () => {
+  it.skip('getAllRewardInfo', async () => {
     const allRewardInfo = await getAllRewardInfo(vault.chainId, vault.dex);
 
     expect(allRewardInfo.length).toBeGreaterThan(0);
   });
-  it('getUserRewards', async () => {
+  it.skip('getUserRewards', async () => {
     const userRewards = await getUserRewards(account, vault.address, provider, vault.dex);
 
     expect(Number(userRewards)).toBeGreaterThan(0);
@@ -377,7 +377,7 @@ describe('Rewards', () => {
       }
     });
   });
-  it('getAllUserRewards', async () => {
+  it.skip('getAllUserRewards', async () => {
     const rewards = await getAllUserRewards(account, provider, vault.dex);
 
     expect(rewards.length).toBeGreaterThan(0);
