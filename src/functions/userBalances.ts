@@ -5,7 +5,7 @@ import { JsonRpcProvider } from '@ethersproject/providers';
 import { BigNumber } from 'ethers';
 // eslint-disable-next-line import/no-unresolved
 import { request } from 'graphql-request';
-import { getIchiVaultContract } from '../contracts';
+import { getIchiVaultContract, getMultiFeeDistributorContract } from '../contracts';
 import {
   SupportedDex,
   UserAmounts,
@@ -22,7 +22,7 @@ import formatBigInt from '../utils/formatBigInt';
 // eslint-disable-next-line import/no-cycle
 import { getChainByProvider, validateVaultData } from './vault';
 import { UserBalancesQueryData } from '../types/vaultQueryData';
-import { userBalancesQuery } from '../graphql/queries';
+import { getUserBalancesQuery } from '../graphql/queries';
 import parseBigInt from '../utils/parseBigInt';
 import getGraphUrls from '../utils/getGraphUrls';
 import { _getTotalAmounts, _getTotalSupply, getTokenDecimals } from './_totalBalances';
@@ -35,6 +35,7 @@ import {
   encodeTotalSupplyCall,
   multicall,
 } from '../utils/multicallUtils';
+import { isVelodromeDex } from '../utils/isVelodrome';
 
 const promises: Record<string, Promise<any>> = {};
 
@@ -57,6 +58,7 @@ async function _getUserBalance(
   accountAddress: string,
   vaultAddress: string,
   jsonProvider: JsonRpcProvider,
+  farmingContract: string | null,
 ): Promise<string>;
 
 // eslint-disable-next-line no-underscore-dangle
@@ -64,6 +66,7 @@ async function _getUserBalance(
   accountAddress: string,
   vaultAddress: string,
   jsonProvider: JsonRpcProvider,
+  farmingContract: string | null,
   raw: true,
 ): Promise<BigNumber>;
 
@@ -72,10 +75,20 @@ async function _getUserBalance(
   accountAddress: string,
   vaultAddress: string,
   jsonProvider: JsonRpcProvider,
+  farmingContract: string | null,
   raw?: true,
 ) {
-  const vaultContract = getIchiVaultContract(vaultAddress, jsonProvider);
-  const shares = await vaultContract.balanceOf(accountAddress);
+  let shares;
+
+  // if there is farmingContract, balance is the sum of staked and unstaked amounts
+  if (farmingContract) {
+    const vaultContract = getIchiVaultContract(vaultAddress, jsonProvider);
+    const mdfContract = getMultiFeeDistributorContract(farmingContract, jsonProvider);
+    shares = (await vaultContract.balanceOf(accountAddress)).add(await mdfContract.totalBalance(accountAddress));
+  } else {
+    const vaultContract = getIchiVaultContract(vaultAddress, jsonProvider);
+    shares = await vaultContract.balanceOf(accountAddress);
+  }
 
   return raw ? shares : formatBigInt(shares, ichiVaultDecimals);
 }
@@ -103,21 +116,29 @@ export async function getUserBalance(
   raw?: true,
 ) {
   // eslint-disable-next-line no-return-await
-  await validateVaultData(vaultAddress, jsonProvider, dex);
+  const { vault } = await validateVaultData(vaultAddress, jsonProvider, dex);
 
   return raw
-    ? _getUserBalance(accountAddress, vaultAddress, jsonProvider, true)
-    : _getUserBalance(accountAddress, vaultAddress, jsonProvider);
+    ? _getUserBalance(accountAddress, vaultAddress, jsonProvider, vault.farmingContract || null, true)
+    : _getUserBalance(accountAddress, vaultAddress, jsonProvider, vault.farmingContract || null);
 }
 
 export async function sendUserBalancesQueryRequest(
   url: string,
   accountAddress: string,
   query: string,
+  vaultAddress?: string,
 ): Promise<UserBalancesQueryData['user']> {
-  return request<UserBalancesQueryData, { accountAddress: string }>(url, query, {
-    accountAddress: accountAddress.toLowerCase(),
-  }).then(({ user }) => user);
+  if (vaultAddress) {
+    return request<UserBalancesQueryData, { accountAddress: string; vaultAddress: string }>(url, query, {
+      accountAddress: accountAddress.toLowerCase(),
+      vaultAddress: vaultAddress.toLowerCase(),
+    }).then(({ user }) => user);
+  } else {
+    return request<UserBalancesQueryData, { accountAddress: string }>(url, query, {
+      accountAddress: accountAddress.toLowerCase(),
+    }).then(({ user }) => user);
+  }
 }
 function storeResult(key: string, result: any) {
   const cacheTtl =
@@ -148,12 +169,13 @@ export async function getAllUserBalances(
   raw?: true,
 ) {
   const { chainId } = await getChainByProvider(jsonProvider);
-  const { publishedUrl, url, version } = getGraphUrls(chainId, dex, true);
+  const { publishedUrl, url } = getGraphUrls(chainId, dex, true);
+  const isVelodrome = isVelodromeDex(chainId, dex);
 
   let shares: UserBalanceInVault[];
   const key = `${chainId + accountAddress}-balances`;
   if (!Object.prototype.hasOwnProperty.call(promises, key)) {
-    const strUserBalancesQuery = userBalancesQuery(version);
+    const strUserBalancesQuery = getUserBalancesQuery(chainId, dex);
     try {
       if (publishedUrl) {
         const result = await sendUserBalancesQueryRequest(publishedUrl, accountAddress, strUserBalancesQuery);
@@ -179,11 +201,22 @@ export async function getAllUserBalances(
   if (balances) {
     const userBalances = (balances as UserBalances).vaultShares;
     shares = userBalances.map((balance) => {
-      return { vaultAddress: balance.vault.id, shares: balance.vaultShareBalance };
+      const vShares = isVelodrome
+        ? (Number(balance.vaultShareBalance) + Number(balance.stakedVaultShareBalance)).toString()
+        : balance.vaultShareBalance;
+      return isVelodrome
+        ? { vaultAddress: balance.vault.id, shares: vShares, stakedShares: balance.stakedVaultShareBalance }
+        : { vaultAddress: balance.vault.id, shares: balance.vaultShareBalance };
     });
     return raw
       ? shares.map((s) => {
-          return { vaultAddress: s.vaultAddress, shares: parseBigInt(s.shares, ichiVaultDecimals) };
+          return isVelodrome
+            ? {
+                vaultAddress: s.vaultAddress,
+                shares: parseBigInt(s.shares, ichiVaultDecimals),
+                stakedShares: parseBigInt(s.stakedShares || '0', ichiVaultDecimals),
+              }
+            : { vaultAddress: s.vaultAddress, shares: parseBigInt(s.shares, ichiVaultDecimals) };
         })
       : shares;
   } else {
@@ -217,7 +250,13 @@ export async function getUserAmounts(
 
   const totalAmountsBN = await _getTotalAmounts(vault, jsonProvider, chainId, true);
   const totalSupplyBN = await _getTotalSupply(vaultAddress, jsonProvider, true);
-  const userBalanceBN = await _getUserBalance(accountAddress, vaultAddress, jsonProvider, true);
+  const userBalanceBN = await _getUserBalance(
+    accountAddress,
+    vaultAddress,
+    jsonProvider,
+    vault.farmingContract || null,
+    true,
+  );
   if (!totalSupplyBN.isZero()) {
     const userAmountsBN = {
       amount0: userBalanceBN.mul(totalAmountsBN[0]).div(totalSupplyBN),
@@ -275,11 +314,11 @@ export async function getAllUserAmounts(
   raw?: true,
 ) {
   const { chainId } = await getChainByProvider(jsonProvider);
-  const { publishedUrl, url, version } = getGraphUrls(chainId, dex, true);
+  const { publishedUrl, url } = getGraphUrls(chainId, dex, true);
 
   const key = `${chainId + accountAddress}-all-user-amounts`;
   if (!Object.prototype.hasOwnProperty.call(promises, key)) {
-    const strUserBalancesQuery = userBalancesQuery(version);
+    const strUserBalancesQuery = getUserBalancesQuery(chainId, dex);
     try {
       if (publishedUrl) {
         const result = await sendUserBalancesQueryRequest(publishedUrl, accountAddress, strUserBalancesQuery);

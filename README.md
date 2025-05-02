@@ -38,6 +38,11 @@ This sdk contains collection of functions to interact with IchiVault's smart con
         * [`getVaultPositions()`](#26-getVaultPositions)
         * [`getSupportedDexes()`](#27-getSupportedDexes)
         * [`getChainsForDex()`](#28-getChainsForDex)
+        * [`getRewardInfo()`](#29-getRewardInfo)
+        * [`getAllRewardInfo()`](#30-getAllRewardInfo)
+        * [`getAllUserRewards()`](#31-getAllUserRewards)
+        * [`getUserRewards()`](#32-getUserRewards)
+        * [`claimRewards()`](#33-claimRewards)
 
 ## Installation
 Install with
@@ -1036,6 +1041,116 @@ const dex = SupportedChainId.UniswapV3;
 const chains: SupportedChainId[] = getChainsForDex(dex);
 ```
 
+#### 29. `getRewardInfo()`
+
+| param | type |  default | required
+| -------- | -------- | -------- | --------
+| chainId   | SupportedChainId | - | true |
+| dex   | SupportedDex | - | true |
+| vaultAddress   | string | - | true |
+
+<br/>
+This function returns information about reward rates and farming contract for the specified vault. This functions is specific for the Velodrome vaults.
+
+```typescript
+import { getRewardInfo, SupportedChainId, SupportedDex } from '@ichidao/ichi-vaults-sdk';
+
+const vaultAddress = "0x3e4...45a";
+const chainId = SupportedChainId.Ink;
+const dex = SupportedDex.Velodrome;
+
+const rewardInfo: RewardInfo = getRewardInfo(chainId, dex, vaultAddress);
+```
+
+#### 30. `getAllRewardInfo()`
+
+| param | type |  default | required
+| -------- | -------- | -------- | --------
+| chainId   | SupportedChainId | - | true |
+| dex   | SupportedDex | - | true |
+
+<br/>
+This function returns information about reward rates and farming contract for all vaults on the dex. This functions is specific for the Velodrome vaults.
+
+```typescript
+import { getAllRewardInfo, SupportedChainId, SupportedDex } from '@ichidao/ichi-vaults-sdk';
+
+const chainId = SupportedChainId.Ink;
+const dex = SupportedDex.Velodrome;
+
+const chains: RewardInfo[] = getAllRewardInfo(chainId, dex);
+```
+
+#### 31. `getAllUserRewards()`
+
+| param | type |  default | required
+| -------- | -------- | -------- | --------
+| accountAddress   | string | - | true |
+| jsonProvider   | JsonRpcProvider | - | true |
+| dex   | SupportedDex | - | true |
+| raw   | true | undefined | - | false |
+
+<br/>
+This function returns user rewards for all vaults on the dex. This functions is specific for the Velodrome vaults.
+
+```typescript
+import { getAllUserRewards, SupportedDex } from '@ichidao/ichi-vaults-sdk';
+
+const account = "0x123...890";
+const provider = new Web3Provider(YOUR_WEB3_PROVIDER);
+const dex = SupportedDex.Velodrome;
+
+const rewards: UserRewards[] = await getAllUserRewards(account, provider, dex);
+```
+
+#### 32. `getUserRewards()`
+
+| param | type |  default | required
+| -------- | -------- | -------- | --------
+| accountAddress   | string | - | true |
+| vaultAddress   | string | - | true |
+| jsonProvider   | JsonRpcProvider | - | true |
+| dex   | SupportedDex | - | true |
+| raw   | true | undefined | - | false |
+
+<br/>
+This function returns claimable reward amount for the specified vault and user account. This functions is specific for the Velodrome vaults.
+
+```typescript
+import { getUserRewards, SupportedDex } from '@ichidao/ichi-vaults-sdk';
+
+const account = "0x123...890";
+const vaultAddress = "0x3e4...45a";
+const provider = new Web3Provider(YOUR_WEB3_PROVIDER);
+const dex = SupportedDex.Velodrome;
+
+const rewards: string = getUserRewards(account, vaultAddress, provider, dex);
+const rewardsBN: BigNumber = getUserRewards(account, vaultAddress, provider, dex, true);
+```
+
+#### 33. `claimRewards()`
+
+| param | type |  default | required
+| -------- | -------- | -------- | --------
+| accountAddress   | string | - | true |
+| vaultAddress   | string | - | true |
+| jsonProvider   | JsonRpcProvider | - | true |
+| dex   | SupportedDex | - | true |
+
+<br/>
+This function transfers rewards from the reward contract to the specified account. This functions is specific for the Velodrome vaults.
+
+```typescript
+import { claimRewards, SupportedDex } from '@ichidao/ichi-vaults-sdk';
+
+const account = "0x123...890";
+const vaultAddress = "0x3e4...45a";
+const provider = new Web3Provider(YOUR_WEB3_PROVIDER);
+const dex = SupportedDex.Velodrome;
+
+await claimRewards(account, vaultAddress, provider, dex);
+```
+
 ## Types
 
 ### SupportedChainId
@@ -1150,6 +1265,9 @@ interface IchiVault {
   allowTokenB: boolean;
   holdersCount?: string // number of vault LP holders
   fee?: string
+  farmingContract?: string; // used for Velodrome vaults only
+  rewardToken?: string; // used for Velodrome vaults only
+  rewardTokenDecimals?: number; // used for Velodrome vaults only
 }
 ```
 
@@ -1251,6 +1369,7 @@ type UserAmountsInVaultBN = {
 type UserBalanceInVault = {
   vaultAddress: string;
   shares: string;
+  stakedShares?: string;
 };
 ```
 
@@ -1260,6 +1379,7 @@ type UserBalanceInVault = {
 type UserBalanceInVaultBN = {
   vaultAddress: string;
   shares: BigNumber;
+  stakedShares?: BigNumber;
 };
 ```
 
@@ -1281,4 +1401,45 @@ type VaultPositionsInfo = {
     positionTvl: number; // in deposit tokens
   } [],
 }
+```
+
+### RewardInfo
+used for Velodrome vaults only
+
+```typescript
+
+interface RewardInfo {
+  id: string;
+  rewardRatePerToken_1d: string;
+  rewardRatePerToken_3d: string;
+  farmingContract: {
+    id: string; 
+    rewardToken: string;
+    rewardTokenDecimals: number;
+  }
+}
+```
+
+### UserRewards
+
+```typescript
+
+type UserRewards = {
+  vaultAddress: string;
+  rewardToken: string;
+  rewardTokenDecimals: number;
+  rewardAmount: string;
+};
+```
+
+### UserRewardsBN
+
+```typescript
+
+type UserRewardsBN = {
+  vaultAddress: string;
+  rewardToken: string;
+  rewardTokenDecimals: number;
+  rewardAmount: BigNumber;
+};
 ```
