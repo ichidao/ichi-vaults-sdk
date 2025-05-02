@@ -126,6 +126,18 @@ export interface IchiVault {
   allowTokenB: boolean;
   holdersCount?: string;
   fee?: string;
+  farmingContract?: string; // used for Velodrome vaults only
+  rewardToken?: string; // used for Velodrome vaults only
+  rewardTokenDecimals?: number; // used for Velodrome vaults only
+}
+
+export interface VaultWithRewards {
+  id: string;
+  farmingContract: {
+    id: string;
+    rewardToken: string;
+    rewardTokenDecimals?: number;
+  };
 }
 
 export type VaultShares = {
@@ -133,8 +145,10 @@ export type VaultShares = {
     id: string;
     tokenA: string;
     tokenB: string;
+    farmingContract?: string;
   };
   vaultShareBalance: string;
+  stakedVaultShareBalance?: string;
 };
 export type UserBalances = {
   vaultShares: VaultShares[];
@@ -208,10 +222,12 @@ export type PriceChange = {
 export type UserBalanceInVault = {
   vaultAddress: string;
   shares: string;
+  stakedShares?: string;
 };
 export type UserBalanceInVaultBN = {
   vaultAddress: string;
   shares: BigNumber;
+  stakedShares?: BigNumber;
 };
 
 export type VaultMetrics = {
@@ -220,4 +236,29 @@ export type VaultMetrics = {
   lpApr: number | null; // percent
   avgDtr: number;
   feeApr: number;
+};
+
+// used for Velodrome vaults only
+export interface RewardInfo {
+  id: string;
+  rewardRatePerToken_1d: string;
+  rewardRatePerToken_3d: string;
+  farmingContract: {
+    id: string;
+    rewardToken: string;
+    rewardTokenDecimals: number;
+  };
+}
+
+export type UserRewards = {
+  vaultAddress: string;
+  rewardToken: string;
+  rewardTokenDecimals: number;
+  rewardAmount: string;
+};
+export type UserRewardsBN = {
+  vaultAddress: string;
+  rewardToken: string;
+  rewardTokenDecimals: number;
+  rewardAmount: BigNumber;
 };

@@ -39,6 +39,11 @@ import {
   getSupportedDexes,
   getChainsForDex,
   getFeeAprs,
+  getRewardInfo,
+  getAllRewardInfo,
+  getUserRewards,
+  claimRewards,
+  getAllUserRewards,
 } from '../index';
 import formatBigInt from '../utils/formatBigInt';
 import parseBigInt from '../utils/parseBigInt';
@@ -340,5 +345,41 @@ describe('Dexes', () => {
   it('getChainsForDex', async () => {
     const chains = getChainsForDex(vault.dex);
     expect(chains.length).toBeGreaterThan(0);
+  });
+});
+
+describe('Rewards', () => {
+  it('getRewardInfo', async () => {
+    const rewardInfo = await getRewardInfo(vault.chainId, vault.dex, vault.address);
+
+    expect(rewardInfo.id).toBeDefined();
+  });
+  it('getAllRewardInfo', async () => {
+    const allRewardInfo = await getAllRewardInfo(vault.chainId, vault.dex);
+
+    expect(allRewardInfo.length).toBeGreaterThan(0);
+  });
+  it('getUserRewards', async () => {
+    const userRewards = await getUserRewards(account, vault.address, provider, vault.dex);
+
+    expect(Number(userRewards)).toBeGreaterThan(0);
+  });
+  it.skip('claimRewards', async () => {
+    const tx = await claimRewards(account, vault.address, provider, vault.dex);
+    const a = await tx.wait();
+
+    a.logs.map((e: any) => {
+      try {
+        console.log('iface.parseLog(e):', iface.parseLog(e));
+        return iface.parseLog(e);
+      } catch (error) {
+        return null;
+      }
+    });
+  });
+  it('getAllUserRewards', async () => {
+    const rewards = await getAllUserRewards(account, provider, vault.dex);
+
+    expect(rewards.length).toBeGreaterThan(0);
   });
 });
