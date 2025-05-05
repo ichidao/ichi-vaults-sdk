@@ -127,16 +127,21 @@ export interface IchiVault {
   holdersCount?: string;
   fee?: string;
   farmingContract?: string; // used for Velodrome vaults only
-  rewardToken?: string; // used for Velodrome vaults only
-  rewardTokenDecimals?: number; // used for Velodrome vaults only
+  rewardTokens?: {
+    // used for Velodrome vaults only
+    token: string;
+    tokenDecimals: number;
+  }[];
 }
 
 export interface VaultWithRewards {
   id: string;
   farmingContract: {
     id: string;
-    rewardToken: string;
-    rewardTokenDecimals?: number;
+    rewardTokens: {
+      token: string;
+      tokenDecimals: number;
+    }[];
   };
 }
 
@@ -239,26 +244,38 @@ export type VaultMetrics = {
 };
 
 // used for Velodrome vaults only
-export interface RewardInfo {
-  id: string;
+export type RewardToken = {
   rewardRatePerToken_1d: string;
   rewardRatePerToken_3d: string;
+  token: string;
+  tokenDecimals: number;
+};
+
+export type UserRewardsByToken = {
+  token: string;
+  tokenDecimals: number;
+  rewardAmount: string;
+};
+
+export type UserRewardsByTokenBN = {
+  token: string;
+  tokenDecimals: number;
+  rewardAmount: BigNumber;
+};
+
+export type RewardInfo = {
+  id: string;
   farmingContract: {
     id: string;
-    rewardToken: string;
-    rewardTokenDecimals: number;
+    rewardTokens: RewardToken[];
   };
-}
+};
 
 export type UserRewards = {
   vaultAddress: string;
-  rewardToken: string;
-  rewardTokenDecimals: number;
-  rewardAmount: string;
+  rewardTokens: UserRewardsByToken[];
 };
 export type UserRewardsBN = {
   vaultAddress: string;
-  rewardToken: string;
-  rewardTokenDecimals: number;
-  rewardAmount: BigNumber;
+  rewardTokens: UserRewardsByTokenBN[];
 };

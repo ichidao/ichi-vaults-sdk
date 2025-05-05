@@ -92,8 +92,10 @@ export const vaultQueryVelodrome = gql`
       holdersCount
       farmingContract {
         id
-        rewardToken
-        rewardTokenDecimals
+        rewardTokens {
+          token
+          tokenDecimals
+        }
       }
     }
   }
@@ -443,11 +445,14 @@ export const rewardInfoQuery = gql`
   query ($vaultAddress: String!) {
     ichiVault(id: $vaultAddress) {
       id
-      rewardRatePerToken_1d
-      rewardRatePerToken_3d
       farmingContract {
         id
-        rewardToken
+        rewardTokens {
+          rewardRatePerToken_1d
+          rewardRatePerToken_3d
+          token
+          tokenDecimals
+        }
       }
     }
   }
@@ -457,12 +462,14 @@ export const allRewardInfoQuery = gql`
   query {
     ichiVaults {
       id
-      rewardRatePerToken_1d
-      rewardRatePerToken_3d
       farmingContract {
         id
-        rewardToken
-        rewardTokenDecimals
+        rewardTokens {
+          rewardRatePerToken_1d
+          rewardRatePerToken_3d
+          token
+          tokenDecimals
+        }
       }
     }
   }
@@ -474,8 +481,10 @@ export const allRewardVaults = gql`
       id
       farmingContract {
         id
-        rewardToken
-        rewardTokenDecimals
+        rewardTokens {
+          token
+          tokenDecimals
+        }
       }
     }
   }

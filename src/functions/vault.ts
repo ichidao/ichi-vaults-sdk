@@ -26,8 +26,7 @@ function normalizeVaultData(vaultData: any): IchiVault {
       fee: vaultData.fee,
       holdersCount: vaultData.holdersCount,
       farmingContract: vaultData.farmingContract?.id,
-      rewardToken: vaultData.farmingContract?.rewardToken,
-      rewardTokenDecimals: vaultData.farmingContract?.rewardTokenDecimals,
+      rewardTokens: vaultData.farmingContract.rewardTokens,
     };
   }
 
