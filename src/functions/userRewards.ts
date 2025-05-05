@@ -2,9 +2,15 @@
 /* eslint-disable import/no-cycle */
 
 import { JsonRpcProvider } from '@ethersproject/providers';
-import { BigNumber } from 'ethers';
 import { getAllRewardVaults, validateVaultData } from './vault';
-import { ichiVaultDecimals, SupportedDex, UserRewards, UserRewardsBN, VaultWithRewards } from '../types';
+import {
+  SupportedDex,
+  UserRewards,
+  UserRewardsBN,
+  UserRewardsByToken,
+  UserRewardsByTokenBN,
+  VaultWithRewards,
+} from '../types';
 import { isVelodromeDex } from '../utils/isVelodrome';
 import { getMultiFeeDistributorContract } from '../contracts';
 import formatBigInt from '../utils/formatBigInt';
@@ -15,7 +21,7 @@ export async function getUserRewards(
   vaultAddress: string,
   jsonProvider: JsonRpcProvider,
   dex: SupportedDex,
-): Promise<string>;
+): Promise<UserRewardsByToken[]>;
 
 export async function getUserRewards(
   accountAddress: string,
@@ -23,7 +29,7 @@ export async function getUserRewards(
   jsonProvider: JsonRpcProvider,
   dex: SupportedDex,
   raw: true,
-): Promise<BigNumber>;
+): Promise<UserRewardsByTokenBN[]>;
 
 export async function getUserRewards(
   accountAddress: string,
@@ -40,14 +46,35 @@ export async function getUserRewards(
 
   // eslint-disable-next-line no-return-await
   const { vault } = await validateVaultData(vaultAddress, jsonProvider, dex);
-  if (!vault.farmingContract) {
-    return raw ? BigNumber.from(0) : '0';
+  const { rewardTokens } = vault;
+  if (!vault.farmingContract || !rewardTokens || rewardTokens.length <= 0) {
+    return [];
   }
 
-  const mdfContract = getMultiFeeDistributorContract(vault.farmingContract, jsonProvider);
-  const rewards = await mdfContract.claimableRewards(accountAddress); // [[rewardTokens], [amounts]]
+  const mfdContract = getMultiFeeDistributorContract(vault.farmingContract, jsonProvider);
+  const result = await mfdContract.claimableRewards(accountAddress); // [[rewardTokens], [amounts]]
+  if (result[0].length <= 0 || result[1].length <= 0) {
+    return [];
+  }
+  const tokens = result[0];
+  const amounts = result[1];
 
-  return raw ? rewards[1][0] : formatBigInt(rewards[1][0], ichiVaultDecimals);
+  const rewards = tokens.map((token, ind) => {
+    const decimals = rewardTokens?.find((rt) => rt.token.toLowerCase() === token.toLowerCase())?.tokenDecimals;
+    return raw
+      ? {
+          token,
+          tokenDecimals: decimals,
+          rewardAmount: amounts[ind],
+        }
+      : {
+          token,
+          tokenDecimals: decimals,
+          rewardAmount: formatBigInt(amounts[ind], decimals),
+        };
+  });
+
+  return rewards;
 }
 
 export async function getAllUserRewards(
@@ -93,22 +120,34 @@ export async function getAllUserRewards(
   // Process results
   const processedResults = vaults.map((vault: VaultWithRewards, index: number) => {
     const rewards = decodeFarmingRewardsResult(results[index], vault.farmingContract.id);
-    const decimals = vault.farmingContract.rewardTokenDecimals;
-    const token = rewards[0][0];
-    const amount = rewards[1][0];
+    if (rewards[0].length <= 0 || rewards[1].length <= 0) {
+      return [];
+    }
+    const { rewardTokens } = vault.farmingContract;
+    if (!rewardTokens || rewardTokens.length <= 0) {
+      return [];
+    }
+    const tokens = rewards[0];
+    const amounts = rewards[1];
     if (raw) {
       return {
         vaultAddress: vault.id,
-        rewardToken: token,
-        rewardTokenDecimals: decimals,
-        rewardAmount: amount,
+        rewardTokens: tokens.map((token, ind) => {
+          const decimals = vault.farmingContract.rewardTokens.find(
+            (rt) => rt.token.toLowerCase() === token.toLowerCase(),
+          )?.tokenDecimals;
+          return { token, tokenDecimals: decimals, rewardAmount: amounts[ind] };
+        }),
       };
     } else {
       return {
         vaultAddress: vault.id,
-        rewardToken: token,
-        rewardTokenDecimals: decimals,
-        rewardAmount: formatBigInt(amount, decimals),
+        rewardTokens: tokens.map((token, ind) => {
+          const decimals = vault.farmingContract.rewardTokens.find(
+            (rt) => rt.token.toLowerCase() === token.toLowerCase(),
+          )?.tokenDecimals;
+          return { token, tokenDecimals: decimals, rewardAmount: formatBigInt(amounts[ind], decimals) };
+        }),
       };
     }
   });

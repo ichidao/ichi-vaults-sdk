@@ -340,9 +340,9 @@ export const graphUrls: Record<SupportedChainId, dexGraph> = {
       supportsCollectFees: true,
     },
     [SupportedDex.Velodrome]: {
-      url: 'https://api.studio.thegraph.com/query/88584/ink-v-2-1-velodrome/version/latest',
+      url: 'https://api.studio.thegraph.com/query/88584/ink-v-2-2-velodrome/version/latest',
       publishedUrl:
-        'https://gateway-arbitrum.network.thegraph.com/api/[api-key]/subgraphs/id/4Y7hPmp9z9z1KZUKiFX4zLYBTxidYkTjr4Lc1NHqNust',
+        'https://gateway-arbitrum.network.thegraph.com/api/[api-key]/subgraphs/id/6jNMNiAgrGy7T66rcQ5hRNDxkU5V5HfyFsmpmbUWEV7g',
       supportsCollectFees: true,
       version: 2,
     },

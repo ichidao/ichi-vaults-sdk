@@ -362,7 +362,7 @@ describe('Rewards', () => {
   it.skip('getUserRewards', async () => {
     const userRewards = await getUserRewards(account, vault.address, provider, vault.dex);
 
-    expect(Number(userRewards)).toBeGreaterThan(0);
+    expect(Number(userRewards[0].rewardAmount)).toBeGreaterThan(0);
   });
   it.skip('claimRewards', async () => {
     const tx = await claimRewards(account, vault.address, provider, vault.dex);

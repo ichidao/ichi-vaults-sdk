@@ -34,20 +34,21 @@ export async function claimRewards(
   // Get the vault data to find the farming contract
   const { vault } = await validateVaultData(vaultAddress, jsonProvider, dex);
 
-  if (!vault.farmingContract || !vault.rewardToken) {
-    throw new Error(`Vault ${vaultAddress} does not have an associated farming contract`);
+  if (!vault.farmingContract || !vault.rewardTokens || vault.rewardTokens.length <= 0) {
+    throw new Error(`Vault ${vaultAddress} does not have an associated farming contract or reward tokens`);
   }
 
   const signer = jsonProvider.getSigner(accountAddress);
   const farmingContract = getMultiFeeDistributorContract(vault.farmingContract, signer);
+  const rewardTokenAddresses = vault.rewardTokens.map((t) => t.token);
 
   // Estimate gas for the transaction
   const gasLimit =
     overrides?.gasLimit ??
-    calculateGasMargin(await farmingContract.estimateGas.getReward(accountAddress, [vault.rewardToken]));
+    calculateGasMargin(await farmingContract.estimateGas.getReward(accountAddress, rewardTokenAddresses));
 
   // Execute the claim transaction
-  const tx = await farmingContract.getReward(accountAddress, [vault.rewardToken], { ...overrides, gasLimit });
+  const tx = await farmingContract.getReward(accountAddress, rewardTokenAddresses, { ...overrides, gasLimit });
 
   return tx;
 }

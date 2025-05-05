@@ -1114,7 +1114,7 @@ const rewards: UserRewards[] = await getAllUserRewards(account, provider, dex);
 | raw   | true | undefined | - | false |
 
 <br/>
-This function returns claimable reward amount for the specified vault and user account. This functions is specific for the Velodrome vaults.
+This function returns claimable reward amounts for the specified vault and user account. This functions is specific for the Velodrome vaults.
 
 ```typescript
 import { getUserRewards, SupportedDex } from '@ichidao/ichi-vaults-sdk';
@@ -1124,8 +1124,8 @@ const vaultAddress = "0x3e4...45a";
 const provider = new Web3Provider(YOUR_WEB3_PROVIDER);
 const dex = SupportedDex.Velodrome;
 
-const rewards: string = getUserRewards(account, vaultAddress, provider, dex);
-const rewardsBN: BigNumber = getUserRewards(account, vaultAddress, provider, dex, true);
+const rewards: UserRewardByToken[] = getUserRewards(account, vaultAddress, provider, dex);
+const rewardsBN: UserRewardByTokenBN[] = getUserRewards(account, vaultAddress, provider, dex, true);
 ```
 
 #### 33. `claimRewards()`
@@ -1266,8 +1266,11 @@ interface IchiVault {
   holdersCount?: string // number of vault LP holders
   fee?: string
   farmingContract?: string; // used for Velodrome vaults only
-  rewardToken?: string; // used for Velodrome vaults only
-  rewardTokenDecimals?: number; // used for Velodrome vaults only
+  rewardTokens?: {
+    // used for Velodrome vaults only
+    token: string;
+    tokenDecimals: number;
+  }[];
 }
 ```
 
@@ -1403,21 +1406,52 @@ type VaultPositionsInfo = {
 }
 ```
 
-### RewardInfo
+### RewardToken
 used for Velodrome vaults only
 
 ```typescript
 
-interface RewardInfo {
-  id: string;
+type RewardToken = {
   rewardRatePerToken_1d: string;
   rewardRatePerToken_3d: string;
+  token: string;
+  tokenDecimals: number;
+};
+```
+
+### UserRewardsByToken
+
+```typescript
+
+type UserRewardsByToken = {
+  token: string;
+  tokenDecimals: number;
+  rewardAmount: string;
+};
+```
+
+### UserRewardsByTokenBN
+
+```typescript
+
+type UserRewardsByTokenBN = {
+  token: string;
+  tokenDecimals: number;
+  rewardAmount: BigNumber;
+};
+```
+
+### RewardInfo
+
+```typescript
+
+type RewardInfo = {
+  id: string;
   farmingContract: {
-    id: string; 
-    rewardToken: string;
-    rewardTokenDecimals: number;
-  }
-}
+    id: string;
+    rewardTokens: RewardToken[];
+  };
+};
 ```
 
 ### UserRewards
@@ -1426,9 +1460,7 @@ interface RewardInfo {
 
 type UserRewards = {
   vaultAddress: string;
-  rewardToken: string;
-  rewardTokenDecimals: number;
-  rewardAmount: string;
+  rewardTokens: UserRewardsByToken[];
 };
 ```
 
@@ -1438,8 +1470,6 @@ type UserRewards = {
 
 type UserRewardsBN = {
   vaultAddress: string;
-  rewardToken: string;
-  rewardTokenDecimals: number;
-  rewardAmount: BigNumber;
+  rewardTokens: UserRewardsByTokenBN[];
 };
 ```
