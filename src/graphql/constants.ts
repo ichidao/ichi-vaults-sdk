@@ -229,6 +229,12 @@ export const graphUrls: Record<SupportedChainId, dexGraph> = {
         'https://gateway-arbitrum.network.thegraph.com/api/[api-key]/subgraphs/id/CUDHBLjeeqpprHGZeesTi9kxtjsZTQnJrvuT4Sm8nyx5',
       supportsCollectFees: true,
     },
+    [SupportedDex.ThenaV3Rewards]: {
+      url: 'https://api.studio.thegraph.com/query/88584/bsc-v-2-thena-rw/version/latest',
+      publishedUrl:
+        'https://gateway-arbitrum.network.thegraph.com/api/[api-key]/subgraphs/id/hsjGcogPgNcYYmdXnZNedrbotTsFxSSn8Sso9FUWc25',
+      supportsCollectFees: true,
+    },
   },
   [SupportedChainId.celo]: {
     [SupportedDex.Ubeswap]: {

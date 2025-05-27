@@ -89,6 +89,7 @@ export enum SupportedDex {
   SwapX = 'SwapX',
   Thena = 'Thena',
   ThenaV3Fees = 'ThenaV3Fees',
+  ThenaV3Rewards = 'ThenaV3Rewards',
   Thirdfy = 'Thirdfy',
   Thruster = 'Thruster',
   Trebleswap = 'Trebleswap',

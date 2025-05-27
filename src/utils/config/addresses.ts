@@ -345,6 +345,16 @@ export const addressConfig: Record<SupportedChainId, Config> = {
       isAlgebra: true,
       ammVersion: AMM_VERSIONS.ALGEBRA_INTEGRAL,
     },
+    [SupportedDex.ThenaV3Rewards]: {
+      factoryAddress: '0x076e46A317DfAE50eEF30dca94Ff41A63118948D',
+      depositGuard: {
+        address: '0x2b52c416F723F16e883E53f3f16435B51300280a',
+        version: 2,
+      },
+      vaultDeployerAddress: '0x05cC3CA6E768a68A7f86b09e3ceE754437bd5f12',
+      isAlgebra: true,
+      ammVersion: AMM_VERSIONS.ALGEBRA_INTEGRAL,
+    },
   },
   [SupportedChainId.celo]: {
     [SupportedDex.Ubeswap]: {
