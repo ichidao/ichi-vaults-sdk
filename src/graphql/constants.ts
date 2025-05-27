@@ -234,6 +234,7 @@ export const graphUrls: Record<SupportedChainId, dexGraph> = {
       publishedUrl:
         'https://gateway-arbitrum.network.thegraph.com/api/[api-key]/subgraphs/id/hsjGcogPgNcYYmdXnZNedrbotTsFxSSn8Sso9FUWc25',
       supportsCollectFees: true,
+      version: 2,
     },
   },
   [SupportedChainId.celo]: {
