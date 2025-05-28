@@ -535,9 +535,10 @@ export const graphUrls: Record<SupportedChainId, dexGraph> = {
   },
   [SupportedChainId.zircuit]: {
     [SupportedDex.Ocelex]: {
-      url: 'none',
-      publishedUrl: 'none',
-      supportsCollectFees: false,
+      url: 'https://api.goldsky.com/api/public/project_clynrq1h8gam301xx6vgngo9p/subgraphs/ichi-org/zircuit-v1-ocelex-0.0.1/gn',
+      publishedUrl:
+        'https://api.goldsky.com/api/public/project_clynrq1h8gam301xx6vgngo9p/subgraphs/ichi-org/zircuit-v1-ocelex-0.0.1/gn',
+      supportsCollectFees: true,
     },
   },
   [SupportedChainId.zksync_era]: {
