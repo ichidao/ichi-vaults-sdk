@@ -342,8 +342,9 @@ export const graphUrls: Record<SupportedChainId, dexGraph> = {
   },
   [SupportedChainId.ink]: {
     [SupportedDex.Reservoir]: {
-      url: 'https://api.goldsky.com/api/public/project_clynrq1h8gam301xx6vgngo9p/subgraphs/thedeep/ink-v1/gn',
-      publishedUrl: 'https://api.goldsky.com/api/public/project_clynrq1h8gam301xx6vgngo9p/subgraphs/thedeep/ink-v1/gn',
+      url: 'https://api.studio.thegraph.com/query/88584/ink-v-1-reservoir/version/latest',
+      publishedUrl:
+        'https://gateway-arbitrum.network.thegraph.com/api/[api-key]/subgraphs/id/HpknPC4bxoVsiNp1gXq63w4tcjFGN9ZokWSWdc3aKSRz',
       supportsCollectFees: true,
     },
     [SupportedDex.Velodrome]: {
