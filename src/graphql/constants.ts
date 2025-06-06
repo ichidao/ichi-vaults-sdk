@@ -125,6 +125,13 @@ export const graphUrls: Record<SupportedChainId, dexGraph> = {
         'https://gateway-arbitrum.network.thegraph.com/api/[api-key]/subgraphs/id/AWny6b9W1v63MPFqeCSFQJt5dMP7xX1nzSCJd2zh8Dgd',
       supportsCollectFees: true,
     },
+    [SupportedDex.Thirdfy]: {
+      url: 'https://api.studio.thegraph.com/query/88584/base-v-2-thirdfy/version/latest',
+      publishedUrl:
+        'https://gateway-arbitrum.network.thegraph.com/api/[api-key]/subgraphs/id/5hB9frAcP8qbdMof5qmhE7tXu8hdaT1BeA8HBtvKb3KG',
+      supportsCollectFees: true,
+      version: 2,
+    },
     [SupportedDex.Trebleswap]: {
       url: 'https://api.studio.thegraph.com/query/88584/base-v1-trebleswap/version/latest',
       publishedUrl:
