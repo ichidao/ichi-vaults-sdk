@@ -222,6 +222,16 @@ export const addressConfig: Record<SupportedChainId, Config> = {
     },
   },
   [SupportedChainId.base_sepolia]: {
+    [SupportedDex.Hydrex]: {
+      factoryAddress: '0x4431CFdA42fB518A87f5928774DeA5389c43363a',
+      depositGuard: {
+        address: '0x92d46AC86f636202d24E178505Be1D7a99F8f182',
+        version: 2,
+      },
+      vaultDeployerAddress: '0xAe781EB26fcA1486032e8A37FAae0C610979C7a1',
+      isAlgebra: true,
+      ammVersion: AMM_VERSIONS.ALGEBRA_INTEGRAL,
+    },
     [SupportedDex.Thirdfy]: {
       factoryAddress: '0x50893Df23638dB2607A3d398EaC6c65CDf847bB7',
       depositGuard: {
@@ -504,6 +514,17 @@ export const addressConfig: Record<SupportedChainId, Config> = {
       isAlgebra: false,
     },
   },
+  [SupportedChainId.hemi]: {
+    [SupportedDex.UniswapV3]: {
+      factoryAddress: '0x8cCd02E769e6A668a447Bd15e134C31bEccd8182',
+      depositGuard: {
+        address: '0x38e6706860dE0b96CD12Eff815DEDF01E5fe0722',
+        version: 2,
+      },
+      vaultDeployerAddress: '0xAFE7041797E8916616952a719971575f352e2b0d',
+      isAlgebra: false,
+    },
+  },
   [SupportedChainId.hyperevm]: {
     [SupportedDex.HyperSwap]: {
       factoryAddress: '0x8cCd02E769e6A668a447Bd15e134C31bEccd8182',
@@ -658,6 +679,17 @@ export const addressConfig: Record<SupportedChainId, Config> = {
       ammVersion: AMM_VERSIONS.ALGEBRA_INTEGRAL,
     },
   },
+  [SupportedChainId.nibiru]: {
+    [SupportedDex.UniswapV3]: {
+      factoryAddress: '0x63703A4DdFA51B6CffC1Bb40cc73912dF62535FA',
+      depositGuard: {
+        address: '0x85a4dd4ed356A7976a8302b1b690202d58583c55',
+        version: 2,
+      },
+      vaultDeployerAddress: '0x88653A91538B17E58c9268573c2345A48B0493C7',
+      isAlgebra: false,
+    },
+  },
   [SupportedChainId.polygon_zkevm]: {
     [SupportedDex.Pancakeswap]: {
       factoryAddress: '0xe8532Db60408f2d47693dA5b9093D71580B8C23F',
@@ -777,6 +809,17 @@ export const addressConfig: Record<SupportedChainId, Config> = {
       ammVersion: AMM_VERSIONS.ALGEBRA_INTEGRAL,
     },
   },
+  [SupportedChainId.unichain]: {
+    [SupportedDex.UniswapV3]: {
+      factoryAddress: '0x8cCd02E769e6A668a447Bd15e134C31bEccd8182',
+      depositGuard: {
+        address: '0xEb6EA277d7b0a876444dab30eEF0f154F406CfB4',
+        version: 2,
+      },
+      vaultDeployerAddress: '0xf0d92E5F6Ccd4E095C4097c1635c7A75D7226114',
+      isAlgebra: false,
+    },
+  },
   [SupportedChainId.unreal]: {
     [SupportedDex.Pearl]: {
       factoryAddress: '0x1294EC9615C91077ebdC57CfC7DDB65140750992',
@@ -855,12 +898,15 @@ export const MULTICALL_ADDRESSES: Partial<Record<SupportedChainId, string>> = {
   [SupportedChainId.fantom]: '0xd9e7c0932a7D3e40Db3Fe78d95A3ED375a37Ab1a',
   [SupportedChainId.hedera_testnet]: '0x0B10E483AAC4340256772754d23131B6E0Dc31EA',
   [SupportedChainId.hedera]: '0x0B10E483AAC4340256772754d23131B6E0Dc31EA',
+  [SupportedChainId.hemi]: '0x352A86168e6988A1aDF9A15Cb00017AAd3B67155',
   [SupportedChainId.hyperevm]: '0xE8571fd6629DA6E488f7BbD83e729c20Fa9B97B4',
   [SupportedChainId.ink]: '0xcfEA11557Bc9cB71bc6916e09fC8493D668b8d53',
   [SupportedChainId.ink_sepolia]: '0x27404A54D594Aa6307C3f9Be102646363d6279a1',
   [SupportedChainId.mantle]: '0xf5bb4e61ccAC9080fb520e5F69224eE85a4D588F',
   [SupportedChainId.mode]: '0x481BE66De423B6a0Df368b526713bA632EF23ADd',
+  [SupportedChainId.nibiru]: '0x5d6b0f5335ec95cD2aB7E52f2A0750dd86502435',
   [SupportedChainId.sonic]: '0x9B500c0a544B870D9C4c441147dCaEf599e542E7',
+  [SupportedChainId.unichain]: '0xb7610f9b733e7d45184be3a1bc966960ccc54f0b',
   [SupportedChainId.zircuit]: '0x89EC5589c030FcEf8c29E7EeC491D2E73b53A623',
   [SupportedChainId.zksync_era_testnet]: '0x8A23CB45E5F4d5a1b2DB673663Ea2aAedc48acff',
   [SupportedChainId.zksync_era]: '0x95071cBD09184083E7F732a710c2e30c9882Fd5f',

@@ -146,6 +146,13 @@ export const graphUrls: Record<SupportedChainId, dexGraph> = {
     },
   },
   [SupportedChainId.base_sepolia]: {
+    [SupportedDex.Hydrex]: {
+      url: 'https://api.studio.thegraph.com/query/88584/base-sepolia-v-2-hydrex/version/latest',
+      publishedUrl:
+        'https://gateway-arbitrum.network.thegraph.com/api/[api-key]/subgraphs/id/BMMasWpeHafiTQQsG7TC871zzUMLH7LPTrN5aYmAod1o',
+      supportsCollectFees: true,
+      version: 2,
+    },
     [SupportedDex.Thirdfy]: {
       url: 'https://api.studio.thegraph.com/query/88584/base-sepolia-v2-thirdfy/version/latest',
       publishedUrl:
@@ -340,6 +347,15 @@ export const graphUrls: Record<SupportedChainId, dexGraph> = {
       supportsCollectFees: false,
     },
   },
+  [SupportedChainId.hemi]: {
+    [SupportedDex.UniswapV3]: {
+      url: 'https://api.studio.thegraph.com/query/88584/hemi-v-2-uniswap/version/latest',
+      publishedUrl:
+        'https://gateway-arbitrum.network.thegraph.com/api/[api-key]/subgraphs/id/6vgG6d1icWJ8xYonLW5iZTSgJMMSMsGuuk5F137ksQVf',
+      supportsCollectFees: true,
+      version: 2,
+    },
+  },
   [SupportedChainId.hyperevm]: {
     [SupportedDex.HyperSwap]: {
       url: 'https://api.goldsky.com/api/public/project_clynrq1h8gam301xx6vgngo9p/subgraphs/g2/hyperevm-v2-hyperswap-0.0.1/gn',
@@ -440,6 +456,15 @@ export const graphUrls: Record<SupportedChainId, dexGraph> = {
   },
   [SupportedChainId.monad_testnet]: {
     [SupportedDex.Atlantis]: {
+      url: 'https://api.studio.thegraph.com/query/88584/monad-testnet-v-2-1-atlantis/version/latest',
+      publishedUrl:
+        'https://gateway-arbitrum.network.thegraph.com/api/[api-key]/subgraphs/id/rJu7xtaKTLrbvhgoqDNGYxULnFnHdMptq19gU8yRqkB',
+      supportsCollectFees: false,
+      version: 2,
+    },
+  },
+  [SupportedChainId.nibiru]: {
+    [SupportedDex.UniswapV3]: {
       url: 'none',
       publishedUrl: 'none',
       supportsCollectFees: false,
@@ -524,6 +549,15 @@ export const graphUrls: Record<SupportedChainId, dexGraph> = {
       url: 'none',
       publishedUrl: 'none',
       supportsCollectFees: true,
+    },
+  },
+  [SupportedChainId.unichain]: {
+    [SupportedDex.UniswapV3]: {
+      url: 'https://api.studio.thegraph.com/query/88584/unichain-v-2-uniswap/version/latest',
+      publishedUrl:
+        'https://gateway-arbitrum.network.thegraph.com/api/[api-key]/subgraphs/id/8fsJpbjBEzkwBUjsNbnA8tDd94NLSh6DvEUGhvFfNfho',
+      supportsCollectFees: true,
+      version: 2,
     },
   },
   [SupportedChainId.unreal]: {
