@@ -362,6 +362,7 @@ export const graphUrls: Record<SupportedChainId, dexGraph> = {
       publishedUrl:
         'https://api.goldsky.com/api/public/project_clynrq1h8gam301xx6vgngo9p/subgraphs/g2/hyperevm-v2-hyperswap-0.0.1/gn',
       supportsCollectFees: true,
+      version: 2,
     },
   },
   [SupportedChainId.ink]: {
