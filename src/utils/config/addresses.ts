@@ -527,9 +527,9 @@ export const addressConfig: Record<SupportedChainId, Config> = {
   },
   [SupportedChainId.hyperevm]: {
     [SupportedDex.HyperSwap]: {
-      factoryAddress: '0x8cCd02E769e6A668a447Bd15e134C31bEccd8182',
+      factoryAddress: '0xCd952718e6Ef25ac7DBDDd55E501AAA0177dbfA0',
       depositGuard: {
-        address: '0x4858d61E83118f124b7dF3E908a3bb465540fFBc',
+        address: '0x4a72DE60A93055139EfB3Dc8F021ceeCaD8CAa7a',
         version: 2,
       },
       vaultDeployerAddress: '0xd71D9b66875C7d57AD630ee58F82e5e76B227aaB',
