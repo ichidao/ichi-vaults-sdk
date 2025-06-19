@@ -172,6 +172,16 @@ export const addressConfig: Record<SupportedChainId, Config> = {
       isAlgebra: true,
       ammVersion: AMM_VERSIONS.ALGEBRA_INTEGRAL,
     },
+    [SupportedDex.Hydrex]: {
+      factoryAddress: '0x2b52c416F723F16e883E53f3f16435B51300280a',
+      depositGuard: {
+        address: '0x9A0EBEc47c85fD30F1fdc90F57d2b178e84DC8d8',
+        version: 2,
+      },
+      vaultDeployerAddress: '0x7d11De61c219b70428Bb3199F0DD88bA9E76bfEE',
+      isAlgebra: true,
+      ammVersion: AMM_VERSIONS.ALGEBRA_INTEGRAL,
+    },
     [SupportedDex.Kim]: {
       factoryAddress: '0x28cF3b462a1ADdE87fe7144d110BcF0D464C97b7',
       depositGuard: {
@@ -394,6 +404,18 @@ export const addressConfig: Record<SupportedChainId, Config> = {
       },
       vaultDeployerAddress: '0xfAcD9c86f7766A5171bb0F9927De808929429A47',
       isAlgebra: false,
+    },
+  },
+  [SupportedChainId.citrea_testnet]: {
+    [SupportedDex.Satsuma]: {
+      factoryAddress: '0x8cCd02E769e6A668a447Bd15e134C31bEccd8182',
+      depositGuard: {
+        address: '0xcA3534C15Cc22535BF880Ba204c69340f813730b',
+        version: 2,
+      },
+      vaultDeployerAddress: '0x5B4b1f40CEa75f3b7E4df178AD1B1804d82491d9',
+      isAlgebra: true,
+      ammVersion: AMM_VERSIONS.ALGEBRA_INTEGRAL,
     },
   },
   [SupportedChainId.eon]: {
@@ -894,6 +916,7 @@ export const MULTICALL_ADDRESSES: Partial<Record<SupportedChainId, string>> = {
   [SupportedChainId.arbitrum]: '0xd9e7c0932a7D3e40Db3Fe78d95A3ED375a37Ab1a',
   [SupportedChainId.base_sepolia]: '0xd867e273eAbD6c853fCd0Ca0bFB6a3aE6491d2C1',
   [SupportedChainId.berachain]: '0x89ff70257bc747F310bB538eeFC46aDD763e75d8',
+  [SupportedChainId.citrea_testnet]: "0xB4F9b6b019E75CBe51af4425b2Fc12797e2Ee2a1",
   [SupportedChainId.haven1_devnet]: '0xe573920139a208989d83C57ea48837C6285F2cd3',
   [SupportedChainId.fantom]: '0xd9e7c0932a7D3e40Db3Fe78d95A3ED375a37Ab1a',
   [SupportedChainId.hedera_testnet]: '0x0B10E483AAC4340256772754d23131B6E0Dc31EA',

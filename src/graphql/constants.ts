@@ -113,6 +113,13 @@ export const graphUrls: Record<SupportedChainId, dexGraph> = {
         'https://gateway-arbitrum.network.thegraph.com/api/[api-key]/subgraphs/id/BBF1RTBGjEhMzoHg7WV4HYKj3rXxE6BZJGYe4n6BgkMv',
       supportsCollectFees: true,
     },
+    [SupportedDex.Hydrex]: {
+      url: 'https://api.studio.thegraph.com/query/88584/base-v-2-hydrex/version/latest',
+      publishedUrl:
+        'https://gateway-arbitrum.network.thegraph.com/api/[api-key]/subgraphs/id/AusreZtgQFkkCDsvGZ6uLZxxCD3KwcpCjrE2sK3ZkW1J',
+      supportsCollectFees: true,
+      version: 2,
+    },
     [SupportedDex.Kim]: {
       url: 'https://api.studio.thegraph.com/query/88584/base-v1-kim/version/latest',
       publishedUrl:
@@ -263,6 +270,14 @@ export const graphUrls: Record<SupportedChainId, dexGraph> = {
       publishedUrl:
         'https://gateway-arbitrum.network.thegraph.com/api/[api-key]/subgraphs/id/7dD1q2C5qCXmQpGCgnUsHmFaufD9c9qfppNoeEjEfkLm',
       supportsCollectFees: true,
+    },
+  },
+  [SupportedChainId.citrea_testnet]: {
+    [SupportedDex.Satsuma]: {
+      url: 'https://api.goldsky.com/api/public/project_clynrq1h8gam301xx6vgngo9p/subgraphs/g2/citrea-testnet-v2-satsuma/gn',
+      publishedUrl: 'https://api.goldsky.com/api/public/project_clynrq1h8gam301xx6vgngo9p/subgraphs/g2/citrea-testnet-v2-satsuma/gn',
+      supportsCollectFees: true,
+      version: 2,
     },
   },
   [SupportedChainId.eon]: {
