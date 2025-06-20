@@ -569,9 +569,9 @@ export const addressConfig: Record<SupportedChainId, Config> = {
       isAlgebra: false,
     },
     [SupportedDex.Velodrome]: {
-      factoryAddress: '0x2A3EB890dC0902c7Ca6CC71a1E9670463b32a3f0',
+      factoryAddress: '0x64dA1Ab5b42c71E8FaF1664745af911B859A06D4',
       depositGuard: {
-        address: '0x388C3aC7039b2C1522B9Fb423e6D4271aca708D1',
+        address: '0xfEA6cCaBae26eDef48E9CC05A599608198211Dd1',
         version: 2,
       },
       vaultDeployerAddress: '0xcBd1F70235904d3764f5d159022BA0281536E3E8',
