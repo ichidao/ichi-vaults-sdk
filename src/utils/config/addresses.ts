@@ -405,6 +405,16 @@ export const addressConfig: Record<SupportedChainId, Config> = {
       vaultDeployerAddress: '0xfAcD9c86f7766A5171bb0F9927De808929429A47',
       isAlgebra: false,
     },
+    [SupportedDex.Velodrome]: {
+      factoryAddress: '0xB3bf88Cb919a222A6F9c90ca8a9ac261CBD3e5bF',
+      depositGuard: {
+        address: '0xEd0819bdC69CFb5F4684CB8B5b7CE70d173371df',
+        version: 2,
+      },
+      vaultDeployerAddress: '0xfAcD9c86f7766A5171bb0F9927De808929429A47',
+      isAlgebra: false,
+      ammVersion: AMM_VERSIONS.VELODROME,
+    },
   },
   [SupportedChainId.citrea_testnet]: {
     [SupportedDex.Satsuma]: {
