@@ -482,7 +482,7 @@ export const graphUrls: Record<SupportedChainId, dexGraph> = {
       url: 'https://api.studio.thegraph.com/query/88584/monad-testnet-v-2-1-atlantis/version/latest',
       publishedUrl:
         'https://gateway-arbitrum.network.thegraph.com/api/[api-key]/subgraphs/id/rJu7xtaKTLrbvhgoqDNGYxULnFnHdMptq19gU8yRqkB',
-      supportsCollectFees: false,
+      supportsCollectFees: true,
       version: 2,
     },
   },
