@@ -59,7 +59,7 @@ export enum SupportedChainId {
 export enum SupportedDex {
   Agni = 'Agni',
   Ascent = 'Ascent',
-  Atlantis = 'Anlantis',
+  Atlantis = 'Atlantis',
   Blueprint = 'Blueprint',
   Cleo = 'Cleo',
   Crust = 'Crust',
