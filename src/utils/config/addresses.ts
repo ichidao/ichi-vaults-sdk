@@ -350,8 +350,8 @@ export const addressConfig: Record<SupportedChainId, Config> = {
     [SupportedDex.Pancakeswap]: {
       factoryAddress: '0x131c03ca881B7cC66d7a5120A9273ebf675C241D',
       depositGuard: {
-        address: '0x454130394B8013D4a7288fe9Db570A0a24C606c2',
-        version: 1,
+        address: '0x2174154294729e593001CBF0232fb787a914b232',
+        version: 2,
       },
       vaultDeployerAddress: '0x05cC3CA6E768a68A7f86b09e3ceE754437bd5f12',
       isAlgebra: false,
