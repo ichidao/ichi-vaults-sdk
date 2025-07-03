@@ -233,10 +233,11 @@ export const graphUrls: Record<SupportedChainId, dexGraph> = {
       supportsCollectFees: false,
     },
     [SupportedDex.Pancakeswap]: {
-      url: 'https://api.studio.thegraph.com/query/88584/bnb-v1-pancakeswap/version/latest',
+      url: 'https://api.studio.thegraph.com/query/88584/bsc-v-2-pancakeswap/version/latest',
       publishedUrl:
-        'https://gateway-arbitrum.network.thegraph.com/api/[api-key]/subgraphs/id/GC3MXRrHoAvHKpMt1GZf6K9PMHTeTfpZZWPisMJdBEJs',
+        'https://gateway-arbitrum.network.thegraph.com/api/[api-key]/subgraphs/id/zGTwSohEE3tmbnoUSdm5PRTFVscBUPDGgpz2VHvN1vG',
       supportsCollectFees: false,
+      version: 2
     },
     [SupportedDex.Thena]: {
       url: 'https://api.studio.thegraph.com/query/88584/bnb-v1-thena/version/latest',
