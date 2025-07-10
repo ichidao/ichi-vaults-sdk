@@ -57,6 +57,7 @@ export enum SupportedChainId {
 }
 
 export enum SupportedDex {
+  Aerodrome = 'Aerodrome',
   Agni = 'Agni',
   Ascent = 'Ascent',
   Atlantis = 'Atlantis',
