@@ -95,6 +95,13 @@ export const graphUrls: Record<SupportedChainId, dexGraph> = {
     },
   },
   [SupportedChainId.base]: {
+    [SupportedDex.Aerodrome]: {
+      url: 'https://api.studio.thegraph.com/query/88584/base-v-2-aerodrome/version/latest',
+      publishedUrl:
+        'https://gateway-arbitrum.network.thegraph.com/api/[api-key]/subgraphs/id/DCM2J4791BMQCuFZMwphiHWVZGCt4tvJCBM93tuAMaXg',
+      supportsCollectFees: true,
+      version: 2,
+    },
     [SupportedDex.Equalizer]: {
       url: 'https://api.studio.thegraph.com/query/88584/base-v1-equalizer/version/latest',
       publishedUrl:

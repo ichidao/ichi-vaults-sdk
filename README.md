@@ -1211,6 +1211,7 @@ enum SupportedChainId {
 
 ```typescript
 enum SupportedDex {
+  Aerodrome = 'Aerodrome',
   Agni = 'Agni',
   Ascent = 'Ascent',
   Atlantis = 'Anlantis',
