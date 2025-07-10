@@ -358,8 +358,8 @@ export const graphUrls: Record<SupportedChainId, dexGraph> = {
   },
   [SupportedChainId.hedera]: {
     [SupportedDex.SaucerSwap]: {
-      url: 'https://mainnet-thegraph.swirldslabs.com/subgraphs/name/ichi-org/hedera-v1-saucerswap',
-      publishedUrl: 'https://mainnet-thegraph.swirldslabs.com/subgraphs/name/ichi-org/hedera-v1-saucerswap',
+      url: 'https://api.goldsky.com/api/public/project_clynrq1h8gam301xx6vgngo9p/subgraphs/g2/hedera-v1-saucerswap/gn',
+      publishedUrl: 'https://api.goldsky.com/api/public/project_clynrq1h8gam301xx6vgngo9p/subgraphs/g2/hedera-v1-saucerswap/gn',
       supportsCollectFees: true,
     },
   },
