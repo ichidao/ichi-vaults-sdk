@@ -151,6 +151,7 @@ export const addressConfig: Record<SupportedChainId, Config> = {
       },
       vaultDeployerAddress: '0x7d11De61c219b70428Bb3199F0DD88bA9E76bfEE',
       isAlgebra: false,
+      ammVersion: AMM_VERSIONS.VELODROME,
     },
     [SupportedDex.Equalizer]: {
       factoryAddress: '0xfBf38920cCbCFF7268Ad714ae5F9Fad6dF607065',
