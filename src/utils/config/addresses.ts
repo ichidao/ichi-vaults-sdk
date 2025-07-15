@@ -711,9 +711,9 @@ export const addressConfig: Record<SupportedChainId, Config> = {
   },
   [SupportedChainId.monad_testnet]: {
     [SupportedDex.Atlantis]: {
-      factoryAddress: '0x28798a2cC5B2b2Dbf9C6D719dd024603F0514a21',
+      factoryAddress: '0x4431CFdA42fB518A87f5928774DeA5389c43363a',
       depositGuard: {
-        address: '0x74C85FF93D0ff3B5E48c119390EF75A43D78d549',
+        address: '0x8d963e46da8eC0365D7ef875dA52c53288b88C73',
         version: 2,
       },
       vaultDeployerAddress: '0x6d2eF63eAe5D6B99474b7d0479877C4037769fdf',
