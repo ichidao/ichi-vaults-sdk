@@ -32,6 +32,7 @@ export enum SupportedChainId {
   hyperevm = 999,
   ink = 57073,
   ink_sepolia = 763373,
+  katana = 747474,
   kava = 2222,
   linea = 59144,
   mainnet = 1,

@@ -418,6 +418,14 @@ export const graphUrls: Record<SupportedChainId, dexGraph> = {
       supportsCollectFees: true,
     },
   },
+  [SupportedChainId.katana]: {
+    [SupportedDex.Sushiswap]: {
+      url: 'https://api.studio.thegraph.com/query/88584/katana-v-2-sushiswap/version/latest',
+      publishedUrl: 'https://gateway-arbitrum.network.thegraph.com/api/[api-key]/subgraphs/id/F4BWERAWUduNTwZEF72yYi8GyEbWWsDdDZbJADUEUG16',
+      supportsCollectFees: true,
+      version: 2,
+    },
+  },
   [SupportedChainId.kava]: {
     [SupportedDex.Kinetix]: {
       url: 'https://the-graph.kava.io/subgraphs/name/ichi-org/kava-v1-kinetix',
