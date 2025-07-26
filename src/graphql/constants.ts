@@ -388,9 +388,9 @@ export const graphUrls: Record<SupportedChainId, dexGraph> = {
   },
   [SupportedChainId.hyperevm]: {
     [SupportedDex.HyperSwap]: {
-      url: 'https://api.goldsky.com/api/public/project_clynrq1h8gam301xx6vgngo9p/subgraphs/g2/hyperevm-v2-hyperswap-0.0.2/gn',
+      url: 'https://api.goldsky.com/api/public/project_clynrq1h8gam301xx6vgngo9p/subgraphs/g2/hyperevm-v2-hyperswap/gn',
       publishedUrl:
-        'https://api.goldsky.com/api/public/project_clynrq1h8gam301xx6vgngo9p/subgraphs/g2/hyperevm-v2-hyperswap-0.0.2/gn',
+        'https://api.goldsky.com/api/public/project_clynrq1h8gam301xx6vgngo9p/subgraphs/g2/hyperevm-v2-hyperswap/gn',
       supportsCollectFees: true,
       version: 2,
     },
@@ -498,6 +498,14 @@ export const graphUrls: Record<SupportedChainId, dexGraph> = {
       url: 'https://api.studio.thegraph.com/query/88584/monad-testnet-v-2-1-atlantis/version/latest',
       publishedUrl:
         'https://gateway-arbitrum.network.thegraph.com/api/[api-key]/subgraphs/id/rJu7xtaKTLrbvhgoqDNGYxULnFnHdMptq19gU8yRqkB',
+      supportsCollectFees: true,
+      version: 2,
+    },
+  },
+  [SupportedChainId.moonbeam]: {
+    [SupportedDex.StellaSwap]: {
+      url: 'https://api.studio.thegraph.com/query/88584/moonbeam-v-2-stellaswap/version/latest',
+      publishedUrl: 'https://gateway-arbitrum.network.thegraph.com/api/[api-key]/subgraphs/id/DgBPraNX8mK7uthvPtzq2rMWx1eU543rWT8kBi1ogWh8',
       supportsCollectFees: true,
       version: 2,
     },
