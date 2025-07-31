@@ -139,6 +139,13 @@ export const graphUrls: Record<SupportedChainId, dexGraph> = {
         'https://gateway-arbitrum.network.thegraph.com/api/[api-key]/subgraphs/id/AWny6b9W1v63MPFqeCSFQJt5dMP7xX1nzSCJd2zh8Dgd',
       supportsCollectFees: true,
     },
+    [SupportedDex.Quickswap]: {
+      url: 'https://api.studio.thegraph.com/query/88584/base-v-2-quickswap/version/latest',
+      publishedUrl:
+        'https://gateway-arbitrum.network.thegraph.com/api/[api-key]/subgraphs/id/EJLBiJxWkpS4eNGErvpShfCzLnzhAv8GHFMe4kVTebY3',
+      supportsCollectFees: true,
+      version: 2,
+    },
     [SupportedDex.Thirdfy]: {
       url: 'https://api.studio.thegraph.com/query/88584/base-v-2-thirdfy/version/latest',
       publishedUrl:
