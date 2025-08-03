@@ -385,6 +385,13 @@ export const graphUrls: Record<SupportedChainId, dexGraph> = {
     },
   },
   [SupportedChainId.hemi]: {
+    [SupportedDex.Sushiswap]: {
+      url: 'https://api.studio.thegraph.com/query/88584/hemi-v-2-sushiswap/version/latest',
+      publishedUrl:
+        'https://gateway-arbitrum.network.thegraph.com/api/[api-key]/subgraphs/id/GhoXkgbWWpAMQ6C1sgJ7hQJt36ocDR31XxPb9RhjXgL2',
+      supportsCollectFees: true,
+      version: 2,
+    },
     [SupportedDex.UniswapV3]: {
       url: 'https://api.studio.thegraph.com/query/88584/hemi-v-2-uniswap/version/latest',
       publishedUrl:
