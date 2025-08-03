@@ -567,6 +567,15 @@ export const addressConfig: Record<SupportedChainId, Config> = {
     },
   },
   [SupportedChainId.hemi]: {
+    [SupportedDex.Sushiswap]: {
+      factoryAddress: '0x5541Bcd3d163326CF12267D1cF6207dbde788348',
+      depositGuard: {
+        address: '0x4196f1cD200739AAC173D83853B4060DA1adB1F6',
+        version: 2,
+      },
+      vaultDeployerAddress: '0xAFE7041797E8916616952a719971575f352e2b0d',
+      isAlgebra: false,
+    },
     [SupportedDex.UniswapV3]: {
       factoryAddress: '0x8cCd02E769e6A668a447Bd15e134C31bEccd8182',
       depositGuard: {
