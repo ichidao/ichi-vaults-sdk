@@ -526,9 +526,10 @@ export const graphUrls: Record<SupportedChainId, dexGraph> = {
   },
   [SupportedChainId.nibiru]: {
     [SupportedDex.UniswapV3]: {
-      url: 'none',
-      publishedUrl: 'none',
-      supportsCollectFees: false,
+      url: 'https://api.goldsky.com/api/public/project_clynrq1h8gam301xx6vgngo9p/subgraphs/g2/nibiru-v2-uniswap/gn',
+      publishedUrl: 'https://api.goldsky.com/api/public/project_clynrq1h8gam301xx6vgngo9p/subgraphs/g2/nibiru-v2-uniswap/gn',
+      supportsCollectFees: true,
+      version: 2,
     },
   },
   [SupportedChainId.polygon_zkevm]: {
