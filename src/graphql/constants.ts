@@ -96,9 +96,9 @@ export const graphUrls: Record<SupportedChainId, dexGraph> = {
   },
   [SupportedChainId.base]: {
     [SupportedDex.Aerodrome]: {
-      url: 'https://api.studio.thegraph.com/query/88584/base-v-2-aerodrome/version/latest',
+      url: 'https://api.studio.thegraph.com/query/88584/base-v-3-aerodrome/version/latest',
       publishedUrl:
-        'https://gateway-arbitrum.network.thegraph.com/api/[api-key]/subgraphs/id/DCM2J4791BMQCuFZMwphiHWVZGCt4tvJCBM93tuAMaXg',
+        'https://gateway-arbitrum.network.thegraph.com/api/[api-key]/subgraphs/id/nZnftbmERiB2tY6t2ika7kP9srTcKnYFEnqG3RKa38r',
       supportsCollectFees: true,
       version: 2,
     },
@@ -287,9 +287,9 @@ export const graphUrls: Record<SupportedChainId, dexGraph> = {
       supportsCollectFees: true,
     },
     [SupportedDex.Velodrome]: {
-      url: 'https://api.studio.thegraph.com/query/88584/celo-v2-velodrome/version/latest',
+      url: 'https://api.studio.thegraph.com/query/88584/celo-v-3-velodrome/version/latest',
       publishedUrl: 
-      'https://gateway-arbitrum.network.thegraph.com/api/[api-key]/subgraphs/id/8ySwKAoRsfvm9xpvZqyam8wekDWPkG5vBaH8zcJsEocK',
+        'https://gateway-arbitrum.network.thegraph.com/api/[api-key]/subgraphs/id/B5bAxkSXt1oXaDJgTdP3UqigxcwgXjeBY51eo9WMmija',
       supportsCollectFees: true,
       version: 2,
     },
@@ -417,9 +417,9 @@ export const graphUrls: Record<SupportedChainId, dexGraph> = {
       supportsCollectFees: true,
     },
     [SupportedDex.Velodrome]: {
-      url: 'https://api.studio.thegraph.com/query/88584/ink-v-2-fee-velodrome/version/latest',
-      publishedUrl:
-        'https://gateway-arbitrum.network.thegraph.com/api/[api-key]/subgraphs/id/CQAmQweRAgwdXtHrk4sqUqU84jiQ1AEYFuQmUAFdeFZx',
+      url: 'https://api.studio.thegraph.com/query/88584/ink-v-3-velodrome/version/latest',
+      publishedUrl: 
+        'https://gateway-arbitrum.network.thegraph.com/api/[api-key]/subgraphs/id/DpBJxoNPbremsbV22e6wm3GCq41R715QXPUYdPxd9TQi',
       supportsCollectFees: true,
       version: 2,
     },
