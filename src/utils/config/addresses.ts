@@ -144,9 +144,9 @@ export const addressConfig: Record<SupportedChainId, Config> = {
   },
   [SupportedChainId.base]: {
     [SupportedDex.Aerodrome]: {
-      factoryAddress: '0xBff23e60F41A11cf131B7180Cbd2BD3d47d17ad1',
+      factoryAddress: '0xf6B5Ab192F2696921F60a1Ff00b99596C4045FA6',
       depositGuard: {
-        address: '0xFe368FC8Bf2a7e60A1234F9623Bc144fa096b681',
+        address: '0x4A094b3e476D7C94445f023B5DAc837f9E0F98c2',
         version: 2,
       },
       vaultDeployerAddress: '0x7d11De61c219b70428Bb3199F0DD88bA9E76bfEE',
@@ -426,9 +426,9 @@ export const addressConfig: Record<SupportedChainId, Config> = {
       isAlgebra: false,
     },
     [SupportedDex.Velodrome]: {
-      factoryAddress: '0xB3bf88Cb919a222A6F9c90ca8a9ac261CBD3e5bF',
+      factoryAddress: '0x82DcA62C4B5Dd28Cc85CE8Ae3B170Ce020e33870',
       depositGuard: {
-        address: '0xEd0819bdC69CFb5F4684CB8B5b7CE70d173371df',
+        address: '0x141dB85183DDB07Dee22C33846aebDe2101D9F25',
         version: 2,
       },
       vaultDeployerAddress: '0xfAcD9c86f7766A5171bb0F9927De808929429A47',
@@ -608,9 +608,9 @@ export const addressConfig: Record<SupportedChainId, Config> = {
       isAlgebra: false,
     },
     [SupportedDex.Velodrome]: {
-      factoryAddress: '0x64dA1Ab5b42c71E8FaF1664745af911B859A06D4',
+      factoryAddress: '0x822b0bE4958ab5b4A48DA3c5f68Fc54846093618',
       depositGuard: {
-        address: '0xfEA6cCaBae26eDef48E9CC05A599608198211Dd1',
+        address: '0x2AB2C46dF4146E092bAC933B73Ed37B420Ae52EA',
         version: 2,
       },
       vaultDeployerAddress: '0xcBd1F70235904d3764f5d159022BA0281536E3E8',
