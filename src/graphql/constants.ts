@@ -614,7 +614,7 @@ export const graphUrls: Record<SupportedChainId, dexGraph> = {
     },
   },
   [SupportedChainId.unichain]: {
-    [SupportedDex.UniswapV3]: {
+    [SupportedDex.Catex]: {
       url: 'https://api.studio.thegraph.com/query/88584/unichain-v-2-uniswap/version/latest',
       publishedUrl:
         'https://gateway-arbitrum.network.thegraph.com/api/[api-key]/subgraphs/id/8fsJpbjBEzkwBUjsNbnA8tDd94NLSh6DvEUGhvFfNfho',
