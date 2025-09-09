@@ -511,6 +511,17 @@ export const addressConfig: Record<SupportedChainId, Config> = {
       isAlgebra: false,
     },
   },
+  [SupportedChainId.flow]: {
+    [SupportedDex.KittyPunch]: {
+      factoryAddress: '0x3bE78614342C7763d87520b2502085761Aa4e5f8',
+      depositGuard: {
+        address: '0xe48aD9fDB787ff25f7bBb400Fc993122d430C8E1',
+        version: 2,
+      },
+      vaultDeployerAddress: '0x2ca0824135b7da7B956CD1B851C451Bc801eb976',
+      isAlgebra: false,
+    },
+  },
   [SupportedChainId.fuse]: {
     [SupportedDex.Voltage]: {
       factoryAddress: '0xfBf38920cCbCFF7268Ad714ae5F9Fad6dF607065',
@@ -869,6 +880,18 @@ export const addressConfig: Record<SupportedChainId, Config> = {
       ammVersion: AMM_VERSIONS.ALGEBRA_INTEGRAL,
     },
   },
+  [SupportedChainId.tac]: {
+    [SupportedDex.Snap]: {
+      factoryAddress: '0x3Aa31b2E925d0E872f9A68Fe057Ed677e735F38d',
+      depositGuard: {
+        address: '0x38e6706860dE0b96CD12Eff815DEDF01E5fe0722',
+        version: 2,
+      },
+      vaultDeployerAddress: '0xDed64030c1b0A63DE0CAd8165f681c7Ef36E4ae3',
+      isAlgebra: true,
+      ammVersion: AMM_VERSIONS.ALGEBRA_INTEGRAL,
+    },
+  },
   [SupportedChainId.taiko]: {
     [SupportedDex.Henjin]: {
       factoryAddress: '0x9FAb4bdD4E05f5C023CCC85D2071b49791D7418F',
@@ -978,9 +1001,10 @@ export const MULTICALL_ADDRESSES: Partial<Record<SupportedChainId, string>> = {
   [SupportedChainId.arbitrum]: '0xd9e7c0932a7D3e40Db3Fe78d95A3ED375a37Ab1a',
   [SupportedChainId.base_sepolia]: '0xd867e273eAbD6c853fCd0Ca0bFB6a3aE6491d2C1',
   [SupportedChainId.berachain]: '0x89ff70257bc747F310bB538eeFC46aDD763e75d8',
-  [SupportedChainId.citrea_testnet]: "0xB4F9b6b019E75CBe51af4425b2Fc12797e2Ee2a1",
+  [SupportedChainId.citrea_testnet]: '0xB4F9b6b019E75CBe51af4425b2Fc12797e2Ee2a1',
   [SupportedChainId.haven1_devnet]: '0xe573920139a208989d83C57ea48837C6285F2cd3',
   [SupportedChainId.fantom]: '0xd9e7c0932a7D3e40Db3Fe78d95A3ED375a37Ab1a',
+  [SupportedChainId.flow]: '0xA41Fef85d7a7DebAD0CC265Ad514716C52919559',
   [SupportedChainId.hedera_testnet]: '0x0B10E483AAC4340256772754d23131B6E0Dc31EA',
   [SupportedChainId.hedera]: '0x0B10E483AAC4340256772754d23131B6E0Dc31EA',
   [SupportedChainId.hemi]: '0x352A86168e6988A1aDF9A15Cb00017AAd3B67155',
@@ -991,9 +1015,10 @@ export const MULTICALL_ADDRESSES: Partial<Record<SupportedChainId, string>> = {
   [SupportedChainId.mantle]: '0xf5bb4e61ccAC9080fb520e5F69224eE85a4D588F',
   [SupportedChainId.mode]: '0x481BE66De423B6a0Df368b526713bA632EF23ADd',
   [SupportedChainId.monad_testnet]: '0xcfEA11557Bc9cB71bc6916e09fC8493D668b8d53',
-  [SupportedChainId.moonbeam]: "0x4F15CED4dD9B8eF545809431c177a3ae46A29c37",
+  [SupportedChainId.moonbeam]: '0x4F15CED4dD9B8eF545809431c177a3ae46A29c37',
   [SupportedChainId.nibiru]: '0x5d6b0f5335ec95cD2aB7E52f2A0750dd86502435',
   [SupportedChainId.sonic]: '0x9B500c0a544B870D9C4c441147dCaEf599e542E7',
+  [SupportedChainId.tac]: '0xD360846137c2be74c6B7624A06A809Ca3aD4e014',
   [SupportedChainId.unichain]: '0xb7610f9b733e7d45184be3a1bc966960ccc54f0b',
   [SupportedChainId.zircuit]: '0x89EC5589c030FcEf8c29E7EeC491D2E73b53A623',
   [SupportedChainId.zksync_era_testnet]: '0x8A23CB45E5F4d5a1b2DB673663Ea2aAedc48acff',

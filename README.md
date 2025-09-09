@@ -58,6 +58,8 @@ npm install @ichidao/ichi-vaults-sdk
 ### Subgraphs
 This SDK uses subgraphs to obtain information about ICHI vaults. The subgraphs are deployed in the Subgraph Studio and published on Arbitrum One. If you prefer to use published subgraphs, you need to add your [subgraph API key](https://thegraph.com/studio/apikeys/) to the SUBGRAPH_API_KEY environment variable. Otherwise, the SDK will use the subgraph's Studio endpoint.
 
+**Note for Flow users:** The Flow blockchain uses Alchemy subgraph instead of Subgraph Studio. If you're using this SDK on Flow, you need to provide your own Alchemy subgraph API key by adding it to the ALCHEMY_SUBGRAPH_API_KEY environment variable.
+
 ### Vault
 
 #### 1. `approveDepositToken()`
@@ -1173,6 +1175,7 @@ enum SupportedChainId {
   evmos = 9001,
   fantom = 250,
   flare = 14,
+  flow = 747,
   fuse = 122,
   haven1 = 8811,
   haven1_devnet = 8110,
@@ -1197,6 +1200,7 @@ enum SupportedChainId {
   scroll = 534352,
   skale_europa = 2046399126,
   sonic = 146,
+  tac = 239,
   taiko = 167000,
   taiko_hekla = 167009,
   unichain = 130,
@@ -1229,6 +1233,7 @@ enum SupportedDex {
   HyperSwap = 'HyperSwap',
   Kim = 'Kim',
   Kinetix = 'Kinetix',
+  KittyPunch = 'KittyPunch',
   Kodiak = 'Kodiak',
   Linehub = 'Linehub',
   Lynex = 'Lynex',
@@ -1243,6 +1248,7 @@ enum SupportedDex {
   Retro = 'Retro',
   Satsuma = 'Satsuma',
   SaucerSwap = 'SaucerSwap',
+  Snap = 'Snap',
   SparkDex = 'SparkDex',
   SparkDexV1 = 'SparkDexV1',
   SpiritSwap = 'SpiritSwap',
