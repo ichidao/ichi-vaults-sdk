@@ -251,7 +251,7 @@ export const graphUrls: Record<SupportedChainId, dexGraph> = {
       publishedUrl:
         'https://gateway-arbitrum.network.thegraph.com/api/[api-key]/subgraphs/id/zGTwSohEE3tmbnoUSdm5PRTFVscBUPDGgpz2VHvN1vG',
       supportsCollectFees: false,
-      version: 2
+      version: 2,
     },
     [SupportedDex.Thena]: {
       url: 'https://api.studio.thegraph.com/query/88584/bnb-v1-thena/version/latest',
@@ -288,7 +288,7 @@ export const graphUrls: Record<SupportedChainId, dexGraph> = {
     },
     [SupportedDex.Velodrome]: {
       url: 'https://api.studio.thegraph.com/query/88584/celo-v-3-velodrome/version/latest',
-      publishedUrl: 
+      publishedUrl:
         'https://gateway-arbitrum.network.thegraph.com/api/[api-key]/subgraphs/id/B5bAxkSXt1oXaDJgTdP3UqigxcwgXjeBY51eo9WMmija',
       supportsCollectFees: true,
       version: 2,
@@ -297,7 +297,8 @@ export const graphUrls: Record<SupportedChainId, dexGraph> = {
   [SupportedChainId.citrea_testnet]: {
     [SupportedDex.Satsuma]: {
       url: 'https://api.goldsky.com/api/public/project_clynrq1h8gam301xx6vgngo9p/subgraphs/g2/citrea-testnet-v2-satsuma/gn',
-      publishedUrl: 'https://api.goldsky.com/api/public/project_clynrq1h8gam301xx6vgngo9p/subgraphs/g2/citrea-testnet-v2-satsuma/gn',
+      publishedUrl:
+        'https://api.goldsky.com/api/public/project_clynrq1h8gam301xx6vgngo9p/subgraphs/g2/citrea-testnet-v2-satsuma/gn',
       supportsCollectFees: true,
       version: 2,
     },
@@ -344,6 +345,14 @@ export const graphUrls: Record<SupportedChainId, dexGraph> = {
       supportsCollectFees: true,
     },
   },
+  [SupportedChainId.flow]: {
+    [SupportedDex.KittyPunch]: {
+      url: 'https://subgraph.satsuma-prod.com/[api-key]/kpgsdns3o2izsefijmnehp--15237/flow-v2-kittypunch/api',
+      publishedUrl: 'https://subgraph.satsuma-prod.com/[api-key]/kpgsdns3o2izsefijmnehp--15237/flow-v2-kittypunch/api',
+      supportsCollectFees: true,
+      version: 2,
+    },
+  },
   [SupportedChainId.fuse]: {
     [SupportedDex.Voltage]: {
       url: 'https://api.studio.thegraph.com/query/88584/fuse-v1-voltage/version/latest',
@@ -373,7 +382,8 @@ export const graphUrls: Record<SupportedChainId, dexGraph> = {
   [SupportedChainId.hedera]: {
     [SupportedDex.SaucerSwap]: {
       url: 'https://api.goldsky.com/api/public/project_clynrq1h8gam301xx6vgngo9p/subgraphs/g2/hedera-v1-saucerswap/gn',
-      publishedUrl: 'https://api.goldsky.com/api/public/project_clynrq1h8gam301xx6vgngo9p/subgraphs/g2/hedera-v1-saucerswap/gn',
+      publishedUrl:
+        'https://api.goldsky.com/api/public/project_clynrq1h8gam301xx6vgngo9p/subgraphs/g2/hedera-v1-saucerswap/gn',
       supportsCollectFees: true,
     },
   },
@@ -418,7 +428,7 @@ export const graphUrls: Record<SupportedChainId, dexGraph> = {
     },
     [SupportedDex.Velodrome]: {
       url: 'https://api.studio.thegraph.com/query/88584/ink-v-3-velodrome/version/latest',
-      publishedUrl: 
+      publishedUrl:
         'https://gateway-arbitrum.network.thegraph.com/api/[api-key]/subgraphs/id/DpBJxoNPbremsbV22e6wm3GCq41R715QXPUYdPxd9TQi',
       supportsCollectFees: true,
       version: 2,
@@ -435,7 +445,8 @@ export const graphUrls: Record<SupportedChainId, dexGraph> = {
   [SupportedChainId.katana]: {
     [SupportedDex.Sushiswap]: {
       url: 'https://api.studio.thegraph.com/query/88584/katana-v-2-sushiswap/version/latest',
-      publishedUrl: 'https://gateway-arbitrum.network.thegraph.com/api/[api-key]/subgraphs/id/F4BWERAWUduNTwZEF72yYi8GyEbWWsDdDZbJADUEUG16',
+      publishedUrl:
+        'https://gateway-arbitrum.network.thegraph.com/api/[api-key]/subgraphs/id/F4BWERAWUduNTwZEF72yYi8GyEbWWsDdDZbJADUEUG16',
       supportsCollectFees: true,
       version: 2,
     },
@@ -519,7 +530,8 @@ export const graphUrls: Record<SupportedChainId, dexGraph> = {
   [SupportedChainId.moonbeam]: {
     [SupportedDex.StellaSwap]: {
       url: 'https://api.studio.thegraph.com/query/88584/moonbeam-v-2-stellaswap/version/latest',
-      publishedUrl: 'https://gateway-arbitrum.network.thegraph.com/api/[api-key]/subgraphs/id/DgBPraNX8mK7uthvPtzq2rMWx1eU543rWT8kBi1ogWh8',
+      publishedUrl:
+        'https://gateway-arbitrum.network.thegraph.com/api/[api-key]/subgraphs/id/DgBPraNX8mK7uthvPtzq2rMWx1eU543rWT8kBi1ogWh8',
       supportsCollectFees: true,
       version: 2,
     },
@@ -527,7 +539,8 @@ export const graphUrls: Record<SupportedChainId, dexGraph> = {
   [SupportedChainId.nibiru]: {
     [SupportedDex.UniswapV3]: {
       url: 'https://api.goldsky.com/api/public/project_clynrq1h8gam301xx6vgngo9p/subgraphs/g2/nibiru-v2-uniswap/gn',
-      publishedUrl: 'https://api.goldsky.com/api/public/project_clynrq1h8gam301xx6vgngo9p/subgraphs/g2/nibiru-v2-uniswap/gn',
+      publishedUrl:
+        'https://api.goldsky.com/api/public/project_clynrq1h8gam301xx6vgngo9p/subgraphs/g2/nibiru-v2-uniswap/gn',
       supportsCollectFees: true,
       version: 2,
     },
@@ -596,6 +609,14 @@ export const graphUrls: Record<SupportedChainId, dexGraph> = {
       publishedUrl:
         'https://gateway-arbitrum.network.thegraph.com/api/[api-key]/subgraphs/id/Gw1DrPbd1pBNorCWEfyb9i8txJ962qYqqPtuyX6iEH8u',
       supportsCollectFees: true,
+    },
+  },
+  [SupportedChainId.tac]: {
+    [SupportedDex.Snap]: {
+      url: 'https://api.goldsky.com/api/public/project_clynrq1h8gam301xx6vgngo9p/subgraphs/g2/tac-v2-snap/gn',
+      publishedUrl: 'https://api.goldsky.com/api/public/project_clynrq1h8gam301xx6vgngo9p/subgraphs/g2/tac-v2-snap/gn',
+      supportsCollectFees: true,
+      version: 2,
     },
   },
   [SupportedChainId.taiko]: {
