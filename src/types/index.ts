@@ -66,6 +66,7 @@ export enum SupportedDex {
   Ascent = 'Ascent',
   Atlantis = 'Atlantis',
   Blueprint = 'Blueprint',
+  Bonzo = 'Bonzo',
   Catex = 'Catex',
   Cleo = 'Cleo',
   Crust = 'Crust',

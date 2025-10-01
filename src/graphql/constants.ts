@@ -386,6 +386,13 @@ export const graphUrls: Record<SupportedChainId, dexGraph> = {
         'https://api.goldsky.com/api/public/project_clynrq1h8gam301xx6vgngo9p/subgraphs/g2/hedera-v1-saucerswap/gn',
       supportsCollectFees: true,
     },
+    [SupportedDex.Bonzo]: {
+      url: 'https://api.goldsky.com/api/public/project_clynrq1h8gam301xx6vgngo9p/subgraphs/g2/hedera-v2-bonzo/gn',
+      publishedUrl:
+        'https://api.goldsky.com/api/public/project_clynrq1h8gam301xx6vgngo9p/subgraphs/g2/hedera-v2-bonzo/gn',
+      supportsCollectFees: true,
+      version: 2,
+    },
   },
   [SupportedChainId.hedera_testnet]: {
     [SupportedDex.SaucerSwap]: {

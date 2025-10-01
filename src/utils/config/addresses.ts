@@ -565,6 +565,15 @@ export const addressConfig: Record<SupportedChainId, Config> = {
       vaultDeployerAddress: '0x8514B2Fa2889F7A2f46F1AA66b514999F2a7327F',
       isAlgebra: false,
     },
+    [SupportedDex.Bonzo]: {
+      factoryAddress: '0x822b0bE4958ab5b4A48DA3c5f68Fc54846093618',
+      depositGuard: {
+        address: '0x84e653E209525f70dC1410a304dFF98fE47CfD4a',
+        version: 2,
+      },
+      vaultDeployerAddress: '0xC159b19C5bd0E4a0709eC13C1303Ff2Bb67F7145',
+      isAlgebra: false,
+    },
   },
   [SupportedChainId.hedera_testnet]: {
     [SupportedDex.SaucerSwap]: {

@@ -1221,6 +1221,7 @@ enum SupportedDex {
   Ascent = 'Ascent',
   Atlantis = 'Anlantis',
   Blueprint = 'Blueprint',
+  Bonzo = 'Bonzo',
   Cleo = 'Cleo',
   Crust = 'Crust',
   Equalizer = 'Equalizer',
