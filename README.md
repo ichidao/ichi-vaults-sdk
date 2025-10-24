@@ -1226,6 +1226,7 @@ enum SupportedDex {
   Crust = 'Crust',
   Equalizer = 'Equalizer',
   Fenix = 'Fenix',
+  FlowSwap = 'FlowSwap',
   Forge = 'Forge',
   Henjin = 'Henjin',
   Honeypot = 'Honeypot',
