@@ -73,6 +73,7 @@ export enum SupportedDex {
   Equalizer = 'Equalizer',
   Equalizer2Thick = 'Equalizer2Thick',
   Fenix = 'Fenix',
+  FlowSwap = 'FlowSwap',
   Forge = 'Forge',
   Henjin = 'Henjin',
   Honeypot = 'Honeypot',

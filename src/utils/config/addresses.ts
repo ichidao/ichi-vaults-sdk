@@ -512,6 +512,15 @@ export const addressConfig: Record<SupportedChainId, Config> = {
     },
   },
   [SupportedChainId.flow]: {
+    [SupportedDex.FlowSwap]: {
+      factoryAddress: '0x6992bB9dDbf44166e3739c8A3147e7e70a082cEb',
+      depositGuard: {
+        address: '0xA3E172C181508A63571840cB8E42723F082bCeC2',
+        version: 2,
+      },
+      vaultDeployerAddress: '0x2ca0824135b7da7B956CD1B851C451Bc801eb976',
+      isAlgebra: false,
+    },
     [SupportedDex.KittyPunch]: {
       factoryAddress: '0x3bE78614342C7763d87520b2502085761Aa4e5f8',
       depositGuard: {

@@ -346,6 +346,12 @@ export const graphUrls: Record<SupportedChainId, dexGraph> = {
     },
   },
   [SupportedChainId.flow]: {
+    [SupportedDex.FlowSwap]: {
+      url: 'https://subgraph.satsuma-prod.com/[api-key]/kpgsdns3o2izsefijmnehp--15237/flow-v2-flowswap/api',
+      publishedUrl: 'https://subgraph.satsuma-prod.com/[api-key]/kpgsdns3o2izsefijmnehp--15237/flow-v2-flowswap/api',
+      supportsCollectFees: true,
+      version: 2,
+    },
     [SupportedDex.KittyPunch]: {
       url: 'https://subgraph.satsuma-prod.com/[api-key]/kpgsdns3o2izsefijmnehp--15237/flow-v2-kittypunch/api',
       publishedUrl: 'https://subgraph.satsuma-prod.com/[api-key]/kpgsdns3o2izsefijmnehp--15237/flow-v2-kittypunch/api',
