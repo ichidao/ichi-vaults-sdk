@@ -8,7 +8,7 @@ import { getCurrLpPrice } from './priceFromPool';
 import { millisecondsToDays } from '../utils/timestamps';
 import getPrice from '../utils/getPrice';
 import formatBigInt from '../utils/formatBigInt';
-import getGraphUrls from '../utils/getGraphUrls';
+import { getGraphUrls } from '../utils/getGraphUrls';
 import { _getAllVaultEvents, getVaultStateAt } from './_vaultEvents';
 import cache from '../utils/cache';
 

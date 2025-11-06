@@ -11,7 +11,7 @@ import {
 } from '../types/vaultQueryData';
 import { getIchiVaultContract } from '../contracts';
 import { allRewardVaults, getVaultQuery, vaultByPoolQuery, vaultByTokensQuery } from '../graphql/queries';
-import getGraphUrls from '../utils/getGraphUrls';
+import { getGraphUrls } from '../utils/getGraphUrls';
 import cache from '../utils/cache';
 
 function normalizeVaultData(vaultData: any): IchiVault {
