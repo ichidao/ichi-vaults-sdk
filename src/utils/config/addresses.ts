@@ -357,6 +357,17 @@ export const addressConfig: Record<SupportedChainId, Config> = {
       ammVersion: AMM_VERSIONS.ALGEBRA_INTEGRAL,
     },
   },
+  [SupportedChainId.botanix]: {
+    [SupportedDex.Bitzy]: {
+      factoryAddress: '0x53511764DE94CdA43CbBadFFCca3F29D2EFAB0F8',
+      depositGuard: {
+        address: '0xf0d899E6582CF2fd1A05F52C8e1b3a56feD9fdb9',
+        version: 2,
+      },
+      vaultDeployerAddress: '0x7d11De61c219b70428Bb3199F0DD88bA9E76bfEE',
+      isAlgebra: false,
+    },
+  },
   [SupportedChainId.bsc]: {
     [SupportedDex.UniswapV3]: {
       factoryAddress: '0x065356d9f628cDd1bb9F2384E2972CdAC50f51b7',
@@ -446,6 +457,17 @@ export const addressConfig: Record<SupportedChainId, Config> = {
       vaultDeployerAddress: '0x5B4b1f40CEa75f3b7E4df178AD1B1804d82491d9',
       isAlgebra: true,
       ammVersion: AMM_VERSIONS.ALGEBRA_INTEGRAL,
+    },
+  },
+  [SupportedChainId.cronos]: {
+    [SupportedDex.VVS]: {
+      factoryAddress: '0x8cCd02E769e6A668a447Bd15e134C31bEccd8182',
+      depositGuard: {
+        address: '0xE665F83541143b0e62187E889580DE25900e2342  ',
+        version: 2,
+      },
+      vaultDeployerAddress: '0xb3104ba008610C2CC7F665F2a6117f2E93515309',
+      isAlgebra: false,
     },
   },
   [SupportedChainId.eon]: {
@@ -1019,7 +1041,9 @@ export const MULTICALL_ADDRESSES: Partial<Record<SupportedChainId, string>> = {
   [SupportedChainId.arbitrum]: '0xd9e7c0932a7D3e40Db3Fe78d95A3ED375a37Ab1a',
   [SupportedChainId.base_sepolia]: '0xd867e273eAbD6c853fCd0Ca0bFB6a3aE6491d2C1',
   [SupportedChainId.berachain]: '0x89ff70257bc747F310bB538eeFC46aDD763e75d8',
+  [SupportedChainId.botanix]: "0xE89F840427D043ED96d70D3b63916776216f55D6",
   [SupportedChainId.citrea_testnet]: '0xB4F9b6b019E75CBe51af4425b2Fc12797e2Ee2a1',
+  [SupportedChainId.cronos]: "0x088ee1FB556Cbd24383AFE3ED9812235Ee931e13",
   [SupportedChainId.haven1_devnet]: '0xe573920139a208989d83C57ea48837C6285F2cd3',
   [SupportedChainId.fantom]: '0xd9e7c0932a7D3e40Db3Fe78d95A3ED375a37Ab1a',
   [SupportedChainId.flow]: '0xA41Fef85d7a7DebAD0CC265Ad514716C52919559',
