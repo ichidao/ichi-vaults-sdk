@@ -239,6 +239,15 @@ export const graphUrls: Record<SupportedChainId, dexGraph> = {
       supportsCollectFees: true,
     },
   },
+  [SupportedChainId.botanix]: {
+    [SupportedDex.Bitzy]: {
+      url: 'https://api.studio.thegraph.com/query/88584/botanix-v-2-bitzy/version/latest',
+      publishedUrl:
+        'https://gateway-arbitrum.network.thegraph.com/api/[api-key]/subgraphs/id/JCJdoEihvoziMjpMHs9eyMnaBmXijWoeuq73zoy8tNJN',
+      supportsCollectFees: true,
+      version: 2,
+    },
+  },
   [SupportedChainId.bsc]: {
     [SupportedDex.UniswapV3]: {
       url: 'https://api.studio.thegraph.com/query/88584/bnb-v1/version/latest',
@@ -303,6 +312,15 @@ export const graphUrls: Record<SupportedChainId, dexGraph> = {
       version: 2,
     },
   },
+  [SupportedChainId.cronos]: {
+    [SupportedDex.VVS]: {
+      url: 'https://api.studio.thegraph.com/query/88584/botanix-v-2-bitzy/version/latest',
+      publishedUrl:
+        'https://gateway-arbitrum.network.thegraph.com/api/[api-key]/subgraphs/id/2q9731g9mpWPpzNDXuSDZ7o92sxHzBs8Nqq4EUHLoQqc',
+      supportsCollectFees: true,
+      version: 2,
+    },
+  },
   [SupportedChainId.eon]: {
     [SupportedDex.Ascent]: {
       url: 'none',
@@ -347,14 +365,14 @@ export const graphUrls: Record<SupportedChainId, dexGraph> = {
   },
   [SupportedChainId.flow]: {
     [SupportedDex.FlowSwap]: {
-      url: 'https://subgraph.satsuma-prod.com/[api-key]/kpgsdns3o2izsefijmnehp--15237/flow-v2-flowswap/api',
-      publishedUrl: 'https://subgraph.satsuma-prod.com/[api-key]/kpgsdns3o2izsefijmnehp--15237/flow-v2-flowswap/api',
+      url: 'https://api.goldsky.com/api/public/project_clynrq1h8gam301xx6vgngo9p/subgraphs/g2/flow-v2-flowswap/gn',
+      publishedUrl: 'https://api.goldsky.com/api/public/project_clynrq1h8gam301xx6vgngo9p/subgraphs/g2/flow-v2-flowswap/gn',
       supportsCollectFees: true,
       version: 2,
     },
     [SupportedDex.KittyPunch]: {
-      url: 'https://subgraph.satsuma-prod.com/[api-key]/kpgsdns3o2izsefijmnehp--15237/flow-v2-kittypunch/api',
-      publishedUrl: 'https://subgraph.satsuma-prod.com/[api-key]/kpgsdns3o2izsefijmnehp--15237/flow-v2-kittypunch/api',
+      url: 'https://api.goldsky.com/api/public/project_clynrq1h8gam301xx6vgngo9p/subgraphs/g2/flow-v2-kittypunch/gn',
+      publishedUrl: 'https://api.goldsky.com/api/public/project_clynrq1h8gam301xx6vgngo9p/subgraphs/g2/flow-v2-kittypunch/gn',
       supportsCollectFees: true,
       version: 2,
     },
