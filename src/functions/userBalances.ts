@@ -24,7 +24,7 @@ import { getChainByProvider, validateVaultData } from './vault';
 import { UserBalancesQueryData } from '../types/vaultQueryData';
 import { getUserBalancesQuery } from '../graphql/queries';
 import parseBigInt from '../utils/parseBigInt';
-import getGraphUrls from '../utils/getGraphUrls';
+import { getGraphUrls } from '../utils/getGraphUrls';
 import { _getTotalAmounts, _getTotalSupply, getTokenDecimals } from './_totalBalances';
 import {
   decodeDecimalsResult,

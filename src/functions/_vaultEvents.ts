@@ -16,7 +16,7 @@ import {
   vaultWithdrawsQuery,
 } from '../graphql/queries';
 import { daysToMilliseconds } from '../utils/timestamps';
-import getGraphUrls from '../utils/getGraphUrls';
+import { getGraphUrls } from '../utils/getGraphUrls';
 import cache from '../utils/cache';
 import {
   sendAllEventsQueryRequest,

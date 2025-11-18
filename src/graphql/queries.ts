@@ -2,7 +2,7 @@
 import { gql } from 'graphql-request';
 import { SupportedChainId, SupportedDex } from '../types';
 import { addressConfig } from '../utils/config/addresses';
-import getGraphUrls from '../utils/getGraphUrls';
+import { getGraphUrls } from '../utils/getGraphUrls';
 import { isVelodromeDex } from '../utils/isVelodrome';
 
 function noHoldersCount(dex: SupportedDex, chainId: SupportedChainId): boolean {

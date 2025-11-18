@@ -1,7 +1,8 @@
 import { graphUrls } from '../graphql/constants';
 import { SupportedChainId, SupportedDex } from '../types';
 
-export default function getGraphUrls(
+// eslint-disable-next-line import/prefer-default-export
+export function getGraphUrls(
   chainId: SupportedChainId,
   dex: SupportedDex,
   isGraphRequired?: boolean,

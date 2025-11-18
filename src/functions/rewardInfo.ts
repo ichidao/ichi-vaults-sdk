@@ -6,7 +6,7 @@
 import request from 'graphql-request';
 import { RewardInfo, SupportedChainId, SupportedDex } from '../types';
 import cache from '../utils/cache';
-import getGraphUrls from '../utils/getGraphUrls';
+import { getGraphUrls } from '../utils/getGraphUrls';
 import { allRewardInfoQuery, rewardInfoQuery } from '../graphql/queries';
 import { AllRewardInfoQueryResponse, RewardInfoQueryResponse } from '../types/vaultQueryData';
 import { isVelodromeDex } from '../utils/isVelodrome';

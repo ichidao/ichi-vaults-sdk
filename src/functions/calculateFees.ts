@@ -12,7 +12,7 @@ import { daysToMilliseconds } from '../utils/timestamps';
 import { isTokenAllowed } from './deposit';
 import getPrice from '../utils/getPrice';
 import { getVaultTvl } from './priceFromPool';
-import getGraphUrls from '../utils/getGraphUrls';
+import { getGraphUrls } from '../utils/getGraphUrls';
 import { _getFeesCollectedEvents, _getRebalances } from './_vaultEvents';
 
 function getCollectedTokenAmountBN(ind: 0 | 1, feesDataset: Fees[]): BigNumber {

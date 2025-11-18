@@ -4,7 +4,7 @@ import { FeeAprData, SupportedDex } from '../types';
 // eslint-disable-next-line import/no-cycle
 import { validateVaultData } from './vault';
 import { graphUrls } from '../graphql/constants';
-import getGraphUrls from '../utils/getGraphUrls';
+import { getGraphUrls } from '../utils/getGraphUrls';
 import cache from '../utils/cache';
 import { FeeAprQueryResponse } from '../types/vaultQueryData';
 import { sendFeeAprQueryRequest } from '../graphql/functions';
