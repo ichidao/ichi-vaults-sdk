@@ -314,7 +314,7 @@ export const graphUrls: Record<SupportedChainId, dexGraph> = {
   },
   [SupportedChainId.cronos]: {
     [SupportedDex.VVS]: {
-      url: 'https://api.studio.thegraph.com/query/88584/botanix-v-2-bitzy/version/latest',
+      url: 'https://api.studio.thegraph.com/query/88584/cronos-v-2-vvs/version/latest',
       publishedUrl:
         'https://gateway-arbitrum.network.thegraph.com/api/[api-key]/subgraphs/id/2q9731g9mpWPpzNDXuSDZ7o92sxHzBs8Nqq4EUHLoQqc',
       supportsCollectFees: true,
@@ -547,6 +547,15 @@ export const graphUrls: Record<SupportedChainId, dexGraph> = {
       publishedUrl:
         'https://api.goldsky.com/api/public/project_clynrq1h8gam301xx6vgngo9p/subgraphs/ichi-org/mode-v1-kim/gn',
       supportsCollectFees: true,
+    },
+  },
+  [SupportedChainId.monad]: {
+    [SupportedDex.Atlantis]: {
+      url: 'https://api.studio.thegraph.com/query/88584/monad-v-2-atlantis/version/latest',
+      publishedUrl:
+        'https://gateway-arbitrum.network.thegraph.com/api/[api-key]/subgraphs/id/EZgWBfZdrmM59HL5SbQkcQp53toKpvKkHgP8RcuQH5uw',
+      supportsCollectFees: true,
+      version: 2,
     },
   },
   [SupportedChainId.monad_testnet]: {

@@ -1192,6 +1192,7 @@ enum SupportedChainId {
   mainnet = 1,
   mantle = 5000,
   mode = 34443,
+  monad = 143,
   monad_testnet = 10143,
   moonbeam = 1284,
   nibiru = 6900,
