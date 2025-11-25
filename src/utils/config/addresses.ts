@@ -361,7 +361,7 @@ export const addressConfig: Record<SupportedChainId, Config> = {
     [SupportedDex.Bitzy]: {
       factoryAddress: '0x53511764DE94CdA43CbBadFFCca3F29D2EFAB0F8',
       depositGuard: {
-        address: '0xf0d899E6582CF2fd1A05F52C8e1b3a56feD9fdb9',
+        address: '0xd68b0114dB1e3CAcb5A334AA8aF3D14295c772E7',
         version: 2,
       },
       vaultDeployerAddress: '0x7d11De61c219b70428Bb3199F0DD88bA9E76bfEE',
@@ -463,7 +463,7 @@ export const addressConfig: Record<SupportedChainId, Config> = {
     [SupportedDex.VVS]: {
       factoryAddress: '0x8cCd02E769e6A668a447Bd15e134C31bEccd8182',
       depositGuard: {
-        address: '0xE665F83541143b0e62187E889580DE25900e2342  ',
+        address: '0x05043eE22e5E64677D42A632D42a5cb15187947B    ',
         version: 2,
       },
       vaultDeployerAddress: '0xb3104ba008610C2CC7F665F2a6117f2E93515309',
@@ -790,6 +790,18 @@ export const addressConfig: Record<SupportedChainId, Config> = {
       ammVersion: AMM_VERSIONS.ALGEBRA_INTEGRAL,
     },
   },
+  [SupportedChainId.monad]: {
+    [SupportedDex.Atlantis]: {
+      factoryAddress: '0xA6cEEf2a9b7B080F62ea2F73F2271214F0d928F8',
+      depositGuard: {
+        address: '0xf10075dA7DD842e8c5FBa17398e8F64F39C201E2',
+        version: 2,
+      },
+      vaultDeployerAddress: '0xd50b5AD0d8D9CcAfe837162Abb80F9D612026a13',
+      isAlgebra: true,
+      ammVersion: AMM_VERSIONS.ALGEBRA_INTEGRAL,
+    },
+  },
   [SupportedChainId.monad_testnet]: {
     [SupportedDex.Atlantis]: {
       factoryAddress: '0x4431CFdA42fB518A87f5928774DeA5389c43363a',
@@ -1056,6 +1068,7 @@ export const MULTICALL_ADDRESSES: Partial<Record<SupportedChainId, string>> = {
   [SupportedChainId.katana]: '0xA730CAa84B6E72bb51eD5b2A1B08bc6031a95294',
   [SupportedChainId.mantle]: '0xf5bb4e61ccAC9080fb520e5F69224eE85a4D588F',
   [SupportedChainId.mode]: '0x481BE66De423B6a0Df368b526713bA632EF23ADd',
+  [SupportedChainId.monad]: '0xD1b797D92d87B688193A2B976eFc8D577D204343',
   [SupportedChainId.monad_testnet]: '0xcfEA11557Bc9cB71bc6916e09fC8493D668b8d53',
   [SupportedChainId.moonbeam]: '0x4F15CED4dD9B8eF545809431c177a3ae46A29c37',
   [SupportedChainId.nibiru]: '0x5d6b0f5335ec95cD2aB7E52f2A0750dd86502435',
