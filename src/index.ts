@@ -18,3 +18,4 @@ export * from './functions/userRewards';
 export * from './functions/claimRewards';
 export * from './types/index';
 export * from './utils/getGraphUrls';
+export * from './utils/config/addresses';

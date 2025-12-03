@@ -575,7 +575,7 @@ const web3Provider = new Web3Provider(YOUR_WEB3_PROVIDER);
 const dex = SupportedDex.UniswapV3
 const accountAddress = "0xaaaa...aaaaaa"
 
-const userBalancesInVaults: UserBalanceInVault[] = await getAllUserBalances(
+const userBalancesInVaults: [UserBalanceInVault](#userbalanceinvault)[] = await getAllUserBalances(
     accountAddress,
     web3Provider,
     dex
@@ -583,7 +583,7 @@ const userBalancesInVaults: UserBalanceInVault[] = await getAllUserBalances(
 
 // - or -
 
-const userBalancesInVaultsBN: UserBalanceInVaultBN[] = await getAllUserBalances(
+const userBalancesInVaultsBN: [UserBalanceInVaultBN](#userbalanceinvaultbn)[] = await getAllUserBalances(
     accountAddress,
     web3Provider,
     dex,
@@ -611,7 +611,7 @@ const web3Provider = new Web3Provider(YOUR_WEB3_PROVIDER);
 const dex = SupportedDex.UniswapV3
 const accountAddress = "0xaaaa...aaaaaa"
 
-const amounts: UserAmountsInVault[] = await getAllUserAmounts(
+const amounts: [UserAmountsInVault](#useramountsinvault)[] = await getAllUserAmounts(
     accountAddress,
     web3Provider,
     dex,
@@ -619,7 +619,7 @@ const amounts: UserAmountsInVault[] = await getAllUserAmounts(
 
 // - or -
 
-const amountsBN: UserAmountsInVaultBN[] = await getAllUserAmounts(
+const amountsBN: [UserAmountsInVaultBN](#useramountsinvaultbn)[] = await getAllUserAmounts(
     accountAddress,
     web3Provider,
     dex,
@@ -715,6 +715,9 @@ const amountsBN: [BigNumber, BigNumber] & {total0: BigNumber, total1: BigNumber}
 | days   | number | undefined | false |
 
 <br/>
+
+> **Note:** This function may take several seconds to execute as it processes historical data. It is best suited for report generation and batched backend processes rather than user-facing interfaces where immediate responses are expected. For real-time UI updates, consider using [`getFeeAprs()`](#20-getfeeaprs) instead.
+
 The getFeesCollected() function returns the number of fees collected for the specified number of days. If the 'days' parameter is not included, it returns the number of fees collected since the vault's inception.
 
 ```typescript
@@ -771,8 +774,11 @@ const amountsBN: [BigNumber, BigNumber] & {total0: BigNumber, total1: BigNumber}
 | forDays   | number[] | undefined | false |
 
 <br/>
-The getFeesCollectedInfo() function returns an array of FeesInfo objects representing the number of fees collected for the periods of time specified by the 'forDays' parameter, along with the fee Annual Percentage Rate (APR) for those periods.
-If 'forDays' is not specified, it returns FeesInfo for time periods of 1, 7, and 30 days.
+
+> **Note:** This function may take several seconds to execute as it processes historical data. It is best suited for report generation and batched backend processes rather than user-facing interfaces where immediate responses are expected. For real-time UI updates, consider using [`getFeeAprs()`](#20-getfeeaprs) instead.
+
+The getFeesCollectedInfo() function returns an array of [FeesInfo](#feesinfo) objects representing the number of fees collected for the periods of time specified by the 'forDays' parameter, along with the fee Annual Percentage Rate (APR) for those periods.
+If 'forDays' is not specified, it returns [FeesInfo](#feesinfo) for time periods of 1, 7, and 30 days.
 <br/>
 
 ```typescript
@@ -784,7 +790,7 @@ const vaultAddress = "0x3ac9...a5f132";
 const dex = SupportedDex.UniswapV3;
 const days = [2, 5, 14, 60];
 
-const feesInfo: FeesInfo[] = await getFeesCollectedInfo(
+const feesInfo: [FeesInfo](#feesinfo)[] = await getFeesCollectedInfo(
     vaultAddress,
     web3Provider,
     dex
@@ -792,7 +798,7 @@ const feesInfo: FeesInfo[] = await getFeesCollectedInfo(
 
 // - or -
 
-const feesInfo: FeesInfo[] = await getFeesCollectedInfo(
+const feesInfo: [FeesInfo](#feesinfo)[] = await getFeesCollectedInfo(
     vaultAddress,
     web3Provider,
     dex,
@@ -809,7 +815,7 @@ const feesInfo: FeesInfo[] = await getFeesCollectedInfo(
 | dex   | SupportedDex | - | true
 
 <br/>
-The getFeeAprs() function calculates and returns fee Annual Percentage Rates (APRs) for the specified vault over different standard time periods. It returns an object of type FeeAprData containing APR values for 1 day, 3 days, 7 days, and 30 days.
+The getFeeAprs() function calculates and returns fee Annual Percentage Rates (APRs) for the specified vault over different standard time periods. It returns an object of type [FeeAprData](#feeaprdata) containing APR values for 1 day, 3 days, 7 days, and 30 days.
 
 ```typescript
 import { Web3Provider } from '@ethersproject/providers';
@@ -833,8 +839,8 @@ console.log(`1-day Fee APR: ${feeAprs.feeApr_1d}%`);
 | timeIntervals   | number[] | [1, 7, 30] | false |
 
 <br/>
-The getAverageDepositTokenRatios() function returns an array of DepositTokenRatio objects representing the average deposit token ratio for the periods of time specified by the 'timeIntervals' parameter.
-If 'timeIntervals' is not specified, it returns DepositTokenRatio objects for time periods of 1, 7, and 30 days.
+The getAverageDepositTokenRatios() function returns an array of [AverageDepositTokenRatio](#averagedeposittokenratio) objects representing the average deposit token ratio for the periods of time specified by the 'timeIntervals' parameter.
+If 'timeIntervals' is not specified, it returns [AverageDepositTokenRatio](#averagedeposittokenratio) objects for time periods of 1, 7, and 30 days.
 
 ```typescript
 import { Web3Provider } from '@ethersproject/providers';
@@ -845,7 +851,7 @@ const vaultAddress = "0x3ac9...a5f132";
 const dex = SupportedDex.UniswapV3;
 const days = [2, 5, 14, 60];
 
-const averageDtr: AverageDepositTokenRatio[] = await getAverageDepositTokenRatios(
+const averageDtr: [AverageDepositTokenRatio](#averagedeposittokenratio)[] = await getAverageDepositTokenRatios(
     vaultAddress,
     web3Provider,
     dex
@@ -853,7 +859,7 @@ const averageDtr: AverageDepositTokenRatio[] = await getAverageDepositTokenRatio
 
 // - or -
 
-const averageDtr: AverageDepositTokenRatio[] = await getAverageDepositTokenRatios(
+const averageDtr: [AverageDepositTokenRatio](#averagedeposittokenratio)[] = await getAverageDepositTokenRatios(
     vaultAddress,
     web3Provider,
     dex,
@@ -871,8 +877,11 @@ const averageDtr: AverageDepositTokenRatio[] = await getAverageDepositTokenRatio
 | timeIntervals   | number[] | [1, 7, 30] | false |
 
 <br/>
-The getVaultMetrics() function returns an array of VaultMetrics objects for the periods of time specified by the 'timeIntervals' parameter.
-If 'timeIntervals' is not specified, it returns VaultMetrics objects for time periods of 1, 7, and 30 days.
+
+> **Note:** This function may take several seconds to execute as it processes historical data. It is best suited for report generation and batched backend processes rather than user-facing interfaces where immediate responses are expected.
+
+The getVaultMetrics() function returns an array of [VaultMetrics](#vaultmetrics) objects for the periods of time specified by the 'timeIntervals' parameter.
+If 'timeIntervals' is not specified, it returns [VaultMetrics](#vaultmetrics) objects for time periods of 1, 7, and 30 days.
 
 ```typescript
 import { Web3Provider } from '@ethersproject/providers';
@@ -883,7 +892,7 @@ const vaultAddress = "0x3ac9...a5f132";
 const dex = SupportedDex.UniswapV3;
 const days = [2, 5, 14, 60];
 
-const vaultMetrics: VaultMetrics[] = await getVaultMetrics(
+const vaultMetrics: [VaultMetrics](#vaultmetrics)[] = await getVaultMetrics(
     vaultAddress,
     web3Provider,
     dex
@@ -891,7 +900,7 @@ const vaultMetrics: VaultMetrics[] = await getVaultMetrics(
 
 // - or -
 
-const vaultMetrics: VaultMetrics[] = await getVaultMetrics(
+const vaultMetrics: [VaultMetrics](#vaultmetrics)[] = await getVaultMetrics(
     vaultAddress,
     web3Provider,
     dex,
@@ -909,7 +918,7 @@ const vaultMetrics: VaultMetrics[] = await getVaultMetrics(
 | jsonProvider   | JsonRpcProvider | - | false |
 
 <br/>
-This function returns IchiVault object.
+This function returns [IchiVault](#ichivault) object.
 
 ```typescript
 import { Web3Provider } from '@ethersproject/providers';
@@ -935,7 +944,7 @@ if (vaultInfo) {
 | pairedTokenAddress   | string | - | true |
 
 <br/>
-This function returns an array of all vaults (IchiVault[]) on the specified DEX that contain two tokens defined by the 'depositTokenAddress' and 'pairedTokenAddress' parameters.
+This function returns an array of all vaults ([IchiVault](#ichivault)[]) on the specified DEX that contain two tokens defined by the 'depositTokenAddress' and 'pairedTokenAddress' parameters.
 
 ```typescript
 import { Web3Provider } from '@ethersproject/providers';
@@ -991,7 +1000,7 @@ if (vaults.length === 0) {
 | dex   | SupportedDex | - | true
 
 <br/>
-This function returns an object of type VaultPositionsInfo.
+This function returns an object of type [VaultPositionsInfo](#vaultpositionsinfo).
 
 ```typescript
 import { Web3Provider } from '@ethersproject/providers';
@@ -1001,7 +1010,7 @@ const web3Provider = new Web3Provider(YOUR_WEB3_PROVIDER);
 const vaultAddress = "0x3ac9...a5f132";
 const dex = SupportedDex.UniswapV3;
 
-const vaultPositions: VaultPositionsInfo = await getVaultPositions(
+const vaultPositions: [VaultPositionsInfo](#vaultpositionsinfo) = await getVaultPositions(
     vaultAddress,
     web3Provider,
     dex
@@ -1061,7 +1070,7 @@ const vaultAddress = "0x3e4...45a";
 const chainId = SupportedChainId.Ink;
 const dex = SupportedDex.Velodrome;
 
-const rewardInfo: RewardInfo = getRewardInfo(chainId, dex, vaultAddress);
+const rewardInfo: [RewardInfo](#rewardinfo) = getRewardInfo(chainId, dex, vaultAddress);
 ```
 
 #### 30. `getAllRewardInfo()`
@@ -1080,7 +1089,7 @@ import { getAllRewardInfo, SupportedChainId, SupportedDex } from '@ichidao/ichi-
 const chainId = SupportedChainId.Ink;
 const dex = SupportedDex.Velodrome;
 
-const chains: RewardInfo[] = getAllRewardInfo(chainId, dex);
+const chains: [RewardInfo](#rewardinfo)[] = getAllRewardInfo(chainId, dex);
 ```
 
 #### 31. `getAllUserRewards()`
@@ -1102,7 +1111,7 @@ const account = "0x123...890";
 const provider = new Web3Provider(YOUR_WEB3_PROVIDER);
 const dex = SupportedDex.Velodrome;
 
-const rewards: UserRewards[] = await getAllUserRewards(account, provider, dex);
+const rewards: [UserRewards](#userrewards)[] = await getAllUserRewards(account, provider, dex);
 ```
 
 #### 32. `getUserRewards()`
@@ -1126,8 +1135,8 @@ const vaultAddress = "0x3e4...45a";
 const provider = new Web3Provider(YOUR_WEB3_PROVIDER);
 const dex = SupportedDex.Velodrome;
 
-const rewards: UserRewardByToken[] = getUserRewards(account, vaultAddress, provider, dex);
-const rewardsBN: UserRewardByTokenBN[] = getUserRewards(account, vaultAddress, provider, dex, true);
+const rewards: [UserRewardsByToken](#userrewardsbytoken)[] = getUserRewards(account, vaultAddress, provider, dex);
+const rewardsBN: [UserRewardsByTokenBN](#userrewardsbytokenbn)[] = getUserRewards(account, vaultAddress, provider, dex, true);
 ```
 
 #### 33. `claimRewards()`
