@@ -564,7 +564,6 @@ const amountsBN: [BigNumber, BigNumber] & {amount0: BigNumber, amount1: BigNumbe
 | dex   | SupportedDex | - | true
 | raw   | true | undefined | false |
 
-<br/>
 This function returns user balances (as [UserBalanceInVault](#userbalanceinvault) or [UserBalanceInVaultBN](#userbalanceinvaultbn)) for all vaults on the specified decentralized exchange (DEX). The result is cached for 2 minutes by default. You can set your own cache TTL by adding the CACHE_TTL environment variable in millisecond. For example, CACHE_TTL = 60000 is 1 minute.
 
 ```typescript
@@ -600,7 +599,6 @@ const userBalancesInVaultsBN: UserBalanceInVaultBN[] = await getAllUserBalances(
 | dex   | SupportedDex | - | true
 | raw   | true | undefined | false |
 
-<br/>
 This function returns user token amounts (as [UserAmountsInVault](#useramountsinvault) or [UserAmountsInVaultBN](#useramountsinvaultbn)) in all vaults on the specified decentralized exchange (DEX). The result is cached for 2 minutes by default. You can set your own cache TTL by adding the CACHE_TTL environment variable in millisecond. For example, CACHE_TTL = 60000 is 1 minute.
 
 ```typescript
@@ -779,7 +777,6 @@ const amountsBN: [BigNumber, BigNumber] & {total0: BigNumber, total1: BigNumber}
 
 The getFeesCollectedInfo() function returns an array of [FeesInfo](#feesinfo) objects representing the number of fees collected for the periods of time specified by the 'forDays' parameter, along with the fee Annual Percentage Rate (APR) for those periods.
 If 'forDays' is not specified, it returns [FeesInfo](#feesinfo) for time periods of 1, 7, and 30 days.
-<br/>
 
 ```typescript
 import { Web3Provider } from '@ethersproject/providers';
@@ -814,7 +811,6 @@ const feesInfo: FeesInfo[] = await getFeesCollectedInfo(
 | jsonProvider      | [JsonRpcProvider](https://github.com/ethers-io/ethers.js/blob/f97b92bbb1bde22fcc44100af78d7f31602863ab/packages/providers/src.ts/json-rpc-provider.ts#L393) | - | true
 | dex   | SupportedDex | - | true
 
-<br/>
 The getFeeAprs() function calculates and returns fee Annual Percentage Rates (APRs) for the specified vault over different standard time periods. It returns an object of type [FeeAprData](#feeaprdata) containing APR values for 1 day, 3 days, 7 days, and 30 days.
 
 ```typescript
@@ -838,7 +834,6 @@ console.log(`1-day Fee APR: ${feeAprs.feeApr_1d}%`);
 | dex   | SupportedDex | - | true
 | timeIntervals   | number[] | [1, 7, 30] | false |
 
-<br/>
 The getAverageDepositTokenRatios() function returns an array of [AverageDepositTokenRatio](#averagedeposittokenratio) objects representing the average deposit token ratio for the periods of time specified by the 'timeIntervals' parameter.
 If 'timeIntervals' is not specified, it returns [AverageDepositTokenRatio](#averagedeposittokenratio) objects for time periods of 1, 7, and 30 days.
 
@@ -917,8 +912,7 @@ const vaultMetrics: VaultMetrics[] = await getVaultMetrics(
 | vaultAddress   | string | - | true |
 | jsonProvider   | JsonRpcProvider | - | false |
 
-<br/>
-This function returns [IchiVault](#ichivault) object.
+This function returns an [IchiVault](#ichivault) object.
 
 ```typescript
 import { Web3Provider } from '@ethersproject/providers';
@@ -943,7 +937,6 @@ if (vaultInfo) {
 | depositTokenAddress   | string | - | true |
 | pairedTokenAddress   | string | - | true |
 
-<br/>
 This function returns an array of all vaults ([IchiVault](#ichivault)[]) on the specified DEX that contain two tokens defined by the 'depositTokenAddress' and 'pairedTokenAddress' parameters.
 
 ```typescript
@@ -999,7 +992,6 @@ if (vaults.length === 0) {
 | jsonProvider      | [JsonRpcProvider](https://github.com/ethers-io/ethers.js/blob/f97b92bbb1bde22fcc44100af78d7f31602863ab/packages/providers/src.ts/json-rpc-provider.ts#L393) | - | true
 | dex   | SupportedDex | - | true
 
-<br/>
 This function returns an object of type [VaultPositionsInfo](#vaultpositionsinfo).
 
 ```typescript
@@ -1060,7 +1052,6 @@ const chains: SupportedChainId[] = getChainsForDex(dex);
 | dex   | SupportedDex | - | true |
 | vaultAddress   | string | - | true |
 
-<br/>
 This function returns [RewardInfo](#rewardinfo) about reward rates and farming contract for the specified vault. This function is specific for Velodrome vaults.
 
 ```typescript
@@ -1080,7 +1071,6 @@ const rewardInfo: RewardInfo = getRewardInfo(chainId, dex, vaultAddress);
 | chainId   | SupportedChainId | - | true |
 | dex   | SupportedDex | - | true |
 
-<br/>
 This function returns an array of [RewardInfo](#rewardinfo) about reward rates and farming contracts for all vaults on the dex. This function is specific for Velodrome vaults.
 
 ```typescript
@@ -1101,7 +1091,6 @@ const allRewardInfo: RewardInfo[] = getAllRewardInfo(chainId, dex);
 | dex   | SupportedDex | - | true |
 | raw   | true | undefined | - | false |
 
-<br/>
 This function returns user rewards (as [UserRewards](#userrewards)) for all vaults on the dex. This function is specific for Velodrome vaults.
 
 ```typescript
@@ -1124,7 +1113,6 @@ const rewards: UserRewards[] = await getAllUserRewards(account, provider, dex);
 | dex   | SupportedDex | - | true |
 | raw   | true | undefined | - | false |
 
-<br/>
 This function returns claimable reward amounts (as [UserRewardsByToken](#userrewardsbytoken) or [UserRewardsByTokenBN](#userrewardsbytokenbn)) for the specified vault and user account. This function is specific for Velodrome vaults.
 
 ```typescript
