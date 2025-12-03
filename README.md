@@ -565,7 +565,7 @@ const amountsBN: [BigNumber, BigNumber] & {amount0: BigNumber, amount1: BigNumbe
 | raw   | true | undefined | false |
 
 <br/>
-This function returns user balances for all vaults on the specified decentralized exchange (DEX). The result is cached for 2 minutes by default. You can set your own cache TTL by adding the CACHE_TTL environment variable in millisecond. For example, CACHE_TTL = 60000 is 1 minute.
+This function returns user balances (as [UserBalanceInVault](#userbalanceinvault) or [UserBalanceInVaultBN](#userbalanceinvaultbn)) for all vaults on the specified decentralized exchange (DEX). The result is cached for 2 minutes by default. You can set your own cache TTL by adding the CACHE_TTL environment variable in millisecond. For example, CACHE_TTL = 60000 is 1 minute.
 
 ```typescript
 import { Web3Provider } from '@ethersproject/providers';
@@ -575,7 +575,7 @@ const web3Provider = new Web3Provider(YOUR_WEB3_PROVIDER);
 const dex = SupportedDex.UniswapV3
 const accountAddress = "0xaaaa...aaaaaa"
 
-const userBalancesInVaults: [UserBalanceInVault](#userbalanceinvault)[] = await getAllUserBalances(
+const userBalancesInVaults: UserBalanceInVault[] = await getAllUserBalances(
     accountAddress,
     web3Provider,
     dex
@@ -583,7 +583,7 @@ const userBalancesInVaults: [UserBalanceInVault](#userbalanceinvault)[] = await 
 
 // - or -
 
-const userBalancesInVaultsBN: [UserBalanceInVaultBN](#userbalanceinvaultbn)[] = await getAllUserBalances(
+const userBalancesInVaultsBN: UserBalanceInVaultBN[] = await getAllUserBalances(
     accountAddress,
     web3Provider,
     dex,
@@ -601,7 +601,7 @@ const userBalancesInVaultsBN: [UserBalanceInVaultBN](#userbalanceinvaultbn)[] = 
 | raw   | true | undefined | false |
 
 <br/>
-This function returns user token amounts in all vaults on the specified decentralized exchange (DEX). The result is cached for 2 minutes by default. You can set your own cache TTL by adding the CACHE_TTL environment variable in millisecond. For example, CACHE_TTL = 60000 is 1 minute.
+This function returns user token amounts (as [UserAmountsInVault](#useramountsinvault) or [UserAmountsInVaultBN](#useramountsinvaultbn)) in all vaults on the specified decentralized exchange (DEX). The result is cached for 2 minutes by default. You can set your own cache TTL by adding the CACHE_TTL environment variable in millisecond. For example, CACHE_TTL = 60000 is 1 minute.
 
 ```typescript
 import { Web3Provider } from '@ethersproject/providers';
@@ -611,7 +611,7 @@ const web3Provider = new Web3Provider(YOUR_WEB3_PROVIDER);
 const dex = SupportedDex.UniswapV3
 const accountAddress = "0xaaaa...aaaaaa"
 
-const amounts: [UserAmountsInVault](#useramountsinvault)[] = await getAllUserAmounts(
+const amounts: UserAmountsInVault[] = await getAllUserAmounts(
     accountAddress,
     web3Provider,
     dex,
@@ -619,7 +619,7 @@ const amounts: [UserAmountsInVault](#useramountsinvault)[] = await getAllUserAmo
 
 // - or -
 
-const amountsBN: [UserAmountsInVaultBN](#useramountsinvaultbn)[] = await getAllUserAmounts(
+const amountsBN: UserAmountsInVaultBN[] = await getAllUserAmounts(
     accountAddress,
     web3Provider,
     dex,
@@ -790,7 +790,7 @@ const vaultAddress = "0x3ac9...a5f132";
 const dex = SupportedDex.UniswapV3;
 const days = [2, 5, 14, 60];
 
-const feesInfo: [FeesInfo](#feesinfo)[] = await getFeesCollectedInfo(
+const feesInfo: FeesInfo[] = await getFeesCollectedInfo(
     vaultAddress,
     web3Provider,
     dex
@@ -798,7 +798,7 @@ const feesInfo: [FeesInfo](#feesinfo)[] = await getFeesCollectedInfo(
 
 // - or -
 
-const feesInfo: [FeesInfo](#feesinfo)[] = await getFeesCollectedInfo(
+const feesInfo: FeesInfo[] = await getFeesCollectedInfo(
     vaultAddress,
     web3Provider,
     dex,
@@ -851,7 +851,7 @@ const vaultAddress = "0x3ac9...a5f132";
 const dex = SupportedDex.UniswapV3;
 const days = [2, 5, 14, 60];
 
-const averageDtr: [AverageDepositTokenRatio](#averagedeposittokenratio)[] = await getAverageDepositTokenRatios(
+const averageDtr: AverageDepositTokenRatio[] = await getAverageDepositTokenRatios(
     vaultAddress,
     web3Provider,
     dex
@@ -859,7 +859,7 @@ const averageDtr: [AverageDepositTokenRatio](#averagedeposittokenratio)[] = awai
 
 // - or -
 
-const averageDtr: [AverageDepositTokenRatio](#averagedeposittokenratio)[] = await getAverageDepositTokenRatios(
+const averageDtr: AverageDepositTokenRatio[] = await getAverageDepositTokenRatios(
     vaultAddress,
     web3Provider,
     dex,
@@ -892,7 +892,7 @@ const vaultAddress = "0x3ac9...a5f132";
 const dex = SupportedDex.UniswapV3;
 const days = [2, 5, 14, 60];
 
-const vaultMetrics: [VaultMetrics](#vaultmetrics)[] = await getVaultMetrics(
+const vaultMetrics: VaultMetrics[] = await getVaultMetrics(
     vaultAddress,
     web3Provider,
     dex
@@ -900,7 +900,7 @@ const vaultMetrics: [VaultMetrics](#vaultmetrics)[] = await getVaultMetrics(
 
 // - or -
 
-const vaultMetrics: [VaultMetrics](#vaultmetrics)[] = await getVaultMetrics(
+const vaultMetrics: VaultMetrics[] = await getVaultMetrics(
     vaultAddress,
     web3Provider,
     dex,
@@ -1010,7 +1010,7 @@ const web3Provider = new Web3Provider(YOUR_WEB3_PROVIDER);
 const vaultAddress = "0x3ac9...a5f132";
 const dex = SupportedDex.UniswapV3;
 
-const vaultPositions: [VaultPositionsInfo](#vaultpositionsinfo) = await getVaultPositions(
+const vaultPositions: VaultPositionsInfo = await getVaultPositions(
     vaultAddress,
     web3Provider,
     dex
@@ -1061,7 +1061,7 @@ const chains: SupportedChainId[] = getChainsForDex(dex);
 | vaultAddress   | string | - | true |
 
 <br/>
-This function returns information about reward rates and farming contract for the specified vault. This functions is specific for the Velodrome vaults.
+This function returns [RewardInfo](#rewardinfo) about reward rates and farming contract for the specified vault. This function is specific for Velodrome vaults.
 
 ```typescript
 import { getRewardInfo, SupportedChainId, SupportedDex } from '@ichidao/ichi-vaults-sdk';
@@ -1070,7 +1070,7 @@ const vaultAddress = "0x3e4...45a";
 const chainId = SupportedChainId.Ink;
 const dex = SupportedDex.Velodrome;
 
-const rewardInfo: [RewardInfo](#rewardinfo) = getRewardInfo(chainId, dex, vaultAddress);
+const rewardInfo: RewardInfo = getRewardInfo(chainId, dex, vaultAddress);
 ```
 
 #### 30. `getAllRewardInfo()`
@@ -1081,7 +1081,7 @@ const rewardInfo: [RewardInfo](#rewardinfo) = getRewardInfo(chainId, dex, vaultA
 | dex   | SupportedDex | - | true |
 
 <br/>
-This function returns information about reward rates and farming contract for all vaults on the dex. This functions is specific for the Velodrome vaults.
+This function returns an array of [RewardInfo](#rewardinfo) about reward rates and farming contracts for all vaults on the dex. This function is specific for Velodrome vaults.
 
 ```typescript
 import { getAllRewardInfo, SupportedChainId, SupportedDex } from '@ichidao/ichi-vaults-sdk';
@@ -1089,7 +1089,7 @@ import { getAllRewardInfo, SupportedChainId, SupportedDex } from '@ichidao/ichi-
 const chainId = SupportedChainId.Ink;
 const dex = SupportedDex.Velodrome;
 
-const chains: [RewardInfo](#rewardinfo)[] = getAllRewardInfo(chainId, dex);
+const allRewardInfo: RewardInfo[] = getAllRewardInfo(chainId, dex);
 ```
 
 #### 31. `getAllUserRewards()`
@@ -1102,7 +1102,7 @@ const chains: [RewardInfo](#rewardinfo)[] = getAllRewardInfo(chainId, dex);
 | raw   | true | undefined | - | false |
 
 <br/>
-This function returns user rewards for all vaults on the dex. This functions is specific for the Velodrome vaults.
+This function returns user rewards (as [UserRewards](#userrewards)) for all vaults on the dex. This function is specific for Velodrome vaults.
 
 ```typescript
 import { getAllUserRewards, SupportedDex } from '@ichidao/ichi-vaults-sdk';
@@ -1111,7 +1111,7 @@ const account = "0x123...890";
 const provider = new Web3Provider(YOUR_WEB3_PROVIDER);
 const dex = SupportedDex.Velodrome;
 
-const rewards: [UserRewards](#userrewards)[] = await getAllUserRewards(account, provider, dex);
+const rewards: UserRewards[] = await getAllUserRewards(account, provider, dex);
 ```
 
 #### 32. `getUserRewards()`
@@ -1125,7 +1125,7 @@ const rewards: [UserRewards](#userrewards)[] = await getAllUserRewards(account, 
 | raw   | true | undefined | - | false |
 
 <br/>
-This function returns claimable reward amounts for the specified vault and user account. This functions is specific for the Velodrome vaults.
+This function returns claimable reward amounts (as [UserRewardsByToken](#userrewardsbytoken) or [UserRewardsByTokenBN](#userrewardsbytokenbn)) for the specified vault and user account. This function is specific for Velodrome vaults.
 
 ```typescript
 import { getUserRewards, SupportedDex } from '@ichidao/ichi-vaults-sdk';
@@ -1135,8 +1135,8 @@ const vaultAddress = "0x3e4...45a";
 const provider = new Web3Provider(YOUR_WEB3_PROVIDER);
 const dex = SupportedDex.Velodrome;
 
-const rewards: [UserRewardsByToken](#userrewardsbytoken)[] = getUserRewards(account, vaultAddress, provider, dex);
-const rewardsBN: [UserRewardsByTokenBN](#userrewardsbytokenbn)[] = getUserRewards(account, vaultAddress, provider, dex, true);
+const rewards: UserRewardsByToken[] = getUserRewards(account, vaultAddress, provider, dex);
+const rewardsBN: UserRewardsByTokenBN[] = getUserRewards(account, vaultAddress, provider, dex, true);
 ```
 
 #### 33. `claimRewards()`
