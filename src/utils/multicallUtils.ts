@@ -32,14 +32,38 @@ export function getMulticallContract(chainId: SupportedChainId, provider: Provid
   return new Contract(address, multicallAbi, provider);
 }
 
+const DEFAULT_BATCH_SIZE = 50;
+
 export async function multicall(
   calls: Call[],
   chainId: SupportedChainId,
   provider: Provider | Signer,
+  batchSize: number = DEFAULT_BATCH_SIZE,
 ): Promise<Result[]> {
   const multicallContract = getMulticallContract(chainId, provider);
-  const { returnData }: MulticallResponse = await multicallContract.callStatic.multicall(calls);
-  return returnData;
+
+  // If calls fit in one batch, execute directly
+  if (calls.length <= batchSize) {
+    const { returnData }: MulticallResponse = await multicallContract.callStatic.multicall(calls);
+    return returnData;
+  }
+
+  // Split calls into batches to avoid gas limit issues
+  const batches: Call[][] = [];
+  for (let i = 0; i < calls.length; i += batchSize) {
+    batches.push(calls.slice(i, i + batchSize));
+  }
+
+  // Execute all batches in parallel
+  const batchResults = await Promise.all(
+    batches.map(async (batch) => {
+      const { returnData }: MulticallResponse = await multicallContract.callStatic.multicall(batch);
+      return returnData;
+    }),
+  );
+
+  // Flatten results
+  return batchResults.flat();
 }
 
 export function encodeTotalAmountsCall(vaultAddress: string): Call {
