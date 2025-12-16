@@ -44,6 +44,10 @@ import {
   getUserRewards,
   claimRewards,
   getAllUserRewards,
+  depositWithHtsWrapping,
+  withdrawWithErc20Wrapping,
+  approveToken,
+  isTokenApproved,
 } from '../index';
 import formatBigInt from '../utils/formatBigInt';
 import parseBigInt from '../utils/parseBigInt';
@@ -52,21 +56,21 @@ import { getTokenDecimals } from '../functions/_totalBalances';
 const hdWalletProvider = new HDWalletProvider([process.env.PRIVATE_KEY!], process.env.PROVIDER_URL!, 0, 1);
 
 const provider = new Web3Provider(hdWalletProvider, {
-  chainId: SupportedChainId.bsc,
-  name: 'Binance Smart Chain',
+  chainId: SupportedChainId.hedera,
+  name: 'hedera',
 });
 const account = process.env.ACCOUNT!;
 
 const vault = {
-  address: '0x0def612e7a7b51ca7ee38f7905da809bd3491268',
-  chainId: SupportedChainId.bsc,
-  dex: SupportedDex.Pancakeswap,
+  address: '0x6b068a06a23edc1de4f63c4d421e57d71e33573d',
+  chainId: SupportedChainId.hedera,
+  dex: SupportedDex.Bonzo,
 };
 
 const pool = {
   address: '0x1123E75b71019962CD4d21b0F3018a6412eDb63C',
-  chainId: SupportedChainId.bsc,
-  dex: SupportedDex.Pancakeswap,
+  chainId: SupportedChainId.hedera,
+  dex: SupportedDex.Bonzo,
 };
 
 const tokens = {
@@ -75,9 +79,9 @@ const tokens = {
 };
 
 const iface = new ethers.utils.Interface(ICHIVAULT_ABI);
-const amount0 = '10';
-const amount1 = '0';
-const sharesToWithdraw = '0.00004';
+const amount1 = '0.00000005';
+const amount0 = '0';
+const sharesToWithdraw = '1.07e-16';
 const bigAmount = '1000';
 
 describe('Vault', () => {
@@ -103,15 +107,23 @@ describe('Vault', () => {
 
   it.skip('approve', async () => {
     let approve: ethers.ContractTransaction | null = null;
-    approve = await approveDepositToken(account, 0, vault.address, provider, vault.dex, amount0);
+    approve = await approveDepositToken(account, 1, vault.address, provider, vault.dex, amount1);
     await approve.wait();
-    const isApproved = await isDepositTokenApproved(account, 0, amount0, vault.address, provider, vault.dex);
+    const isApproved = await isDepositTokenApproved(account, 1, amount1, vault.address, provider, vault.dex);
+    expect(isApproved).toEqual(true);
+  });
+
+  it.skip('approveToken', async () => {
+    let approve: ethers.ContractTransaction | null = null;
+    approve = await approveToken(account, '0xd7d4d91d64a6061fa00a94e2b3a2d2a5fb677849', vault.address, provider, vault.dex, amount1);
+    await approve.wait();
+    const isApproved = await isTokenApproved(account, '0xd7d4d91d64a6061fa00a94e2b3a2d2a5fb677849', amount1, vault.address, provider, vault.dex);
     expect(isApproved).toEqual(true);
   });
 
   it('isDepositTokenApproved', async () => {
-    const isApproved = await isDepositTokenApproved(account, 0, bigAmount, vault.address, provider, vault.dex);
-    expect(isApproved).toEqual(false);
+    const is0Approved = await isDepositTokenApproved(account, 0, bigAmount, vault.address, provider, vault.dex);
+    expect(is0Approved).toEqual(false);
   });
 
   it.skip('deposit', async () => {
@@ -171,6 +183,40 @@ describe('Vault', () => {
       return;
 
     const r = await depositNativeToken(account, amount0, amount1, vault.address, provider, vault.dex);
+    const a = await r.wait();
+
+    const result: any = a.logs
+      .map((e: any) => {
+        try {
+          console.log('iface.parseLog(e):', iface.parseLog(e));
+          return iface.parseLog(e);
+        } catch (error) {
+          return null;
+        }
+      })
+      .find((e: any) => e && e.name === 'Deposit')?.args;
+
+    console.log('Deposit:', result);
+
+    share = formatBigInt(result.shares);
+    console.log('Deposit share:', share);
+  });
+
+  it.skip('depositWithHtsWrapping', async () => {
+    const isAllowed0 = await isTokenAllowed(0, vault.address, provider, vault.dex);
+    const isAllowed1 = await isTokenAllowed(1, vault.address, provider, vault.dex);
+    console.log({isAllowed0}, {isAllowed1});
+
+    const vaultFromQuery = await getIchiVaultInfo(vault.chainId, vault.dex, vault.address, provider);
+    if (!vaultFromQuery)
+      throw new Error(`Vault ${vault.address} not found on chain ${vault.chainId} and dex ${vault.dex}]`);
+    const token0Decimals = await getTokenDecimals(vaultFromQuery.tokenA, provider, vault.chainId);
+    const token1Decimals = await getTokenDecimals(vaultFromQuery.tokenB, provider, vault.chainId);
+
+    if (!isAllowed0 && Number(amount0) > 0) return;
+    if (!isAllowed1 && Number(amount1) > 0) return;
+
+    const r = await depositWithHtsWrapping(account, amount0, amount1, vault.address, provider, vault.dex);
     const a = await r.wait();
 
     const result: any = a.logs
@@ -315,6 +361,24 @@ describe('Withdraws', () => {
           .find((e: any) => e && e.name === 'Withdraw')?.args;
 
         console.log('withdrawNativeToken:', result);
+        expect(formatBigInt(result.shares)).toEqual(sharesToWithdraw);
+      });
+  });
+  it.skip('withdrawWithErc20Wrapping', async () => {
+    await withdrawWithErc20Wrapping(account, sharesToWithdraw, vault.address, provider, vault.dex)
+      .then((e) => e.wait())
+      .then((a) => {
+        const result: any = a.logs
+          .map((e: any) => {
+            try {
+              return iface.parseLog(e);
+            } catch (error) {
+              return null;
+            }
+          })
+          .find((e: any) => e && e.name === 'Withdraw')?.args;
+
+        console.log('withdrawWithErc20Wrapping:', result);
         expect(formatBigInt(result.shares)).toEqual(sharesToWithdraw);
       });
   });
