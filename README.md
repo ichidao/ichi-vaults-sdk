@@ -387,7 +387,11 @@ const txnDetails = await withdraw(
 )
 ```
 
+<<<<<<< HEAD
 #### 8a. `approveToken()`
+=======
+#### 8a. `approveToken()` - Bonzo on Hedera Only
+>>>>>>> 18675e0 (Deposit guard with HTS wrapping)
 
 | param | type |  default | required
 | -------- | -------- | -------- | --------
@@ -401,6 +405,11 @@ const txnDetails = await withdraw(
 
 <br/>
 
+<<<<<<< HEAD
+=======
+> **Note:** This function is only available for Bonzo vaults on the Hedera chain.
+
+>>>>>>> 18675e0 (Deposit guard with HTS wrapping)
 This function approves a specific token for deposit into the vault by token address. Unlike `approveDepositToken()` which uses a token index (0 or 1), this function accepts the actual token address. This is particularly useful when working with HTS wrapped tokens where the actual deposit token may differ from the vault's token. Use `getActualDepositToken()` to determine the correct token address to approve.
 
 ```typescript
@@ -428,7 +437,11 @@ const txnDetails = await approveToken(
 await txnDetails.wait();
 ```
 
+<<<<<<< HEAD
 #### 8b. `isTokenApproved()`
+=======
+#### 8b. `isTokenApproved()` - Bonzo on Hedera Only
+>>>>>>> 18675e0 (Deposit guard with HTS wrapping)
 
 | param | type |  default | required
 | -------- | -------- | -------- | --------
