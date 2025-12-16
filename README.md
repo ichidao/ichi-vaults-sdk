@@ -387,7 +387,7 @@ const txnDetails = await withdraw(
 )
 ```
 
-#### 8a. `approveToken()` - Bonzo on Hedera Only
+#### 8a. `approveToken()`
 
 | param | type |  default | required
 | -------- | -------- | -------- | --------
@@ -400,8 +400,6 @@ const txnDetails = await withdraw(
 | overrides         | [Overrides](https://github.com/ethers-io/ethers.js/blob/f97b92bbb1bde22fcc44100af78d7f31602863ab/packages/contracts/lib/index.d.ts#L7)  | undefined | false
 
 <br/>
-
-> **Note:** This function is only available for Bonzo vaults on the Hedera chain.
 
 This function approves a specific token for deposit into the vault by token address. Unlike `approveDepositToken()` which uses a token index (0 or 1), this function accepts the actual token address. This is particularly useful when working with HTS wrapped tokens where the actual deposit token may differ from the vault's token. Use `getActualDepositToken()` to determine the correct token address to approve.
 
@@ -430,7 +428,7 @@ const txnDetails = await approveToken(
 await txnDetails.wait();
 ```
 
-#### 8b. `isTokenApproved()` - Bonzo on Hedera Only
+#### 8b. `isTokenApproved()`
 
 | param | type |  default | required
 | -------- | -------- | -------- | --------
@@ -443,9 +441,7 @@ await txnDetails.wait();
 
 <br/>
 
-> **Note:** This function is only available for Bonzo vaults on the Hedera chain.
-
-This function returns true if the specified token's allowance is non-zero and greater than or equal to the specified amount. Use this to check approval status for the actual deposit token (which may be the ERC20 counterpart of an HTS token).
+This function returns true if the specified token's allowance is non-zero and greater than or equal to the specified amount. Use this to check approval status for the actual deposit token (which may be the ERC20 counterpart of an HTS token for vaults on Hedera).
 
 ```typescript
 import { Web3Provider } from '@ethersproject/providers';
