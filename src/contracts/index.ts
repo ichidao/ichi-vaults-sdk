@@ -9,6 +9,10 @@ import {
   IchiVault,
   DepositGuard__factory,
   DepositGuard,
+  DepositGuardWithHtsWrapping__factory,
+  DepositGuardWithHtsWrapping,
+  ERC20Wrapper__factory,
+  ERC20Wrapper,
   UniswapV3Pool__factory,
   AlgebraPool__factory,
   UniswapV3Pool,
@@ -78,4 +82,17 @@ export function getMultiFeeDistributorContract(
     console.error(`Couldn't create MultiFeeDistributer contract with address: ${address}`);
     throw e;
   }
+}
+
+export function getDepositGuardWithHtsWrappingContract(
+  address: string,
+  signerOrProvider: SignerOrProvider,
+): DepositGuardWithHtsWrapping {
+  getAddress(address);
+  return DepositGuardWithHtsWrapping__factory.connect(address, signerOrProvider);
+}
+
+export function getERC20WrapperContract(address: string, signerOrProvider: SignerOrProvider): ERC20Wrapper {
+  getAddress(address);
+  return ERC20Wrapper__factory.connect(address, signerOrProvider);
 }

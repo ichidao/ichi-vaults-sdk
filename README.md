@@ -18,6 +18,11 @@ This sdk contains collection of functions to interact with IchiVault's smart con
         * [`withdraw()`](#6-withdraw)
         * [`withdrawWithSlippage()`](#7-withdraw)
         * [`withdrawNativeToken()`](#8-withdraw)
+        * [`approveToken()`](#8a-approveToken)
+        * [`isTokenApproved()`](#8b-isTokenApproved)
+        * [`getActualDepositToken()`](#8c-getActualDepositToken)
+        * [`depositWithHtsWrapping()`](#8d-depositWithHtsWrapping)
+        * [`withdrawWithErc20Wrapping()`](#8e-withdrawWithErc20Wrapping)
         * [`isDepositTokenApproved()`](#9-isDepositTokenApproved)
         * [`isTokenAllowed()`](#10-isTokenAllowed)
         * [`getMaxDepositAmount()`](#11-getMaxDepositAmount)
@@ -379,6 +384,210 @@ const txnDetails = await withdraw(
     vaultAddress,
     web3Provider,
     dex
+)
+```
+
+#### 8a. `approveToken()` - Bonzo on Hedera Only
+
+| param | type |  default | required
+| -------- | -------- | -------- | --------
+| accountAddress   | string | - | true
+| tokenAddress   | string | - | true
+| vaultAddress   | string | - | true |
+| jsonProvider      | [JsonRpcProvider](https://github.com/ethers-io/ethers.js/blob/f97b92bbb1bde22fcc44100af78d7f31602863ab/packages/providers/src.ts/json-rpc-provider.ts#L393) | - | true
+| dex   | SupportedDex | - | true |
+| amount   | string \| number \| BigNumber | undefined | false |
+| overrides         | [Overrides](https://github.com/ethers-io/ethers.js/blob/f97b92bbb1bde22fcc44100af78d7f31602863ab/packages/contracts/lib/index.d.ts#L7)  | undefined | false
+
+<br/>
+
+> **Note:** This function is only available for Bonzo vaults on the Hedera chain.
+
+This function approves a specific token for deposit into the vault by token address. Unlike `approveDepositToken()` which uses a token index (0 or 1), this function accepts the actual token address. This is particularly useful when working with HTS wrapped tokens where the actual deposit token may differ from the vault's token. Use `getActualDepositToken()` to determine the correct token address to approve.
+
+```typescript
+import { Web3Provider } from '@ethersproject/providers';
+import { approveToken, getActualDepositToken, SupportedDex } from '@ichidao/ichi-vaults-sdk';
+
+const web3Provider = new Web3Provider(YOUR_WEB3_PROVIDER);
+const vaultAddress = "0x3ac9...a5f132"
+const accountAddress = "0xaaaa...aaaaaa"
+const depositToken = "0xbbbb...bbbbbb" // original deposit token from vault
+const dex = SupportedDex.Bonzo
+
+// Get the actual token to approve (may be ERC20 counterpart of HTS token)
+const actualToken = await getActualDepositToken(depositToken, web3Provider);
+
+const txnDetails = await approveToken(
+    accountAddress,
+    actualToken,
+    vaultAddress,
+    web3Provider,
+    dex,
+    100 // amount (optional)
+);
+
+await txnDetails.wait();
+```
+
+#### 8b. `isTokenApproved()` - Bonzo on Hedera Only
+
+| param | type |  default | required
+| -------- | -------- | -------- | --------
+| accountAddress   | string | - | true
+| tokenAddress   | string | - | true
+| amount   | string \| number \| BigNumber | - | true |
+| vaultAddress   | string | - | true |
+| jsonProvider      | [JsonRpcProvider](https://github.com/ethers-io/ethers.js/blob/f97b92bbb1bde22fcc44100af78d7f31602863ab/packages/providers/src.ts/json-rpc-provider.ts#L393) | - | true
+| dex   | SupportedDex | - | true |
+
+<br/>
+
+> **Note:** This function is only available for Bonzo vaults on the Hedera chain.
+
+This function returns true if the specified token's allowance is non-zero and greater than or equal to the specified amount. Use this to check approval status for the actual deposit token (which may be the ERC20 counterpart of an HTS token).
+
+```typescript
+import { Web3Provider } from '@ethersproject/providers';
+import { isTokenApproved, getActualDepositToken, SupportedDex } from '@ichidao/ichi-vaults-sdk';
+
+const web3Provider = new Web3Provider(YOUR_WEB3_PROVIDER);
+const vaultAddress = "0x3ac9...a5f132"
+const accountAddress = "0xaaaa...aaaaaa"
+const depositToken = "0xbbbb...bbbbbb"
+const amount = 100
+const dex = SupportedDex.Bonzo
+
+// Get the actual token to check (may be ERC20 counterpart of HTS token)
+const actualToken = await getActualDepositToken(depositToken, web3Provider);
+
+const isApproved: boolean = await isTokenApproved(
+    accountAddress,
+    actualToken,
+    amount,
+    vaultAddress,
+    web3Provider,
+    dex
+)
+```
+
+#### 8c. `getActualDepositToken()` - Bonzo on Hedera Only
+
+| param | type |  default | required
+| -------- | -------- | -------- | --------
+| depositToken   | string | - | true
+| jsonProvider      | [JsonRpcProvider](https://github.com/ethers-io/ethers.js/blob/f97b92bbb1bde22fcc44100af78d7f31602863ab/packages/providers/src.ts/json-rpc-provider.ts#L393) | - | true
+
+<br/>
+
+> **Note:** This function is only available for Bonzo vaults on the Hedera chain.
+
+This helper function checks if the deposit token is an HTS wrapped token and returns its ERC20 counterpart if one exists. If no ERC20 counterpart exists, it returns the original token address. Use this function to determine the correct token address for approval and deposit operations.
+
+```typescript
+import { Web3Provider } from '@ethersproject/providers';
+import { getActualDepositToken } from '@ichidao/ichi-vaults-sdk';
+
+const web3Provider = new Web3Provider(YOUR_WEB3_PROVIDER);
+const depositToken = "0xbbbb...bbbbbb" // HTS wrapped token
+
+const actualToken = await getActualDepositToken(depositToken, web3Provider);
+// actualToken will be the ERC20 counterpart if one exists, otherwise the original token
+```
+
+#### 8d. `depositWithHtsWrapping()` - Bonzo on Hedera Only
+
+| param | type |  default | required
+| -------- | -------- | -------- | --------
+| accountAddress   | string | - | true
+| amount0           | string \| number \| BigNumber | - | true
+| amount1           | string \| number \| BigNumber | - | true
+| vaultAddress   | string | - | true
+| jsonProvider      | [JsonRpcProvider](https://github.com/ethers-io/ethers.js/blob/f97b92bbb1bde22fcc44100af78d7f31602863ab/packages/providers/src.ts/json-rpc-provider.ts#L393) | - | true
+| dex   | SupportedDex | - | true
+| percentSlippage   | number | 1 | false
+| overrides         | [Overrides](https://github.com/ethers-io/ethers.js/blob/f97b92bbb1bde22fcc44100af78d7f31602863ab/packages/contracts/lib/index.d.ts#L7)  | undefined | false
+
+<br/>
+
+> **Note:** This function is only available for Bonzo vaults on the Hedera chain. Using it with other vaults or chains will throw an error.
+
+This function facilitates deposits into Bonzo vaults on Hedera with automatic HTS token wrapping. If the deposit token is an HTS wrapped token, the function automatically finds and uses its ERC20 counterpart for the deposit. The vault tokens received will be wrapped to HTS format. Use `approveToken()` with `getActualDepositToken()` to approve the correct token before calling this function.
+
+```typescript
+import { Web3Provider } from '@ethersproject/providers';
+import { depositWithHtsWrapping, approveToken, getActualDepositToken, SupportedDex } from '@ichidao/ichi-vaults-sdk';
+
+const web3Provider = new Web3Provider(YOUR_WEB3_PROVIDER);
+const vaultAddress = "0x3ac9...a5f132"
+const dex = SupportedDex.Bonzo
+const accountAddress = "0xaaaa...aaaaaa"
+const depositToken = "0xbbbb...bbbbbb" // token from vault
+
+// First, get the actual token and approve it
+const actualToken = await getActualDepositToken(depositToken, web3Provider);
+await approveToken(accountAddress, actualToken, vaultAddress, web3Provider, dex);
+
+const amount0 = 100
+const amount1 = 0
+
+const txnDetails = await depositWithHtsWrapping(
+    accountAddress,
+    amount0,
+    amount1,
+    vaultAddress,
+    web3Provider,
+    dex,
+    1 // acceptable slippage (percent)
+)
+```
+
+#### 8e. `withdrawWithErc20Wrapping()` - Bonzo on Hedera Only
+
+| param | type |  default | required
+| -------- | -------- | -------- | --------
+| accountAddress   | string | - | true
+| shares           | string \| number \| BigNumber | - | true
+| vaultAddress   | string | - | true
+| jsonProvider      | [JsonRpcProvider](https://github.com/ethers-io/ethers.js/blob/f97b92bbb1bde22fcc44100af78d7f31602863ab/packages/providers/src.ts/json-rpc-provider.ts#L393) | - | true
+| dex   | SupportedDex | - | true
+| percentSlippage   | number | 1 | false
+| overrides         | [Overrides](https://github.com/ethers-io/ethers.js/blob/f97b92bbb1bde22fcc44100af78d7f31602863ab/packages/contracts/lib/index.d.ts#L7)  | undefined | false
+
+<br/>
+
+> **Note:** This function is only available for Bonzo vaults on the Hedera chain. Using it with other vaults or chains will throw an error.
+
+This function facilitates withdrawals from Bonzo vaults on Hedera with automatic unwrapping of HTS tokens to their ERC20 counterparts. If the vault tokens are HTS wrapped, they will be automatically converted to ERC20 tokens during withdrawal. Ensure to use the `approveVaultToken()` function before invoking this function.
+
+```typescript
+import { Web3Provider } from '@ethersproject/providers';
+import { getUserBalance, withdrawWithErc20Wrapping, approveVaultToken, SupportedDex } from '@ichidao/ichi-vaults-sdk';
+
+const web3Provider = new Web3Provider(YOUR_WEB3_PROVIDER);
+const vaultAddress = "0x3ac9...a5f132"
+const dex = SupportedDex.Bonzo
+const accountAddress = "0xaaaa...aaaaaa"
+
+const totalUserShares: string = await getUserBalance(
+    accountAddress,
+    vaultAddress,
+    web3Provider,
+    dex
+)
+
+let shares = Number(totalUserShares) * 0.5 // 50% of user share balance
+
+// Approve vault tokens first
+await approveVaultToken(accountAddress, vaultAddress, web3Provider, dex, shares);
+
+const txnDetails = await withdrawWithErc20Wrapping(
+    accountAddress,
+    shares,
+    vaultAddress,
+    web3Provider,
+    dex,
+    1 // acceptable slippage (percent)
 )
 ```
 
