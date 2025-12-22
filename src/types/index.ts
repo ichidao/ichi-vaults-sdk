@@ -91,6 +91,7 @@ export enum SupportedDex {
   Linehub = 'Linehub',
   Lynex = 'Lynex',
   Metavault = 'Metavault',
+  Nest = 'Nest',
   Nile = 'Nile',
   Ocelex = 'Ocelex',
   Pancakeswap = 'PancakeSwap',
