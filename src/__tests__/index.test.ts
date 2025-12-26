@@ -48,6 +48,9 @@ import {
   withdrawWithErc20Wrapping,
   approveToken,
   isTokenApproved,
+  getConfigByFactory,
+  getAllFactoryConfigs,
+  addressConfig,
 } from '../index';
 import formatBigInt from '../utils/formatBigInt';
 import parseBigInt from '../utils/parseBigInt';
@@ -445,5 +448,78 @@ describe('Rewards', () => {
     const rewards = await getAllUserRewards(account, provider, vault.dex);
 
     expect(rewards.length).toBeGreaterThan(0);
+  });
+});
+
+describe('Factory Config', () => {
+  it('getConfigByFactory returns config for valid factory', () => {
+    // Use Base Aerodrome factory address
+    const factoryAddress = '0xf6B5Ab192F2696921F60a1Ff00b99596C4045FA6';
+    const config = getConfigByFactory(SupportedChainId.base, factoryAddress);
+
+    expect(config).toBeDefined();
+    expect(config?.dex).toBe(SupportedDex.Aerodrome);
+    expect(config?.factoryAddress.toLowerCase()).toBe(factoryAddress.toLowerCase());
+    expect(config?.vaultDeployerAddress).toBeDefined();
+    expect(config?.graphUrl).toBeDefined();
+    expect(typeof config?.supportsCollectFees).toBe('boolean');
+    expect(typeof config?.isAlgebra).toBe('boolean');
+  });
+
+  it('getConfigByFactory returns config case-insensitively', () => {
+    // Use lowercase version of factory address
+    const factoryAddress = '0xf6b5ab192f2696921f60a1ff00b99596c4045fa6';
+    const config = getConfigByFactory(SupportedChainId.base, factoryAddress);
+
+    expect(config).toBeDefined();
+    expect(config?.dex).toBe(SupportedDex.Aerodrome);
+  });
+
+  it('getConfigByFactory returns undefined for invalid factory', () => {
+    const config = getConfigByFactory(SupportedChainId.base, '0x0000000000000000000000000000000000000000');
+
+    expect(config).toBeUndefined();
+  });
+
+  it('getConfigByFactory returns undefined for invalid chain', () => {
+    const factoryAddress = '0xf6B5Ab192F2696921F60a1Ff00b99596C4045FA6';
+    const config = getConfigByFactory(999999 as SupportedChainId, factoryAddress);
+
+    expect(config).toBeUndefined();
+  });
+
+  it('getAllFactoryConfigs returns all factories for a chain', () => {
+    const configs = getAllFactoryConfigs(SupportedChainId.base);
+
+    expect(configs.size).toBeGreaterThan(0);
+
+    // Verify the structure of returned configs
+    const firstConfig = configs.values().next().value;
+    expect(firstConfig.dex).toBeDefined();
+    expect(firstConfig.factoryAddress).toBeDefined();
+    expect(firstConfig.vaultDeployerAddress).toBeDefined();
+    expect(typeof firstConfig.isAlgebra).toBe('boolean');
+  });
+
+  it('getAllFactoryConfigs returns empty map for invalid chain', () => {
+    const configs = getAllFactoryConfigs(999999 as SupportedChainId);
+
+    expect(configs.size).toBe(0);
+  });
+
+  it('getAllFactoryConfigs keys are lowercase factory addresses', () => {
+    const configs = getAllFactoryConfigs(SupportedChainId.base);
+
+    configs.forEach((value, key) => {
+      expect(key).toBe(key.toLowerCase());
+      expect(key).toBe(value.factoryAddress.toLowerCase());
+    });
+  });
+
+  it('addressConfig is exported and has expected structure', () => {
+    expect(addressConfig).toBeDefined();
+    expect(addressConfig[SupportedChainId.base]).toBeDefined();
+    expect(addressConfig[SupportedChainId.base]?.[SupportedDex.Aerodrome]).toBeDefined();
+    expect(addressConfig[SupportedChainId.base]?.[SupportedDex.Aerodrome]?.factoryAddress).toBeDefined();
   });
 });
