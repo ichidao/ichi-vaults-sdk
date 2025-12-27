@@ -1,8 +1,7 @@
 /* eslint-disable no-redeclare */
 /* eslint-disable import/prefer-default-export */
 
-import { JsonRpcProvider } from '@ethersproject/providers';
-import { BigNumber } from 'ethers';
+import { JsonRpcProvider } from 'ethers';
 // eslint-disable-next-line import/no-unresolved
 import { request } from 'graphql-request';
 import { getIchiVaultContract, getMultiFeeDistributorContract } from '../contracts';
@@ -68,7 +67,7 @@ async function _getUserBalance(
   jsonProvider: JsonRpcProvider,
   farmingContract: string | null,
   raw: true,
-): Promise<BigNumber>;
+): Promise<bigint>;
 
 // eslint-disable-next-line no-underscore-dangle
 async function _getUserBalance(
@@ -84,7 +83,7 @@ async function _getUserBalance(
   if (farmingContract) {
     const vaultContract = getIchiVaultContract(vaultAddress, jsonProvider);
     const mdfContract = getMultiFeeDistributorContract(farmingContract, jsonProvider);
-    shares = (await vaultContract.balanceOf(accountAddress)).add(await mdfContract.totalBalance(accountAddress));
+    shares = (await vaultContract.balanceOf(accountAddress)) + (await mdfContract.totalBalance(accountAddress));
   } else {
     const vaultContract = getIchiVaultContract(vaultAddress, jsonProvider);
     shares = await vaultContract.balanceOf(accountAddress);
@@ -106,7 +105,7 @@ export async function getUserBalance(
   jsonProvider: JsonRpcProvider,
   dex: SupportedDex,
   raw: true,
-): Promise<BigNumber>;
+): Promise<bigint>;
 
 export async function getUserBalance(
   accountAddress: string,
@@ -257,12 +256,12 @@ export async function getUserAmounts(
     vault.farmingContract || null,
     true,
   );
-  if (!totalSupplyBN.isZero()) {
+  if (totalSupplyBN !== 0n) {
     const userAmountsBN = {
-      amount0: userBalanceBN.mul(totalAmountsBN[0]).div(totalSupplyBN),
-      amount1: userBalanceBN.mul(totalAmountsBN[1]).div(totalSupplyBN),
-      0: userBalanceBN.mul(totalAmountsBN[0]).div(totalSupplyBN),
-      1: userBalanceBN.mul(totalAmountsBN[1]).div(totalSupplyBN),
+      amount0: (userBalanceBN * totalAmountsBN[0]) / totalSupplyBN,
+      amount1: (userBalanceBN * totalAmountsBN[1]) / totalSupplyBN,
+      0: (userBalanceBN * totalAmountsBN[0]) / totalSupplyBN,
+      1: (userBalanceBN * totalAmountsBN[1]) / totalSupplyBN,
     } as UserAmountsBN;
     if (!raw) {
       const token0Decimals = await getTokenDecimals(vault.tokenA, jsonProvider, chainId);
@@ -286,10 +285,10 @@ export async function getUserAmounts(
     } as UserAmounts;
   } else {
     return {
-      amount0: BigNumber.from(0),
-      amount1: BigNumber.from(0),
-      0: BigNumber.from(0),
-      1: BigNumber.from(0),
+      amount0: 0n,
+      amount1: 0n,
+      0: 0n,
+      1: 0n,
     } as UserAmountsBN;
   }
 }
@@ -361,8 +360,7 @@ export async function getAllUserAmounts(
     });
 
     // Execute multicall
-    const signer = jsonProvider.getSigner(accountAddress);
-    const results = await multicall(calls, chainId, signer);
+    const results = await multicall(calls, chainId, jsonProvider);
 
     // Process results
     const processedResults = balances.vaultShares.map((share: VaultShares, index: number) => {
@@ -378,9 +376,9 @@ export async function getAllUserAmounts(
 
       const userBalance = parseBigInt(share.vaultShareBalance, ichiVaultDecimals);
 
-      if (!totalSupply.isZero()) {
-        const amount0 = userBalance.mul(totalAmounts.total0).div(totalSupply);
-        const amount1 = userBalance.mul(totalAmounts.total1).div(totalSupply);
+      if (totalSupply !== 0n) {
+        const amount0 = (userBalance * totalAmounts.total0) / totalSupply;
+        const amount1 = (userBalance * totalAmounts.total1) / totalSupply;
 
         if (!raw) {
           const userAmounts = {
@@ -410,10 +408,10 @@ export async function getAllUserAmounts(
                 1: '0',
               }
             : {
-                amount0: BigNumber.from(0),
-                amount1: BigNumber.from(0),
-                0: BigNumber.from(0),
-                1: BigNumber.from(0),
+                amount0: 0n,
+                amount1: 0n,
+                0: 0n,
+                1: 0n,
               },
         } as UserAmountsInVault | UserAmountsInVaultBN;
       }
@@ -421,7 +419,7 @@ export async function getAllUserAmounts(
 
     return processedResults;
   } catch (error) {
-    console.error('Could not get user amounts');
+    console.error('Could not get user amounts', error);
     throw error;
   }
 }

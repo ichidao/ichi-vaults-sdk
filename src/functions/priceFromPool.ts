@@ -1,8 +1,7 @@
 /* eslint-disable no-redeclare */
 /* eslint-disable import/prefer-default-export */
 
-import { JsonRpcProvider } from '@ethersproject/providers';
-import { BigNumber } from '@ethersproject/bignumber';
+import { JsonRpcProvider } from 'ethers';
 import { IchiVault, SupportedChainId, SupportedDex } from '../types';
 // eslint-disable-next-line import/no-cycle
 import { getIchiVaultInfo } from './vault';
@@ -23,7 +22,7 @@ export async function getSqrtPriceFromPool(
   jsonProvider: JsonRpcProvider,
   chainId: SupportedChainId,
   dex: SupportedDex,
-): Promise<BigNumber> {
+): Promise<bigint> {
   try {
     const dexConfig = addressConfig[chainId]?.[dex];
 
@@ -61,7 +60,7 @@ export async function getSqrtPriceFromVault(
   jsonProvider: JsonRpcProvider,
   chainId: SupportedChainId,
   dex: SupportedDex,
-): Promise<BigNumber> {
+): Promise<bigint> {
   try {
     const vaultContract = getIchiVaultContract(vault.id, jsonProvider);
     const poolAddress: string = await vaultContract.pool();
@@ -154,7 +153,8 @@ export async function getCurrentDtr(
   token0decimals: number,
   token1decimals: number,
 ): Promise<number> {
-  const { chainId } = await jsonProvider.getNetwork();
+  const network = await jsonProvider.getNetwork();
+  const chainId = Number(network.chainId) as SupportedChainId;
 
   if (!Object.values(SupportedChainId).includes(chainId)) {
     throw new Error(`Unsupported chainId: ${chainId ?? 'undefined'}`);

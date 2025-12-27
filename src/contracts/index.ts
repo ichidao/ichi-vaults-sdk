@@ -1,6 +1,5 @@
 /* eslint-disable camelcase */
-import { getAddress } from '@ethersproject/address';
-import { JsonRpcProvider } from '@ethersproject/providers';
+import { getAddress, JsonRpcProvider } from 'ethers';
 import { SignerOrProvider } from '../types';
 import {
   ERC20__factory as ERC20Factory,
@@ -9,6 +8,10 @@ import {
   IchiVault,
   DepositGuard__factory,
   DepositGuard,
+  DepositGuardWithHtsWrapping__factory,
+  DepositGuardWithHtsWrapping,
+  ERC20Wrapper__factory,
+  ERC20Wrapper,
   UniswapV3Pool__factory,
   AlgebraPool__factory,
   UniswapV3Pool,
@@ -78,4 +81,17 @@ export function getMultiFeeDistributorContract(
     console.error(`Couldn't create MultiFeeDistributer contract with address: ${address}`);
     throw e;
   }
+}
+
+export function getDepositGuardWithHtsWrappingContract(
+  address: string,
+  signerOrProvider: SignerOrProvider,
+): DepositGuardWithHtsWrapping {
+  getAddress(address);
+  return DepositGuardWithHtsWrapping__factory.connect(address, signerOrProvider);
+}
+
+export function getERC20WrapperContract(address: string, signerOrProvider: SignerOrProvider): ERC20Wrapper {
+  getAddress(address);
+  return ERC20Wrapper__factory.connect(address, signerOrProvider);
 }

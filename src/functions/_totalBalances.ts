@@ -2,8 +2,7 @@
 /* eslint-disable import/prefer-default-export */
 /* eslint-disable no-underscore-dangle */
 
-import { JsonRpcProvider } from '@ethersproject/providers';
-import { BigNumber } from 'ethers';
+import { JsonRpcProvider } from 'ethers';
 import { getERC20Contract, getIchiVaultContract } from '../contracts';
 import { IchiVault, SupportedChainId, TotalAmounts, TotalAmountsBN, ichiVaultDecimals } from '../types';
 import formatBigInt from '../utils/formatBigInt';
@@ -23,7 +22,7 @@ export async function getTokenDecimals(
   const ttl = 24 * 60 * 60 * 1000;
   try {
     const tokenContract = getERC20Contract(tokenAddress, jsonProvider);
-    const tokenDecimals = await tokenContract.decimals();
+    const tokenDecimals = Number(await tokenContract.decimals());
     cache.set(key, tokenDecimals, ttl);
     return tokenDecimals;
   } catch (error) {
@@ -75,7 +74,7 @@ export async function _getTotalSupply(
   vaultAddress: string,
   jsonProvider: JsonRpcProvider,
   raw: true,
-): Promise<BigNumber>;
+): Promise<bigint>;
 
 export async function _getTotalSupply(vaultAddress: string, jsonProvider: JsonRpcProvider, raw?: true) {
   try {

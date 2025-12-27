@@ -1,6 +1,5 @@
-import { JsonRpcProvider } from '@ethersproject/providers';
-import { ContractTransaction, Overrides } from 'ethers';
-import { SupportedDex } from '../types';
+import { JsonRpcProvider, ContractTransactionResponse, Overrides } from 'ethers';
+import { SupportedDex, SupportedChainId } from '../types';
 import { isVelodromeDex } from '../utils/isVelodrome';
 // eslint-disable-next-line import/no-cycle
 import { validateVaultData } from './vault';
@@ -24,8 +23,9 @@ export async function claimRewards(
   jsonProvider: JsonRpcProvider,
   dex: SupportedDex,
   overrides?: Overrides,
-): Promise<ContractTransaction> {
-  const { chainId } = await jsonProvider.getNetwork();
+): Promise<ContractTransactionResponse> {
+  const network = await jsonProvider.getNetwork();
+  const chainId = Number(network.chainId) as SupportedChainId;
   const isVelodrome = isVelodromeDex(chainId, dex);
   if (!isVelodrome) {
     throw new Error(`This function is not supported on chain ${chainId} and dex ${dex}`);
@@ -38,14 +38,14 @@ export async function claimRewards(
     throw new Error(`Vault ${vaultAddress} does not have an associated farming contract or reward tokens`);
   }
 
-  const signer = jsonProvider.getSigner(accountAddress);
+  const signer = await jsonProvider.getSigner(accountAddress);
   const farmingContract = getMultiFeeDistributorContract(vault.farmingContract, signer);
   const rewardTokenAddresses = vault.rewardTokens.map((t) => t.token);
 
   // Estimate gas for the transaction
   const gasLimit =
     overrides?.gasLimit ??
-    calculateGasMargin(await farmingContract.estimateGas.getReward(accountAddress, rewardTokenAddresses));
+    calculateGasMargin(await farmingContract.getReward.estimateGas(accountAddress, rewardTokenAddresses));
 
   // Execute the claim transaction
   const tx = await farmingContract.getReward(accountAddress, rewardTokenAddresses, { ...overrides, gasLimit });

@@ -1,5 +1,4 @@
-// eslint-disable-next-line import/no-unresolved
-import { JsonRpcProvider } from '@ethersproject/providers';
+import { JsonRpcProvider } from 'ethers';
 import { SupportedDex } from '../types';
 // eslint-disable-next-line import/no-cycle
 import { validateVaultData } from './vault';
@@ -51,11 +50,11 @@ export async function getVaultPositions(
   const isInv = vault.allowTokenB;
   const vaultContract = getIchiVaultContract(vaultAddress, jsonProvider);
   try {
-    const baseLower = await vaultContract.baseLower();
-    const baseUpper = await vaultContract.baseUpper();
-    const limitLower = await vaultContract.limitLower();
-    const limitUpper = await vaultContract.limitUpper();
-    const currentTick = await vaultContract.currentTick();
+    const baseLower = Number(await vaultContract.baseLower());
+    const baseUpper = Number(await vaultContract.baseUpper());
+    const limitLower = Number(await vaultContract.limitLower());
+    const limitUpper = Number(await vaultContract.limitUpper());
+    const currentTick = Number(await vaultContract.currentTick());
     const basePosition = await vaultContract.getBasePosition();
     const limitPosition = await vaultContract.getLimitPosition();
     const priceAtBaseLower = getPriceInDepositToken(isInv, tokenDecimals, baseLower);

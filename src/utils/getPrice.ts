@@ -1,11 +1,9 @@
-import { BigNumber } from 'ethers';
-
 const univ3prices = require('@thanpolas/univ3prices');
 
 // calculate price/ratio in the pool
 export default function getPrice(
   isInverted: boolean,
-  sqrtPrice: BigNumber,
+  sqrtPrice: bigint,
   decimals0: number,
   decimals1: number,
   decimalPlaces = 3,
@@ -14,7 +12,7 @@ export default function getPrice(
   if (isInverted) {
     decimalArray = [decimals1, decimals0];
   }
-  const price = univ3prices(decimalArray, sqrtPrice).toSignificant({
+  const price = univ3prices(decimalArray, sqrtPrice.toString()).toSignificant({
     reverse: isInverted,
     decimalPlaces,
   });

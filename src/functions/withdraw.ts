@@ -1,9 +1,6 @@
 /* eslint-disable import/prefer-default-export */
 
-import { ContractTransaction, Overrides } from '@ethersproject/contracts';
-import { JsonRpcProvider } from '@ethersproject/providers';
-import { BigNumber } from 'ethers';
-import { MaxUint256 } from '@ethersproject/constants';
+import { JsonRpcProvider, MaxUint256, ContractTransactionResponse, Overrides } from 'ethers';
 import { getDepositGuardContract, getERC20Contract, getIchiVaultContract } from '../contracts';
 import parseBigInt from '../utils/parseBigInt';
 import { IchiVault, SupportedChainId, SupportedDex, ichiVaultDecimals } from '../types';
@@ -20,18 +17,18 @@ export async function approveVaultToken(
   vaultAddress: string,
   jsonProvider: JsonRpcProvider,
   dex: SupportedDex,
-  shares?: string | number | BigNumber,
+  shares?: string | number | bigint,
   overrides?: Overrides,
-): Promise<ContractTransaction> {
+): Promise<ContractTransactionResponse> {
   const { chainId } = await validateVaultData(vaultAddress, jsonProvider, dex);
 
-  const signer = jsonProvider.getSigner(accountAddress);
+  const signer = await jsonProvider.getSigner(accountAddress);
 
   const vaultTokenContract = getERC20Contract(vaultAddress, signer);
 
   // eslint-disable-next-line no-nested-ternary
   const sharesBN = shares
-    ? shares instanceof BigNumber
+    ? typeof shares === 'bigint'
       ? shares
       : parseBigInt(shares, ichiVaultDecimals)
     : MaxUint256;
@@ -42,7 +39,7 @@ export async function approveVaultToken(
   }
   const gasLimit =
     overrides?.gasLimit ??
-    calculateGasMargin(await vaultTokenContract.estimateGas.approve(depositGuardAddress, sharesBN));
+    calculateGasMargin(await vaultTokenContract.approve.estimateGas(depositGuardAddress, sharesBN));
 
   return vaultTokenContract.approve(depositGuardAddress, sharesBN, { gasLimit });
 }
@@ -50,13 +47,13 @@ export async function approveVaultToken(
 // eslint-disable-next-line no-underscore-dangle
 async function _isVaultTokenApproved(
   accountAddress: string,
-  shares: string | number | BigNumber,
+  shares: string | number | bigint,
   vault: IchiVault,
   chainId: SupportedChainId,
   jsonProvider: JsonRpcProvider,
   dex: SupportedDex,
 ): Promise<boolean> {
-  const signer = jsonProvider.getSigner(accountAddress);
+  const signer = await jsonProvider.getSigner(accountAddress);
 
   const vaultTokenContract = getERC20Contract(vault.id, signer);
   const depositGuardAddress = addressConfig[chainId as SupportedChainId]![dex]?.depositGuard.address;
@@ -65,14 +62,14 @@ async function _isVaultTokenApproved(
   }
   const currentAllowanceBN = await vaultTokenContract.allowance(accountAddress, depositGuardAddress);
 
-  const sharesBN = shares instanceof BigNumber ? shares : parseBigInt(shares, ichiVaultDecimals);
+  const sharesBN = typeof shares === 'bigint' ? shares : parseBigInt(shares, ichiVaultDecimals);
 
-  return currentAllowanceBN.gt(BigNumber.from(0)) && currentAllowanceBN.gte(sharesBN);
+  return currentAllowanceBN > 0n && currentAllowanceBN >= sharesBN;
 }
 
 export async function isVaultTokenApproved(
   accountAddress: string,
-  shares: string | number | BigNumber,
+  shares: string | number | bigint,
   vaultAddress: string,
   jsonProvider: JsonRpcProvider,
   dex: SupportedDex,
@@ -83,49 +80,45 @@ export async function isVaultTokenApproved(
 
 export async function withdraw(
   accountAddress: string,
-  shares: string | number | BigNumber,
+  shares: string | number | bigint,
   vaultAddress: string,
   jsonProvider: JsonRpcProvider,
   dex: SupportedDex,
   overrides?: Overrides,
-): Promise<ContractTransaction> {
+): Promise<ContractTransactionResponse> {
   const { chainId } = await validateVaultData(vaultAddress, jsonProvider, dex);
-  const signer = jsonProvider.getSigner(accountAddress);
+  const signer = await jsonProvider.getSigner(accountAddress);
   const vaultContract = getIchiVaultContract(vaultAddress, signer);
 
   const userShares = getUserBalance(accountAddress, vaultAddress, jsonProvider, dex, true);
-  const withdrawShares = shares instanceof BigNumber ? shares : parseBigInt(shares, 18);
-  if ((await userShares).lt(withdrawShares)) {
+  const withdrawShares = typeof shares === 'bigint' ? shares : parseBigInt(shares, 18);
+  if ((await userShares) < withdrawShares) {
     throw new Error(
       `Withdraw amount exceeds user shares amount in vault ${vaultAddress} on chain ${chainId} and dex ${dex}`,
     );
   }
 
-  const params: Parameters<typeof vaultContract.withdraw> = [
-    shares instanceof BigNumber ? shares : parseBigInt(shares, 18),
-    accountAddress,
-  ];
-  const gasLimit = overrides?.gasLimit ?? calculateGasMargin(await vaultContract.estimateGas.withdraw(...params));
-  params[2] = { ...overrides, gasLimit };
+  const sharesBN = typeof shares === 'bigint' ? shares : parseBigInt(shares, 18);
+  const gasLimit = overrides?.gasLimit ?? calculateGasMargin(await vaultContract.withdraw.estimateGas(sharesBN, accountAddress));
 
-  return vaultContract.withdraw(...params);
+  return vaultContract.withdraw(sharesBN, accountAddress, { ...overrides, gasLimit });
 }
 
 export async function withdrawWithSlippage(
   accountAddress: string,
-  shares: string | number | BigNumber,
+  shares: string | number | bigint,
   vaultAddress: string,
   jsonProvider: JsonRpcProvider,
   dex: SupportedDex,
   percentSlippage = 1,
   overrides?: Overrides,
-): Promise<ContractTransaction> {
+): Promise<ContractTransactionResponse> {
   const { chainId, vault } = await validateVaultData(vaultAddress, jsonProvider, dex);
   if (addressConfig[chainId as SupportedChainId][dex]?.depositGuard.version !== 2) {
     throw new Error(`Unsupported function for vault ${vaultAddress} on chain ${chainId} and dex ${dex}`);
   }
 
-  const signer = jsonProvider.getSigner(accountAddress);
+  const signer = await jsonProvider.getSigner(accountAddress);
 
   const vaultDeployerAddress = getVaultDeployer(vaultAddress, chainId, dex);
 
@@ -136,8 +129,8 @@ export async function withdrawWithSlippage(
   }
 
   const userShares = getUserBalance(accountAddress, vaultAddress, jsonProvider, dex, true);
-  const withdrawShares = shares instanceof BigNumber ? shares : parseBigInt(shares, 18);
-  if ((await userShares).lt(withdrawShares)) {
+  const withdrawShares = typeof shares === 'bigint' ? shares : parseBigInt(shares, 18);
+  if ((await userShares) < withdrawShares) {
     throw new Error(
       `Withdraw amount exceeds user shares amount in vault ${vaultAddress} on chain ${chainId} and dex ${dex}`,
     );
@@ -154,13 +147,13 @@ export async function withdrawWithSlippage(
   const maxGasLimit = getGasLimit(chainId);
 
   // the first call: get estimated LP amount
-  let amounts = await depositGuardContract.callStatic.forwardWithdrawFromICHIVault(
+  let amounts = await depositGuardContract.forwardWithdrawFromICHIVault.staticCall(
     vaultAddress,
     vaultDeployerAddress,
     withdrawShares,
     accountAddress,
-    BigNumber.from(0),
-    BigNumber.from(0),
+    0n,
+    0n,
     {
       gasLimit: maxGasLimit,
     },
@@ -174,12 +167,12 @@ export async function withdrawWithSlippage(
     1: amountWithSlippage(amounts[1], percentSlippage),
     amount0: amountWithSlippage(amounts[0], percentSlippage),
     amount1: amountWithSlippage(amounts[1], percentSlippage),
-  } as [BigNumber, BigNumber] & { amount0: BigNumber; amount1: BigNumber };
+  } as [bigint, bigint] & { amount0: bigint; amount1: bigint };
 
   const gasLimit =
     overrides?.gasLimit ??
     calculateGasMargin(
-      await depositGuardContract.estimateGas.forwardWithdrawFromICHIVault(
+      await depositGuardContract.forwardWithdrawFromICHIVault.estimateGas(
         vaultAddress,
         vaultDeployerAddress,
         withdrawShares,
@@ -208,13 +201,13 @@ export async function withdrawWithSlippage(
 
 export async function withdrawNativeToken(
   accountAddress: string,
-  shares: string | number | BigNumber,
+  shares: string | number | bigint,
   vaultAddress: string,
   jsonProvider: JsonRpcProvider,
   dex: SupportedDex,
   percentSlippage = 1,
   overrides?: Overrides,
-): Promise<ContractTransaction> {
+): Promise<ContractTransactionResponse> {
   const { chainId, vault } = await validateVaultData(vaultAddress, jsonProvider, dex);
   if (chainId === SupportedChainId.celo) {
     throw new Error(`This function is not supported on chain ${chainId}`);
@@ -224,13 +217,13 @@ export async function withdrawNativeToken(
     throw new Error(`Unsupported function for vault ${vaultAddress} on chain ${chainId} and dex ${dex}`);
   }
 
-  const signer = jsonProvider.getSigner(accountAddress);
+  const signer = await jsonProvider.getSigner(accountAddress);
 
   const vaultDeployerAddress = getVaultDeployer(vaultAddress, chainId, dex);
 
   const userShares = getUserBalance(accountAddress, vaultAddress, jsonProvider, dex, true);
-  const withdrawShares = shares instanceof BigNumber ? shares : parseBigInt(shares, 18);
-  if ((await userShares).lt(withdrawShares)) {
+  const withdrawShares = typeof shares === 'bigint' ? shares : parseBigInt(shares, 18);
+  if ((await userShares) < withdrawShares) {
     throw new Error(
       `Withdraw amount exceeds user shares amount in vault ${vaultAddress} on chain ${chainId} and dex ${dex}`,
     );
@@ -263,13 +256,13 @@ export async function withdrawNativeToken(
   const maxGasLimit = getGasLimit(chainId);
 
   // the first call: get estimated LP amount
-  let amounts = await depositGuardContract.callStatic.forwardNativeWithdrawFromICHIVault(
+  let amounts = await depositGuardContract.forwardNativeWithdrawFromICHIVault.staticCall(
     vaultAddress,
     vaultDeployerAddress,
     withdrawShares,
     accountAddress,
-    BigNumber.from(0),
-    BigNumber.from(0),
+    0n,
+    0n,
     {
       gasLimit: maxGasLimit,
     },
@@ -283,12 +276,12 @@ export async function withdrawNativeToken(
     1: amountWithSlippage(amounts[1], percentSlippage),
     amount0: amountWithSlippage(amounts[0], percentSlippage),
     amount1: amountWithSlippage(amounts[1], percentSlippage),
-  } as [BigNumber, BigNumber] & { amount0: BigNumber; amount1: BigNumber };
+  } as [bigint, bigint] & { amount0: bigint; amount1: bigint };
 
   const gasLimit =
     overrides?.gasLimit ??
     calculateGasMargin(
-      await depositGuardContract.estimateGas.forwardNativeWithdrawFromICHIVault(
+      await depositGuardContract.forwardNativeWithdrawFromICHIVault.estimateGas(
         vaultAddress,
         vaultDeployerAddress,
         withdrawShares,

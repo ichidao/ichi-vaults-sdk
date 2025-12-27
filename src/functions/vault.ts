@@ -1,6 +1,6 @@
 // eslint-disable-next-line import/no-unresolved
 import { request } from 'graphql-request';
-import { JsonRpcProvider } from '@ethersproject/providers';
+import { JsonRpcProvider } from 'ethers';
 import { SupportedDex, SupportedChainId, IchiVault, VaultWithRewards } from '../types';
 // eslint-disable-next-line import/no-cycle
 import {
@@ -229,7 +229,8 @@ export async function validateVaultData(
   jsonProvider: JsonRpcProvider,
   dex: SupportedDex,
 ): Promise<{ chainId: SupportedChainId; vault: IchiVault }> {
-  const { chainId } = await jsonProvider.getNetwork();
+  const network = await jsonProvider.getNetwork();
+  const chainId = Number(network.chainId) as SupportedChainId;
 
   if (!Object.values(SupportedChainId).includes(chainId)) {
     throw new Error(`Unsupported chainId: ${chainId ?? 'undefined'}`);
@@ -241,7 +242,8 @@ export async function validateVaultData(
 }
 
 export async function getChainByProvider(jsonProvider: JsonRpcProvider): Promise<{ chainId: SupportedChainId }> {
-  const { chainId } = await jsonProvider.getNetwork();
+  const network = await jsonProvider.getNetwork();
+  const chainId = Number(network.chainId) as SupportedChainId;
 
   if (!Object.values(SupportedChainId).includes(chainId)) {
     throw new Error(`Unsupported chainId: ${chainId ?? 'undefined'}`);

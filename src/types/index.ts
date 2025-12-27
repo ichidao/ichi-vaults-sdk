@@ -1,10 +1,8 @@
 /* eslint-disable camelcase */
 /* eslint-disable no-shadow */
-import { Signer } from '@ethersproject/abstract-signer';
-import { Provider } from '@ethersproject/providers';
-import { BigNumber } from 'ethers';
+import { Signer, JsonRpcProvider, Provider } from 'ethers';
 
-export type SignerOrProvider = Signer | Provider;
+export type SignerOrProvider = Signer | Provider | JsonRpcProvider;
 
 export enum SupportedChainId {
   arbitrum = 42161,
@@ -91,6 +89,7 @@ export enum SupportedDex {
   Linehub = 'Linehub',
   Lynex = 'Lynex',
   Metavault = 'Metavault',
+  Nest = 'Nest',
   Nile = 'Nile',
   Ocelex = 'Ocelex',
   Pancakeswap = 'PancakeSwap',
@@ -127,8 +126,8 @@ export enum SupportedDex {
 
 export const ichiVaultDecimals = 18;
 
-export type TotalAmountsBN = [BigNumber, BigNumber] & { total0: BigNumber; total1: BigNumber };
-export type UserAmountsBN = [BigNumber, BigNumber] & { amount0: BigNumber; amount1: BigNumber };
+export type TotalAmountsBN = [bigint, bigint] & { total0: bigint; total1: bigint };
+export type UserAmountsBN = [bigint, bigint] & { amount0: bigint; amount1: bigint };
 export type TotalAmounts = [string, string] & { total0: string; total1: string };
 export type UserAmounts = [string, string] & { amount0: string; amount1: string };
 
@@ -255,8 +254,8 @@ export type UserBalanceInVault = {
 };
 export type UserBalanceInVaultBN = {
   vaultAddress: string;
-  shares: BigNumber;
-  stakedShares?: BigNumber;
+  shares: bigint;
+  stakedShares?: bigint;
 };
 
 export type VaultMetrics = {
@@ -284,7 +283,7 @@ export type UserRewardsByToken = {
 export type UserRewardsByTokenBN = {
   token: string;
   tokenDecimals: number;
-  rewardAmount: BigNumber;
+  rewardAmount: bigint;
 };
 
 export type RewardInfo = {

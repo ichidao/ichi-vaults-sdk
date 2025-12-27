@@ -1,7 +1,5 @@
-import { Provider } from '@ethersproject/providers';
-import { Contract } from '@ethersproject/contracts';
-import { Interface } from '@ethersproject/abi';
-import { BigNumber, Signer } from 'ethers';
+import { Contract, Interface, Signer } from 'ethers';
+import { JsonRpcProvider } from 'ethers';
 import { SupportedChainId } from '../types';
 import { MULTICALL_ADDRESSES } from './config/addresses';
 import { getERC20Contract, getIchiVaultContract, getMultiFeeDistributorContract } from '../contracts';
@@ -15,16 +13,16 @@ interface Call {
 
 export interface Result {
   success: boolean;
-  gasUsed: BigNumber;
+  gasUsed: bigint;
   returnData: string;
 }
 
 interface MulticallResponse {
-  blockNumber: BigNumber;
+  blockNumber: bigint;
   returnData: Result[];
 }
 
-export function getMulticallContract(chainId: SupportedChainId, provider: Provider | Signer): Contract {
+export function getMulticallContract(chainId: SupportedChainId, provider: JsonRpcProvider | Signer): Contract {
   const address = MULTICALL_ADDRESSES[chainId];
   if (!address) {
     throw new Error(`Multicall not supported on chain ${chainId}`);
@@ -32,14 +30,38 @@ export function getMulticallContract(chainId: SupportedChainId, provider: Provid
   return new Contract(address, multicallAbi, provider);
 }
 
+const DEFAULT_BATCH_SIZE = 50;
+
 export async function multicall(
   calls: Call[],
   chainId: SupportedChainId,
-  provider: Provider | Signer,
+  provider: JsonRpcProvider | Signer,
+  batchSize: number = DEFAULT_BATCH_SIZE,
 ): Promise<Result[]> {
   const multicallContract = getMulticallContract(chainId, provider);
-  const { returnData }: MulticallResponse = await multicallContract.callStatic.multicall(calls);
-  return returnData;
+
+  // If calls fit in one batch, execute directly
+  if (calls.length <= batchSize) {
+    const { returnData }: MulticallResponse = await multicallContract.multicall.staticCall(calls);
+    return returnData;
+  }
+
+  // Split calls into batches to avoid gas limit issues
+  const batches: Call[][] = [];
+  for (let i = 0; i < calls.length; i += batchSize) {
+    batches.push(calls.slice(i, i + batchSize));
+  }
+
+  // Execute all batches in parallel
+  const batchResults = await Promise.all(
+    batches.map(async (batch) => {
+      const { returnData }: MulticallResponse = await multicallContract.multicall.staticCall(batch);
+      return returnData;
+    }),
+  );
+
+  // Flatten results
+  return batchResults.flat();
 }
 
 export function encodeTotalAmountsCall(vaultAddress: string): Call {
@@ -83,7 +105,7 @@ export function encodeFarmingRewardsCall(farmingContractAddress: string, userAdd
 export function decodeTotalAmountsResult(
   result: Result,
   vaultAddress: string,
-): { total0: BigNumber; total1: BigNumber } {
+): { total0: bigint; total1: bigint } {
   if (!result.success) {
     throw new Error('Failed to get total amounts');
   }
@@ -95,7 +117,7 @@ export function decodeTotalAmountsResult(
   };
 }
 
-export function decodeTotalSupplyResult(result: Result, vaultAddress: string): BigNumber {
+export function decodeTotalSupplyResult(result: Result, vaultAddress: string): bigint {
   if (!result.success) {
     throw new Error('Failed to get total supply');
   }
@@ -108,10 +130,10 @@ export function decodeDecimalsResult(result: Result, tokenAddress: string): numb
     throw new Error('Failed to get decimals');
   }
   const tokenInterface = new Interface(getERC20Contract(tokenAddress, null as any).interface.format());
-  return tokenInterface.decodeFunctionResult('decimals', result.returnData)[0];
+  return Number(tokenInterface.decodeFunctionResult('decimals', result.returnData)[0]);
 }
 
-export function decodeFarmingRewardsResult(result: Result, farmingContractAddress: string): [string[], BigNumber[]] {
+export function decodeFarmingRewardsResult(result: Result, farmingContractAddress: string): [string[], bigint[]] {
   if (!result.success) {
     throw new Error('Failed to get farming rewards');
   }

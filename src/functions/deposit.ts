@@ -1,7 +1,4 @@
-import { ContractTransaction, Overrides } from '@ethersproject/contracts';
-import { JsonRpcProvider } from '@ethersproject/providers';
-import { MaxUint256 } from '@ethersproject/constants';
-import { BigNumber } from 'ethers';
+import { JsonRpcProvider, MaxUint256, ContractTransactionResponse, Overrides } from 'ethers';
 import { getDepositGuardContract, getERC20Contract, getIchiVaultContract } from '../contracts';
 import parseBigInt from '../utils/parseBigInt';
 import { SupportedDex, SupportedChainId, IchiVault } from '../types';
@@ -19,7 +16,8 @@ export async function isTokenAllowed(
   jsonProvider: JsonRpcProvider,
   dex: SupportedDex,
 ): Promise<boolean> {
-  const { chainId } = await jsonProvider.getNetwork();
+  const network = await jsonProvider.getNetwork();
+  const chainId = Number(network.chainId) as SupportedChainId;
   if (!Object.values(SupportedChainId).includes(chainId)) {
     throw new Error(`Unsupported chainId: ${chainId}`);
   }
@@ -36,7 +34,7 @@ export async function isTokenAllowed(
 async function _isDepositTokenApproved(
   accountAddress: string,
   tokenIdx: 0 | 1,
-  amount: string | number | BigNumber,
+  amount: string | number | bigint,
   vault: IchiVault,
   chainId: SupportedChainId,
   jsonProvider: JsonRpcProvider,
@@ -47,17 +45,17 @@ async function _isDepositTokenApproved(
   const tokenContract = getERC20Contract(token, jsonProvider);
   const depositGuardAddress = addressConfig[chainId as SupportedChainId]![dex]?.depositGuard.address ?? '';
   const currentAllowanceBN = await tokenContract.allowance(accountAddress, depositGuardAddress);
-  const tokenDecimals = await tokenContract.decimals();
+  const tokenDecimals = Number(await tokenContract.decimals());
 
-  const amountBN = amount instanceof BigNumber ? amount : parseBigInt(amount, tokenDecimals);
+  const amountBN = typeof amount === 'bigint' ? amount : parseBigInt(amount, tokenDecimals);
 
-  return currentAllowanceBN.gt(BigNumber.from(0)) && currentAllowanceBN.gte(amountBN);
+  return currentAllowanceBN > 0n && currentAllowanceBN >= amountBN;
 }
 
 export async function isDepositTokenApproved(
   accountAddress: string,
   tokenIdx: 0 | 1,
-  amount: string | number | BigNumber,
+  amount: string | number | bigint,
   vaultAddress: string,
   jsonProvider: JsonRpcProvider,
   dex: SupportedDex,
@@ -72,28 +70,28 @@ export async function approveDepositToken(
   vaultAddress: string,
   jsonProvider: JsonRpcProvider,
   dex: SupportedDex,
-  amount?: string | number | BigNumber,
+  amount?: string | number | bigint,
   overrides?: Overrides,
-): Promise<ContractTransaction> {
+): Promise<ContractTransactionResponse> {
   const { chainId, vault } = await validateVaultData(vaultAddress, jsonProvider, dex);
 
-  const signer = jsonProvider.getSigner(accountAddress);
+  const signer = await jsonProvider.getSigner(accountAddress);
 
   const token = vault[tokenIdx === 0 ? 'tokenA' : 'tokenB'];
 
   const tokenContract = getERC20Contract(token, signer);
-  const tokenDecimals = await tokenContract.decimals();
+  const tokenDecimals = Number(await tokenContract.decimals());
 
   // eslint-disable-next-line no-nested-ternary
   const amountBN = amount
-    ? amount instanceof BigNumber
+    ? typeof amount === 'bigint'
       ? amount
-      : parseBigInt(amount, +tokenDecimals || 18)
+      : parseBigInt(amount, tokenDecimals || 18)
     : MaxUint256;
 
   const depositGuardAddress = addressConfig[chainId as SupportedChainId]![dex]?.depositGuard.address ?? '';
   const gasLimit =
-    overrides?.gasLimit ?? calculateGasMargin(await tokenContract.estimateGas.approve(depositGuardAddress, amountBN));
+    overrides?.gasLimit ?? calculateGasMargin(await tokenContract.approve.estimateGas(depositGuardAddress, amountBN));
 
   return tokenContract.approve(depositGuardAddress, amountBN, { gasLimit });
 }
@@ -103,7 +101,7 @@ export async function _getMaxDepositAmount(
   tokenIdx: 0 | 1,
   vaultAddress: string,
   jsonProvider: JsonRpcProvider,
-): Promise<BigNumber> {
+): Promise<bigint> {
   const vaultContract = getIchiVaultContract(vaultAddress, jsonProvider);
 
   const maxDepositAmount = tokenIdx === 0 ? vaultContract.deposit0Max() : vaultContract.deposit1Max();
@@ -116,7 +114,7 @@ export async function getMaxDepositAmount(
   vaultAddress: string,
   jsonProvider: JsonRpcProvider,
   dex: SupportedDex,
-): Promise<BigNumber> {
+): Promise<bigint> {
   await validateVaultData(vaultAddress, jsonProvider, dex);
 
   const maxDepositAmount = _getMaxDepositAmount(tokenIdx, vaultAddress, jsonProvider);
@@ -126,16 +124,16 @@ export async function getMaxDepositAmount(
 
 export async function deposit(
   accountAddress: string,
-  amount0: string | number | BigNumber,
-  amount1: string | number | BigNumber,
+  amount0: string | number | bigint,
+  amount1: string | number | bigint,
   vaultAddress: string,
   jsonProvider: JsonRpcProvider,
   dex: SupportedDex,
   percentSlippage = 1,
   overrides?: Overrides,
-): Promise<ContractTransaction> {
+): Promise<ContractTransactionResponse> {
   const { chainId, vault } = await validateVaultData(vaultAddress, jsonProvider, dex);
-  const signer = jsonProvider.getSigner(accountAddress);
+  const signer = await jsonProvider.getSigner(accountAddress);
   const vaultDeployerAddress = getVaultDeployer(vaultAddress, chainId, dex);
 
   const token0 = vault.tokenA;
@@ -144,18 +142,18 @@ export async function deposit(
   const isToken1Allowed = vault.allowTokenB;
   const token0Decimals = await getTokenDecimals(token0, jsonProvider, chainId);
   const token1Decimals = await getTokenDecimals(token1, jsonProvider, chainId);
-  const amount0BN = amount0 instanceof BigNumber ? amount0 : parseBigInt(amount0, +token0Decimals);
-  const amount1BN = amount1 instanceof BigNumber ? amount1 : parseBigInt(amount1, +token1Decimals);
-  if (!isToken0Allowed && amount0BN.gt(BigNumber.from(0))) {
+  const amount0BN = typeof amount0 === 'bigint' ? amount0 : parseBigInt(amount0, token0Decimals);
+  const amount1BN = typeof amount1 === 'bigint' ? amount1 : parseBigInt(amount1, token1Decimals);
+  if (!isToken0Allowed && amount0BN > 0n) {
     throw new Error(`Deposit of token0 is not allowed: ${chainId}, ${vaultAddress}`);
   }
-  if (!isToken1Allowed && amount1BN.gt(BigNumber.from(0))) {
+  if (!isToken1Allowed && amount1BN > 0n) {
     throw new Error(`Deposit of token1 is not allowed: chain ${chainId}, vault ${vaultAddress}`);
   }
   let depositAmount = amount0BN;
   let depositToken = token0;
   let tokenIndex = 0 as 0 | 1;
-  if (amount1BN.gt(BigNumber.from(0))) {
+  if (amount1BN > 0n) {
     depositAmount = amount1BN;
     depositToken = token1;
     tokenIndex = 1;
@@ -178,13 +176,13 @@ export async function deposit(
   const tokenContract = getERC20Contract(depositToken, jsonProvider);
   const userTokenBalance = await tokenContract.balanceOf(accountAddress);
 
-  if (userTokenBalance.lt(depositAmount)) {
+  if (userTokenBalance < depositAmount) {
     throw new Error(`Deposit amount exceeds user token amount for token: ${depositToken}, chain ${chainId}`);
   }
 
   const maxDeposit0 = await _getMaxDepositAmount(0, vaultAddress, jsonProvider);
   const maxDeposit1 = await _getMaxDepositAmount(1, vaultAddress, jsonProvider);
-  if (amount0BN.gt(maxDeposit0) || amount0BN.gt(maxDeposit1)) {
+  if (amount0BN > maxDeposit0 || amount0BN > maxDeposit1) {
     throw new Error(`Deposit amount exceeds max deposit amount: vault ${vaultAddress}, chain ${chainId}`);
   }
 
@@ -194,12 +192,12 @@ export async function deposit(
   const maxGasLimit = getGasLimit(chainId);
 
   // the first call: get estimated LP amount
-  let lpAmount = await depositGuardContract.callStatic.forwardDepositToICHIVault(
+  let lpAmount = await depositGuardContract.forwardDepositToICHIVault.staticCall(
     vaultAddress,
     vaultDeployerAddress,
     depositToken,
     depositAmount,
-    BigNumber.from(0),
+    0n,
     accountAddress,
     {
       gasLimit: maxGasLimit,
@@ -209,12 +207,12 @@ export async function deposit(
   // reduce the estimated LP amount by an acceptable slippage %, for example 1%
   if (percentSlippage < 0.01) throw new Error('Slippage parameter is less than 0.01%.');
   if (percentSlippage > 100) throw new Error('Slippage parameter is more than 100%.');
-  lpAmount = lpAmount.mul(Math.floor((100 - percentSlippage) * 1000)).div(100000);
+  lpAmount = amountWithSlippage(lpAmount, percentSlippage);
 
   const gasLimit =
     overrides?.gasLimit ??
     calculateGasMargin(
-      await depositGuardContract.estimateGas.forwardDepositToICHIVault(
+      await depositGuardContract.forwardDepositToICHIVault.estimateGas(
         vaultAddress,
         vaultDeployerAddress,
         depositToken,
@@ -243,14 +241,14 @@ export async function deposit(
 
 export async function depositNativeToken(
   accountAddress: string,
-  amount0: string | number | BigNumber,
-  amount1: string | number | BigNumber,
+  amount0: string | number | bigint,
+  amount1: string | number | bigint,
   vaultAddress: string,
   jsonProvider: JsonRpcProvider,
   dex: SupportedDex,
   percentSlippage = 1,
   overrides?: Overrides,
-): Promise<ContractTransaction> {
+): Promise<ContractTransactionResponse> {
   const { chainId, vault } = await validateVaultData(vaultAddress, jsonProvider, dex);
   if (chainId === SupportedChainId.celo) {
     throw new Error(`This function is not supported on chain ${chainId}`);
@@ -258,7 +256,7 @@ export async function depositNativeToken(
   if (addressConfig[chainId as SupportedChainId][dex]?.depositGuard.version !== 2) {
     throw new Error(`Unsupported function for vault ${vaultAddress} on chain ${chainId} and dex ${dex}`);
   }
-  const signer = jsonProvider.getSigner(accountAddress);
+  const signer = await jsonProvider.getSigner(accountAddress);
   const vaultDeployerAddress = getVaultDeployer(vaultAddress, chainId, dex);
 
   const token0 = vault.tokenA;
@@ -267,19 +265,19 @@ export async function depositNativeToken(
   const isToken1Allowed = vault.allowTokenB;
   const token0Contract = getERC20Contract(token0, signer);
   const token1Contract = getERC20Contract(token1, signer);
-  const token0Decimals = await token0Contract.decimals();
-  const token1Decimals = await token1Contract.decimals();
-  const amount0BN = amount0 instanceof BigNumber ? amount0 : parseBigInt(amount0, +token0Decimals);
-  const amount1BN = amount1 instanceof BigNumber ? amount1 : parseBigInt(amount1, +token1Decimals);
-  if (!isToken0Allowed && amount0BN > BigNumber.from(0)) {
+  const token0Decimals = Number(await token0Contract.decimals());
+  const token1Decimals = Number(await token1Contract.decimals());
+  const amount0BN = typeof amount0 === 'bigint' ? amount0 : parseBigInt(amount0, token0Decimals);
+  const amount1BN = typeof amount1 === 'bigint' ? amount1 : parseBigInt(amount1, token1Decimals);
+  if (!isToken0Allowed && amount0BN > 0n) {
     throw new Error(`Deposit of token0 is not allowed: ${chainId}, ${vaultAddress}`);
   }
-  if (!isToken1Allowed && amount1BN > BigNumber.from(0)) {
+  if (!isToken1Allowed && amount1BN > 0n) {
     throw new Error(`Deposit of token1 is not allowed: ${chainId}, ${vaultAddress}`);
   }
   let depositAmount = amount0BN;
   let depositToken = token0;
-  if (amount1BN > BigNumber.from(0)) {
+  if (amount1BN > 0n) {
     depositAmount = amount1BN;
     depositToken = token1;
   }
@@ -299,21 +297,21 @@ export async function depositNativeToken(
   }
 
   const userNativeTokenBalance = await jsonProvider.getBalance(accountAddress);
-  if (userNativeTokenBalance.lt(depositAmount)) {
+  if (userNativeTokenBalance < depositAmount) {
     throw new Error(`Deposit amount exceeds user native token amount on chain ${chainId}`);
   }
 
   const maxGasLimit = getGasLimit(chainId);
 
   if (chainId === SupportedChainId.hedera) {
-    depositAmount = depositAmount.mul(BigNumber.from(1e10));
+    depositAmount = depositAmount * BigInt(1e10);
   }
 
   // the first call: get estimated LP amount
-  let lpAmount = await depositGuardContract.callStatic.forwardNativeDepositToICHIVault(
+  let lpAmount = await depositGuardContract.forwardNativeDepositToICHIVault.staticCall(
     vaultAddress,
     vaultDeployerAddress,
-    BigNumber.from(0),
+    0n,
     accountAddress,
     {
       value: depositAmount,
@@ -329,7 +327,7 @@ export async function depositNativeToken(
   const gasLimit =
     overrides?.gasLimit ??
     calculateGasMargin(
-      await depositGuardContract.estimateGas.forwardNativeDepositToICHIVault(
+      await depositGuardContract.forwardNativeDepositToICHIVault.estimateGas(
         vaultAddress,
         vaultDeployerAddress,
         lpAmount,
