@@ -61,7 +61,7 @@ npm install @ichidao/ichi-vaults-sdk
 | SDK Version | Ethers.js Version | Status |
 |-------------|-------------------|--------|
 | 2.x.x       | v6                | Active |
-| 1.x.x       | v5                | Maintenance |
+| 0.1.x       | v5                | Maintenance |
 
 **Version 2.x (ethers v6)** - Current default version. If you're using ethers v6 in your project, install the latest version:
 ```bash
@@ -70,25 +70,25 @@ yarn add @ichidao/ichi-vaults-sdk
 npm install @ichidao/ichi-vaults-sdk
 ```
 
-**Version 1.x (ethers v5)** - For projects still using ethers v5, install the legacy version:
+**Version 0.1.x (ethers v5)** - For projects still using ethers v5, install the legacy version:
 ```bash
-yarn add @ichidao/ichi-vaults-sdk@1
+yarn add @ichidao/ichi-vaults-sdk@ethers5
 # or
-npm install @ichidao/ichi-vaults-sdk@1
+npm install @ichidao/ichi-vaults-sdk@ethers5
 ```
 
 To install a specific version:
 ```bash
-yarn add @ichidao/ichi-vaults-sdk@1.x.x
+yarn add @ichidao/ichi-vaults-sdk@0.1.x
 # or
-npm install @ichidao/ichi-vaults-sdk@1.x.x
+npm install @ichidao/ichi-vaults-sdk@0.1.x
 ```
 
-### Migration from v1 to v2
+### Migration from v0.1 to v2
 
 The main breaking change in v2 is that functions requiring transaction signing now accept a `Signer` instead of `JsonRpcProvider`. This aligns with ethers v6's architecture where signers are explicitly passed rather than obtained from providers.
 
-**Before (v1 with ethers v5):**
+**Before (v0.1 with ethers v5):**
 ```typescript
 import { JsonRpcProvider } from '@ethersproject/providers';
 const provider = new JsonRpcProvider(rpcUrl);
@@ -118,8 +118,6 @@ Read-only functions continue to accept `JsonRpcProvider`.
 ## Usage
 ### Subgraphs
 This SDK uses subgraphs to obtain information about ICHI vaults. The subgraphs are deployed in the Subgraph Studio and published on Arbitrum One. If you prefer to use published subgraphs, you need to add your [subgraph API key](https://thegraph.com/studio/apikeys/) to the SUBGRAPH_API_KEY environment variable. Otherwise, the SDK will use the subgraph's Studio endpoint.
-
-**Note for Flow users:** The Flow blockchain uses Alchemy subgraph instead of Subgraph Studio. If you're using this SDK on Flow, you need to provide your own Alchemy subgraph API key by adding it to the ALCHEMY_SUBGRAPH_API_KEY environment variable.
 
 ### Vault
 
