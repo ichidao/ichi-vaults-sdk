@@ -1,4 +1,4 @@
-import { JsonRpcProvider, ContractTransactionResponse, Overrides } from 'ethers';
+import { JsonRpcProvider, ContractTransactionResponse, Overrides, Signer } from 'ethers';
 import { getDepositGuardWithHtsWrappingContract } from '../contracts';
 import parseBigInt from '../utils/parseBigInt';
 import { SupportedChainId, SupportedDex } from '../types';
@@ -15,11 +15,15 @@ export async function withdrawWithErc20Wrapping(
   accountAddress: string,
   shares: string | number | bigint,
   vaultAddress: string,
-  jsonProvider: JsonRpcProvider,
+  signer: Signer,
   dex: SupportedDex,
   percentSlippage = 1,
   overrides?: Overrides,
 ): Promise<ContractTransactionResponse> {
+  if (!signer.provider) {
+    throw new Error('Signer must be connected to a provider');
+  }
+  const jsonProvider = signer.provider as JsonRpcProvider;
   const { chainId, vault } = await validateVaultData(vaultAddress, jsonProvider, dex);
 
   // This function is only applicable for BONZO vaults on Hedera
@@ -28,8 +32,6 @@ export async function withdrawWithErc20Wrapping(
       `withdrawWithErc20Wrapping is only supported for Bonzo vaults on Hedera. Got dex: ${dex}, chainId: ${chainId}`,
     );
   }
-
-  const signer = await jsonProvider.getSigner(accountAddress);
 
   const vaultDeployerAddress = getVaultDeployer(vaultAddress, chainId, dex);
 

@@ -1,4 +1,4 @@
-import { JsonRpcProvider, ContractTransactionResponse, Overrides } from 'ethers';
+import { JsonRpcProvider, ContractTransactionResponse, Overrides, Signer } from 'ethers';
 import { SupportedDex, SupportedChainId } from '../types';
 import { isVelodromeDex } from '../utils/isVelodrome';
 // eslint-disable-next-line import/no-cycle
@@ -11,7 +11,7 @@ import { calculateGasMargin } from '../types/calculateGasMargin';
  *
  * @param accountAddress - The address of the account claiming rewards
  * @param vaultAddress - The address of the vault
- * @param jsonProvider - The JSON RPC provider
+ * @param signer - The signer for the transaction
  * @param dex - The DEX to use
  * @param overrides - Optional transaction overrides
  * @returns The transaction
@@ -20,10 +20,14 @@ import { calculateGasMargin } from '../types/calculateGasMargin';
 export async function claimRewards(
   accountAddress: string,
   vaultAddress: string,
-  jsonProvider: JsonRpcProvider,
+  signer: Signer,
   dex: SupportedDex,
   overrides?: Overrides,
 ): Promise<ContractTransactionResponse> {
+  if (!signer.provider) {
+    throw new Error('Signer must be connected to a provider');
+  }
+  const jsonProvider = signer.provider as JsonRpcProvider;
   const network = await jsonProvider.getNetwork();
   const chainId = Number(network.chainId) as SupportedChainId;
   const isVelodrome = isVelodromeDex(chainId, dex);
@@ -37,8 +41,6 @@ export async function claimRewards(
   if (!vault.farmingContract || !vault.rewardTokens || vault.rewardTokens.length <= 0) {
     throw new Error(`Vault ${vaultAddress} does not have an associated farming contract or reward tokens`);
   }
-
-  const signer = await jsonProvider.getSigner(accountAddress);
   const farmingContract = getMultiFeeDistributorContract(vault.farmingContract, signer);
   const rewardTokenAddresses = vault.rewardTokens.map((t) => t.token);
 

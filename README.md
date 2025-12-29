@@ -7,6 +7,8 @@ This sdk contains collection of functions to interact with IchiVault's smart con
 ## Table of Contents
 
 * [__Installation__](#Installation)
+    * [Version Compatibility](#version-compatibility)
+    * [Migration from v1 to v2](#migration-from-v1-to-v2)
 * [__Subgraphs__](#Subgraphs)
 * [__Usage__](#Usage)
      * [__Vault Functions__](#Vault)
@@ -53,6 +55,65 @@ or
 ```bash
 npm install @ichidao/ichi-vaults-sdk
 ```
+
+### Version Compatibility
+
+| SDK Version | Ethers.js Version | Status |
+|-------------|-------------------|--------|
+| 2.x.x       | v6                | Active |
+| 1.x.x       | v5                | Maintenance |
+
+**Version 2.x (ethers v6)** - Current default version. If you're using ethers v6 in your project, install the latest version:
+```bash
+yarn add @ichidao/ichi-vaults-sdk
+# or
+npm install @ichidao/ichi-vaults-sdk
+```
+
+**Version 1.x (ethers v5)** - For projects still using ethers v5, install the legacy version:
+```bash
+yarn add @ichidao/ichi-vaults-sdk@1
+# or
+npm install @ichidao/ichi-vaults-sdk@1
+```
+
+To install a specific version:
+```bash
+yarn add @ichidao/ichi-vaults-sdk@1.x.x
+# or
+npm install @ichidao/ichi-vaults-sdk@1.x.x
+```
+
+### Migration from v1 to v2
+
+The main breaking change in v2 is that functions requiring transaction signing now accept a `Signer` instead of `JsonRpcProvider`. This aligns with ethers v6's architecture where signers are explicitly passed rather than obtained from providers.
+
+**Before (v1 with ethers v5):**
+```typescript
+import { JsonRpcProvider } from '@ethersproject/providers';
+const provider = new JsonRpcProvider(rpcUrl);
+await deposit(account, amount0, amount1, vaultAddress, provider, dex);
+```
+
+**After (v2 with ethers v6):**
+```typescript
+import { JsonRpcProvider, Wallet } from 'ethers';
+const provider = new JsonRpcProvider(rpcUrl);
+const signer = new Wallet(privateKey, provider);
+await deposit(account, amount0, amount1, vaultAddress, signer, dex);
+```
+
+Functions affected by this change:
+- `approveDepositToken()`
+- `deposit()`
+- `depositNativeToken()`
+- `approveVaultToken()`
+- `withdraw()`
+- `withdrawWithSlippage()`
+- `withdrawNativeToken()`
+- `claimRewards()`
+
+Read-only functions continue to accept `JsonRpcProvider`.
 
 ## Usage
 ### Subgraphs

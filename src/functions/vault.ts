@@ -15,6 +15,10 @@ import { getGraphUrls } from '../utils/getGraphUrls';
 import cache from '../utils/cache';
 
 function normalizeVaultData(vaultData: any): IchiVault {
+  // If vaultData is null or undefined, throw an error
+  if (!vaultData) {
+    throw new Error('Vault data is null or undefined');
+  }
   // If it's a v2 response (has token0/token1)
   if ('token0' in vaultData && 'token1' in vaultData) {
     return {

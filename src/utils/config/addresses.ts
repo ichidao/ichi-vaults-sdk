@@ -1,7 +1,7 @@
 import { SupportedDex, SupportedChainId } from '../../types';
 
 // ERC20 Wrapper address for Hedera HTS wrapping
-export const ERC20_WRAPPER_ADDRESS = '0x0000000000000000000000000000000000000411';
+export const ERC20_WRAPPER_ADDRESS = '0x000000000000000000000000000000000093A3A8';
 
 export type AddressConfig = { [key in SupportedDex]?: string };
 
@@ -611,7 +611,7 @@ export const addressConfig: Record<SupportedChainId, Config> = {
     [SupportedDex.Bonzo]: {
       factoryAddress: '0x822b0bE4958ab5b4A48DA3c5f68Fc54846093618',
       depositGuard: {
-        address: '0x84e653E209525f70dC1410a304dFF98fE47CfD4a',
+        address: '0xCCD6D4a3308cb318BFFebF03030585cF40A6cfa2', // with HTS Wrapping
         version: 2,
       },
       vaultDeployerAddress: '0xC159b19C5bd0E4a0709eC13C1303Ff2Bb67F7145',

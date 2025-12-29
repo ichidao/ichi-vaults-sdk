@@ -1,4 +1,4 @@
-import { JsonRpcProvider, MaxUint256, ContractTransactionResponse, Overrides } from 'ethers';
+import { JsonRpcProvider, MaxUint256, ContractTransactionResponse, Overrides, Signer } from 'ethers';
 import {
   getDepositGuardWithHtsWrappingContract,
   getERC20Contract,
@@ -39,14 +39,16 @@ export async function approveToken(
   accountAddress: string,
   tokenAddress: string,
   vaultAddress: string,
-  jsonProvider: JsonRpcProvider,
+  signer: Signer,
   dex: SupportedDex,
   amount?: string | number | bigint,
   overrides?: Overrides,
 ): Promise<ContractTransactionResponse> {
+  if (!signer.provider) {
+    throw new Error('Signer must be connected to a provider');
+  }
+  const jsonProvider = signer.provider as JsonRpcProvider;
   const { chainId } = await validateVaultData(vaultAddress, jsonProvider, dex);
-
-  const signer = await jsonProvider.getSigner(accountAddress);
 
   const tokenContract = getERC20Contract(tokenAddress, signer);
   const tokenDecimals = Number(await tokenContract.decimals());
@@ -78,11 +80,15 @@ export async function depositWithHtsWrapping(
   amount0: string | number | bigint,
   amount1: string | number | bigint,
   vaultAddress: string,
-  jsonProvider: JsonRpcProvider,
+  signer: Signer,
   dex: SupportedDex,
   percentSlippage = 1,
   overrides?: Overrides,
 ): Promise<ContractTransactionResponse> {
+  if (!signer.provider) {
+    throw new Error('Signer must be connected to a provider');
+  }
+  const jsonProvider = signer.provider as JsonRpcProvider;
   const { chainId, vault } = await validateVaultData(vaultAddress, jsonProvider, dex);
 
   // This function is only applicable for BONZO vaults on Hedera
@@ -91,8 +97,6 @@ export async function depositWithHtsWrapping(
       `depositWithHtsWrapping is only supported for Bonzo vaults on Hedera. Got dex: ${dex}, chainId: ${chainId}`,
     );
   }
-
-  const signer = await jsonProvider.getSigner(accountAddress);
   const vaultDeployerAddress = getVaultDeployer(vaultAddress, chainId, dex);
 
   const token0 = vault.tokenA;

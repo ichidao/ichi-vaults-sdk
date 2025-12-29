@@ -1,4 +1,4 @@
-import { JsonRpcProvider, MaxUint256, ContractTransactionResponse, Overrides } from 'ethers';
+import { JsonRpcProvider, MaxUint256, ContractTransactionResponse, Overrides, Signer } from 'ethers';
 import { getDepositGuardContract, getERC20Contract, getIchiVaultContract } from '../contracts';
 import parseBigInt from '../utils/parseBigInt';
 import { SupportedDex, SupportedChainId, IchiVault } from '../types';
@@ -68,14 +68,16 @@ export async function approveDepositToken(
   accountAddress: string,
   tokenIdx: 0 | 1,
   vaultAddress: string,
-  jsonProvider: JsonRpcProvider,
+  signer: Signer,
   dex: SupportedDex,
   amount?: string | number | bigint,
   overrides?: Overrides,
 ): Promise<ContractTransactionResponse> {
+  if (!signer.provider) {
+    throw new Error('Signer must be connected to a provider');
+  }
+  const jsonProvider = signer.provider as JsonRpcProvider;
   const { chainId, vault } = await validateVaultData(vaultAddress, jsonProvider, dex);
-
-  const signer = await jsonProvider.getSigner(accountAddress);
 
   const token = vault[tokenIdx === 0 ? 'tokenA' : 'tokenB'];
 
@@ -127,13 +129,16 @@ export async function deposit(
   amount0: string | number | bigint,
   amount1: string | number | bigint,
   vaultAddress: string,
-  jsonProvider: JsonRpcProvider,
+  signer: Signer,
   dex: SupportedDex,
   percentSlippage = 1,
   overrides?: Overrides,
 ): Promise<ContractTransactionResponse> {
+  if (!signer.provider) {
+    throw new Error('Signer must be connected to a provider');
+  }
+  const jsonProvider = signer.provider as JsonRpcProvider;
   const { chainId, vault } = await validateVaultData(vaultAddress, jsonProvider, dex);
-  const signer = await jsonProvider.getSigner(accountAddress);
   const vaultDeployerAddress = getVaultDeployer(vaultAddress, chainId, dex);
 
   const token0 = vault.tokenA;
@@ -244,11 +249,15 @@ export async function depositNativeToken(
   amount0: string | number | bigint,
   amount1: string | number | bigint,
   vaultAddress: string,
-  jsonProvider: JsonRpcProvider,
+  signer: Signer,
   dex: SupportedDex,
   percentSlippage = 1,
   overrides?: Overrides,
 ): Promise<ContractTransactionResponse> {
+  if (!signer.provider) {
+    throw new Error('Signer must be connected to a provider');
+  }
+  const jsonProvider = signer.provider as JsonRpcProvider;
   const { chainId, vault } = await validateVaultData(vaultAddress, jsonProvider, dex);
   if (chainId === SupportedChainId.celo) {
     throw new Error(`This function is not supported on chain ${chainId}`);
@@ -256,7 +265,6 @@ export async function depositNativeToken(
   if (addressConfig[chainId as SupportedChainId][dex]?.depositGuard.version !== 2) {
     throw new Error(`Unsupported function for vault ${vaultAddress} on chain ${chainId} and dex ${dex}`);
   }
-  const signer = await jsonProvider.getSigner(accountAddress);
   const vaultDeployerAddress = getVaultDeployer(vaultAddress, chainId, dex);
 
   const token0 = vault.tokenA;

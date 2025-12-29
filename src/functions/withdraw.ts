@@ -1,6 +1,6 @@
 /* eslint-disable import/prefer-default-export */
 
-import { JsonRpcProvider, MaxUint256, ContractTransactionResponse, Overrides } from 'ethers';
+import { JsonRpcProvider, MaxUint256, ContractTransactionResponse, Overrides, Signer } from 'ethers';
 import { getDepositGuardContract, getERC20Contract, getIchiVaultContract } from '../contracts';
 import parseBigInt from '../utils/parseBigInt';
 import { IchiVault, SupportedChainId, SupportedDex, ichiVaultDecimals } from '../types';
@@ -15,14 +15,16 @@ import getVaultDeployer from './vaultBasics';
 export async function approveVaultToken(
   accountAddress: string,
   vaultAddress: string,
-  jsonProvider: JsonRpcProvider,
+  signer: Signer,
   dex: SupportedDex,
   shares?: string | number | bigint,
   overrides?: Overrides,
 ): Promise<ContractTransactionResponse> {
+  if (!signer.provider) {
+    throw new Error('Signer must be connected to a provider');
+  }
+  const jsonProvider = signer.provider as JsonRpcProvider;
   const { chainId } = await validateVaultData(vaultAddress, jsonProvider, dex);
-
-  const signer = await jsonProvider.getSigner(accountAddress);
 
   const vaultTokenContract = getERC20Contract(vaultAddress, signer);
 
@@ -53,9 +55,7 @@ async function _isVaultTokenApproved(
   jsonProvider: JsonRpcProvider,
   dex: SupportedDex,
 ): Promise<boolean> {
-  const signer = await jsonProvider.getSigner(accountAddress);
-
-  const vaultTokenContract = getERC20Contract(vault.id, signer);
+  const vaultTokenContract = getERC20Contract(vault.id, jsonProvider);
   const depositGuardAddress = addressConfig[chainId as SupportedChainId]![dex]?.depositGuard.address;
   if (!depositGuardAddress) {
     throw new Error(`Deposit Guard  for vault ${vault.id} not found on chain ${chainId} and dex ${dex}`);
@@ -82,12 +82,15 @@ export async function withdraw(
   accountAddress: string,
   shares: string | number | bigint,
   vaultAddress: string,
-  jsonProvider: JsonRpcProvider,
+  signer: Signer,
   dex: SupportedDex,
   overrides?: Overrides,
 ): Promise<ContractTransactionResponse> {
+  if (!signer.provider) {
+    throw new Error('Signer must be connected to a provider');
+  }
+  const jsonProvider = signer.provider as JsonRpcProvider;
   const { chainId } = await validateVaultData(vaultAddress, jsonProvider, dex);
-  const signer = await jsonProvider.getSigner(accountAddress);
   const vaultContract = getIchiVaultContract(vaultAddress, signer);
 
   const userShares = getUserBalance(accountAddress, vaultAddress, jsonProvider, dex, true);
@@ -108,17 +111,19 @@ export async function withdrawWithSlippage(
   accountAddress: string,
   shares: string | number | bigint,
   vaultAddress: string,
-  jsonProvider: JsonRpcProvider,
+  signer: Signer,
   dex: SupportedDex,
   percentSlippage = 1,
   overrides?: Overrides,
 ): Promise<ContractTransactionResponse> {
+  if (!signer.provider) {
+    throw new Error('Signer must be connected to a provider');
+  }
+  const jsonProvider = signer.provider as JsonRpcProvider;
   const { chainId, vault } = await validateVaultData(vaultAddress, jsonProvider, dex);
   if (addressConfig[chainId as SupportedChainId][dex]?.depositGuard.version !== 2) {
     throw new Error(`Unsupported function for vault ${vaultAddress} on chain ${chainId} and dex ${dex}`);
   }
-
-  const signer = await jsonProvider.getSigner(accountAddress);
 
   const vaultDeployerAddress = getVaultDeployer(vaultAddress, chainId, dex);
 
@@ -203,11 +208,15 @@ export async function withdrawNativeToken(
   accountAddress: string,
   shares: string | number | bigint,
   vaultAddress: string,
-  jsonProvider: JsonRpcProvider,
+  signer: Signer,
   dex: SupportedDex,
   percentSlippage = 1,
   overrides?: Overrides,
 ): Promise<ContractTransactionResponse> {
+  if (!signer.provider) {
+    throw new Error('Signer must be connected to a provider');
+  }
+  const jsonProvider = signer.provider as JsonRpcProvider;
   const { chainId, vault } = await validateVaultData(vaultAddress, jsonProvider, dex);
   if (chainId === SupportedChainId.celo) {
     throw new Error(`This function is not supported on chain ${chainId}`);
@@ -216,8 +225,6 @@ export async function withdrawNativeToken(
   if (addressConfig[chainId as SupportedChainId][dex]?.depositGuard.version !== 2) {
     throw new Error(`Unsupported function for vault ${vaultAddress} on chain ${chainId} and dex ${dex}`);
   }
-
-  const signer = await jsonProvider.getSigner(accountAddress);
 
   const vaultDeployerAddress = getVaultDeployer(vaultAddress, chainId, dex);
 

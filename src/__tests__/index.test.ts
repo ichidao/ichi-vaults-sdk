@@ -3,7 +3,7 @@
 
 import 'dotenv/config';
 
-import { ethers, JsonRpcProvider } from 'ethers';
+import { ethers, JsonRpcProvider, Wallet } from 'ethers';
 import { SupportedDex, SupportedChainId } from '../types';
 import ICHIVAULT_ABI from '../abis/IchiVault.json';
 import {
@@ -45,6 +45,10 @@ import {
   getConfigByFactory,
   getAllFactoryConfigs,
   addressConfig,
+  depositWithHtsWrapping,
+  withdrawWithErc20Wrapping,
+  approveToken,
+  isTokenApproved,
 } from '../index';
 import formatBigInt from '../utils/formatBigInt';
 import parseBigInt from '../utils/parseBigInt';
@@ -52,19 +56,20 @@ import { getTokenDecimals } from '../functions/_totalBalances';
 
 // In ethers v6, use JsonRpcProvider directly for read operations
 // For write operations (transactions), a Wallet with the private key is needed
-const provider = new JsonRpcProvider(process.env.PROVIDER_URL!, SupportedChainId.base);
+const provider = new JsonRpcProvider(process.env.PROVIDER_URL!, SupportedChainId.hedera);
+const wallet = new Wallet(process.env.PRIVATE_KEY!, provider);
 const account = process.env.ACCOUNT!;
 
 const vault = {
-  address: '0x3c0c1bdce2497cad2e6a6c873a28f4b2a32aa759',
-  chainId: SupportedChainId.base,
-  dex: SupportedDex.Aerodrome,
+  address: '0x4431a822e59e12cea7fa614791ae39fe8b931d0f',
+  chainId: SupportedChainId.hedera,
+  dex: SupportedDex.Bonzo,
 };
 
 const pool = {
   address: '0xE539b14a87D3Db4a2945ac99b29A69DE61531592',
-  chainId: SupportedChainId.base,
-  dex: SupportedDex.Aerodrome,
+  chainId: SupportedChainId.hedera,
+  dex: SupportedDex.Bonzo,
 };
 
 const tokens = {
@@ -73,48 +78,51 @@ const tokens = {
 };
 
 const iface = new ethers.Interface(ICHIVAULT_ABI);
-const amount0 = '10';
-const amount1 = '0';
-const sharesToWithdraw = '0.00004';
+const amount1 = '10';
+const amount0 = '0';
+const sharesToWithdraw = '10';
 const bigAmount = '1000';
 
 describe('Vault', () => {
   let share: string | null = null;
 
-  // it.skip('getFeeAprs', async () => {
-  //   const feeAprs = await getFeeAprs(vault.address, provider, vault.dex);
-  //   console.log({feeAprs})
-  //   if (feeAprs) {
-  //     expect(Number(feeAprs.feeApr_1d)).toBeGreaterThanOrEqual(0);
-  //   }
-  // });
+  it.skip('getFeeAprs', async () => {
+    const feeAprs = await getFeeAprs(vault.address, provider, vault.dex);
+    if (feeAprs) {
+      expect(Number(feeAprs.feeApr_1d)).toBeGreaterThanOrEqual(0);
+    }
+  });
 
-  // it('getVaultMetrics', async () => {
-  //   const metrics = await getVaultMetrics(vault.address, provider, vault.dex);
-  //   console.log({metrics})
-  //   expect(Number(metrics[0]?.avgDtr)).toBeGreaterThan(0);
-  // });
+  it('getVaultMetrics', async () => {
+    const metrics = await getVaultMetrics(vault.address, provider, vault.dex);
+    expect(Number(metrics[0]?.avgDtr)).toBeGreaterThan(0);
+  });
 
-  // it('getTotalSupply', async () => {
-  //   const totalSupply = await getTotalSupply(vault.address, provider, vault.dex);
-  //   console.log({totalSupply})
+  it('getTotalSupply', async () => {
+    const totalSupply = await getTotalSupply(vault.address, provider, vault.dex);
 
-  //   expect(Number(totalSupply)).toBeGreaterThan(0);
-  // });
+    expect(Number(totalSupply)).toBeGreaterThan(0);
+  });
 
   it.skip('approve', async () => {
     let approve: ethers.ContractTransactionResponse | null = null;
-    approve = await approveDepositToken(account, 0, vault.address, provider, vault.dex, amount0);
+    approve = await approveDepositToken(account, 1, vault.address, wallet, vault.dex, amount1);
     await approve.wait();
-    const isApproved = await isDepositTokenApproved(account, 0, amount0, vault.address, provider, vault.dex);
+    const isApproved = await isDepositTokenApproved(account, 1, amount1, vault.address, provider, vault.dex);
     expect(isApproved).toEqual(true);
   });
 
-  // it('isDepositTokenApproved', async () => {
-  //   const isApproved = await isDepositTokenApproved(account, 0, bigAmount, vault.address, provider, vault.dex);
-  //   console.log({isApproved})
-  //   expect(isApproved).toEqual(false);
-  // });
+  it.skip('approveToken', async () => {
+    const approve = await approveToken(account, '0xd7d4d91d64a6061fa00a94e2b3a2d2a5fb677849', vault.address, wallet, vault.dex, amount1);
+    await approve.wait();
+    const isApproved = await isTokenApproved(account, '0xd7d4d91d64a6061fa00a94e2b3a2d2a5fb677849', amount1, vault.address, provider, vault.dex);
+    expect(isApproved).toEqual(true);
+  });
+  
+  it('isDepositTokenApproved', async () => {
+    const isApproved = await isDepositTokenApproved(account, 0, bigAmount, vault.address, provider, vault.dex);
+    expect(isApproved).toEqual(false);
+  });
 
   it.skip('deposit', async () => {
     const isAllowed0 = await isTokenAllowed(0, vault.address, provider, vault.dex);
@@ -134,7 +142,7 @@ describe('Vault', () => {
     if (parseBigInt(amount0, token0Decimals) > maxDeposit0 || parseBigInt(amount1, token1Decimals) > maxDeposit1)
       return;
 
-    const r = await deposit(account, amount0, amount1, vault.address, provider, vault.dex);
+    const r = await deposit(account, amount0, amount1, vault.address, wallet, vault.dex);
     const a = await r.wait();
 
     const result: any = a!.logs
@@ -172,7 +180,7 @@ describe('Vault', () => {
     if (parseBigInt(amount0, token0Decimals) > maxDeposit0 || parseBigInt(amount1, token1Decimals) > maxDeposit1)
       return;
 
-    const r = await depositNativeToken(account, amount0, amount1, vault.address, provider, vault.dex);
+    const r = await depositNativeToken(account, amount0, amount1, vault.address, wallet, vault.dex);
     const a = await r.wait();
 
     const result: any = a!.logs
@@ -192,213 +200,243 @@ describe('Vault', () => {
     console.log('Deposit share:', share);
   });
 
-  // it('getUserBalance', async () => {
-  //   const userShares = await getUserBalance(account, vault.address, provider, vault.dex);
-  //   console.log({userShares})
+  it.skip('depositWithHtsWrapping', async () => {
+    const isAllowed0 = await isTokenAllowed(0, vault.address, provider, vault.dex);
+    const isAllowed1 = await isTokenAllowed(1, vault.address, provider, vault.dex);
 
-  //   expect(Number(userShares)).toBeGreaterThanOrEqual(0);
-  // });
+    const vaultFromQuery = await getIchiVaultInfo(vault.chainId, vault.dex, vault.address, provider);
+    if (!vaultFromQuery)
+      throw new Error(`Vault ${vault.address} not found on chain ${vault.chainId} and dex ${vault.dex}]`);
 
-  // it('getAllUserBalances', async () => {
-  //   const allUserShares = await getAllUserBalances(account, provider, vault.dex);
-  //   console.log({allUserShares})
+    if (!isAllowed0 && Number(amount0) > 0) return;
+    if (!isAllowed1 && Number(amount1) > 0) return;
 
-  //   expect(Number(allUserShares[0].shares)).toBeGreaterThanOrEqual(0);
-  // });
+    const r = await depositWithHtsWrapping(account, amount0, amount1, vault.address, wallet, vault.dex);
+    const a = await r.wait();
 
-  // it('getAllUserAmounts', async () => {
-  //   const userAmounts = await getAllUserAmounts(account, provider, vault.dex);
-  //   console.log({userAmounts}, userAmounts[0].userAmounts)
+    const result: any = a!.logs
+      .map((e: any) => {
+        try {
+          console.log('iface.parseLog(e):', iface.parseLog(e));
+          return iface.parseLog(e);
+        } catch (error) {
+          return null;
+        }
+      })
+      .find((e: any) => e && e.name === 'Deposit')?.args;
 
-  //   expect(Number(userAmounts[0].userAmounts.amount0)).toBeGreaterThanOrEqual(0);
-  // });
+    console.log('Deposit:', result);
 
-  // it('getTotalAmounts', async () => {
-  //   const totalAmounts = await getTotalAmounts(vault.address, provider, vault.dex);
-  //   console.log({totalAmounts})
+    share = formatBigInt(result.shares);
+    console.log('Deposit share:', share);
+  });
 
-  //   expect(Number(totalAmounts.total0)).toBeGreaterThan(0);
-  // });
+  it('getUserBalance', async () => {
+    const userShares = await getUserBalance(account, vault.address, provider, vault.dex);
 
-  // it('getUserAmounts', async () => {
-  //   const amounts = await getUserAmounts(account, vault.address, provider, vault.dex);
-  //   console.log({amounts})
+    expect(Number(userShares)).toBeGreaterThanOrEqual(0);
+  });
 
-  //   expect(Number(amounts.amount0)).toBeGreaterThanOrEqual(0);
-  // });
+  it('getAllUserBalances', async () => {
+    const allUserShares = await getAllUserBalances(account, provider, vault.dex);
 
-  // it('getFeesCollected_All', async () => {
-  //   const fees = await getFeesCollected(vault.address, provider, vault.dex);
-  //   console.log({fees})
+    expect(Number(allUserShares[0].shares)).toBeGreaterThanOrEqual(0);
+  });
 
-  //   expect(Number(fees[0])).toBeGreaterThanOrEqual(0);
-  // });
+  it('getAllUserAmounts', async () => {
+    const userAmounts = await getAllUserAmounts(account, provider, vault.dex);
 
-  // it('getFeesCollectedInfo', async () => {
-  //   const feeCollected = await getFeesCollectedInfo(vault.address, provider, vault.dex, [1, 7, 30, 1000]);
-  //   console.log({feeCollected})
+    expect(Number(userAmounts[0].userAmounts.amount0)).toBeGreaterThanOrEqual(0);
+  });
 
-  //   expect(Number(feeCollected[0].pctAPR)).toBeGreaterThanOrEqual(0);
-  // });
+  it('getTotalAmounts', async () => {
+    const totalAmounts = await getTotalAmounts(vault.address, provider, vault.dex);
 
-  // it('getAverageDepositTokenRatios', async () => {
-  //   const avgDtr = await getAverageDepositTokenRatios(vault.address, provider, vault.dex);
-  //   console.log({avgDtr})
+    expect(Number(totalAmounts.total0)).toBeGreaterThan(0);
+  });
 
-  //   expect(Number(avgDtr[0].percent)).toBeGreaterThanOrEqual(0);
-  // });
+  it('getUserAmounts', async () => {
+    const amounts = await getUserAmounts(account, vault.address, provider, vault.dex);
 
-  // it('getLpApr', async () => {
-  //   const lpAprs = await getLpApr(vault.address, provider, vault.dex);
-  //   console.log({lpAprs})
+    expect(Number(amounts.amount0)).toBeGreaterThanOrEqual(0);
+  });
 
-  //   expect(Number(lpAprs[0]?.timeInterval)).toEqual(1);
-  // });
-  // it('getLpPriceChange', async () => {
-  //   const lpPriceChange = await getLpPriceChange(vault.address, provider, vault.dex);
-  //   console.log({lpPriceChange})
+  it('getFeesCollected_All', async () => {
+    const fees = await getFeesCollected(vault.address, provider, vault.dex);
 
-  //   expect(Number(lpPriceChange[0]?.timeInterval)).toEqual(1);
-  // });
-  // it('getVaultPositions', async () => {
-  //   const positions = await getVaultPositions(vault.address, provider, vault.dex);
-  //   console.log({positions}, positions.positions)
-  //   expect(positions.currentPrice).toBeGreaterThanOrEqual(0);
-  // });
-// });
+    expect(Number(fees[0])).toBeGreaterThanOrEqual(0);
+  });
 
-// describe('Withdraws', () => {
-//   it.skip('withdraw:deposited', async () => {
-//     await withdraw(account, sharesToWithdraw, vault.address, provider, vault.dex)
-//       .then((e) => e.wait())
-//       .then((a) => {
-//         const result: any = a!.logs
-//           .map((e: any) => {
-//             try {
-//               return iface.parseLog(e);
-//             } catch (error) {
-//               return null;
-//             }
-//           })
-//           .find((e: any) => e && e.name === 'Withdraw')?.args;
+  it('getFeesCollectedInfo', async () => {
+    const feeCollected = await getFeesCollectedInfo(vault.address, provider, vault.dex, [1, 7, 30, 1000]);
 
-//         console.log('Withdraw:', result);
-//         expect(formatBigInt(result.shares)).toEqual(sharesToWithdraw);
-//       });
-//   });
+    expect(Number(feeCollected[0].pctAPR)).toBeGreaterThanOrEqual(0);
+  });
 
-//   it.skip('approveVaultToken', async () => {
-//     let approve: ethers.ContractTransactionResponse | null = null;
-//     approve = await approveVaultToken(account, vault.address, provider, vault.dex, sharesToWithdraw);
-//     await approve.wait();
-//     const isApproved = await isVaultTokenApproved(account, sharesToWithdraw, vault.address, provider, vault.dex);
-//     expect(isApproved).toEqual(true);
-//   });
+  it('getAverageDepositTokenRatios', async () => {
+    const avgDtr = await getAverageDepositTokenRatios(vault.address, provider, vault.dex);
 
-//   it.skip('withdrawWithSlippage', async () => {
-//     await withdrawWithSlippage(account, sharesToWithdraw, vault.address, provider, vault.dex, 2)
-//       .then((e) => e.wait())
-//       .then((a) => {
-//         const result: any = a!.logs
-//           .map((e: any) => {
-//             try {
-//               return iface.parseLog(e);
-//             } catch (error) {
-//               return null;
-//             }
-//           })
-//           .find((e: any) => e && e.name === 'Withdraw')?.args;
+    expect(Number(avgDtr[0].percent)).toBeGreaterThanOrEqual(0);
+  });
 
-//         console.log('Withdraw with slippage:', result);
-//         expect(formatBigInt(result.shares)).toEqual(sharesToWithdraw);
-//       });
-//   });
-//   it.skip('withdrawNativeToken', async () => {
-//     await withdrawNativeToken(account, sharesToWithdraw, vault.address, provider, vault.dex)
-//       .then((e) => e.wait())
-//       .then((a) => {
-//         const result: any = a!.logs
-//           .map((e: any) => {
-//             try {
-//               return iface.parseLog(e);
-//             } catch (error) {
-//               return null;
-//             }
-//           })
-//           .find((e: any) => e && e.name === 'Withdraw')?.args;
+  it('getLpApr', async () => {
+    const lpAprs = await getLpApr(vault.address, provider, vault.dex);
 
-//         console.log('withdrawNativeToken:', result);
-//         expect(formatBigInt(result.shares)).toEqual(sharesToWithdraw);
-//       });
-//   });
+    expect(Number(lpAprs[0]?.timeInterval)).toEqual(1);
+  });
+  it('getLpPriceChange', async () => {
+    const lpPriceChange = await getLpPriceChange(vault.address, provider, vault.dex);
+
+    expect(Number(lpPriceChange[0]?.timeInterval)).toEqual(1);
+  });
+  it('getVaultPositions', async () => {
+    const positions = await getVaultPositions(vault.address, provider, vault.dex);
+    expect(positions.currentPrice).toBeGreaterThanOrEqual(0);
+  });
+});
+
+describe('Withdraws', () => {
+  it.skip('withdraw:deposited', async () => {
+    await withdraw(account, sharesToWithdraw, vault.address, wallet, vault.dex)
+      .then((e) => e.wait())
+      .then((a) => {
+        const result: any = a!.logs
+          .map((e: any) => {
+            try {
+              return iface.parseLog(e);
+            } catch (error) {
+              return null;
+            }
+          })
+          .find((e: any) => e && e.name === 'Withdraw')?.args;
+
+        console.log('Withdraw:', result);
+        expect(formatBigInt(result.shares)).toEqual(sharesToWithdraw);
+      });
+  });
+
+  it.skip('approveVaultToken', async () => {
+    let approve: ethers.ContractTransactionResponse | null = null;
+    approve = await approveVaultToken(account, vault.address, wallet, vault.dex, Number(sharesToWithdraw)*2);
+    await approve.wait();
+    const isApproved = await isVaultTokenApproved(account, sharesToWithdraw, vault.address, provider, vault.dex);
+    expect(isApproved).toEqual(true);
+  });
+
+  it.skip('withdrawWithSlippage', async () => {
+    await withdrawWithSlippage(account, sharesToWithdraw, vault.address, wallet, vault.dex, 2)
+      .then((e) => e.wait())
+      .then((a) => {
+        const result: any = a!.logs
+          .map((e: any) => {
+            try {
+              return iface.parseLog(e);
+            } catch (error) {
+              return null;
+            }
+          })
+          .find((e: any) => e && e.name === 'Withdraw')?.args;
+
+        console.log('Withdraw with slippage:', result);
+        expect(formatBigInt(result.shares)).toEqual(sharesToWithdraw);
+      });
+  });
+  it.skip('withdrawNativeToken', async () => {
+    await withdrawNativeToken(account, sharesToWithdraw, vault.address, wallet, vault.dex)
+      .then((e) => e.wait())
+      .then((a) => {
+        const result: any = a!.logs
+          .map((e: any) => {
+            try {
+              return iface.parseLog(e);
+            } catch (error) {
+              return null;
+            }
+          })
+          .find((e: any) => e && e.name === 'Withdraw')?.args;
+
+        console.log('withdrawNativeToken:', result);
+        expect(formatBigInt(result.shares)).toEqual(sharesToWithdraw);
+      });
+  });
+  it.skip('withdrawWithErc20Wrapping', async () => {
+    await withdrawWithErc20Wrapping(account, sharesToWithdraw, vault.address, wallet, vault.dex)
+      .then((e) => e.wait())
+      .then((a) => {
+        const result: any = a!.logs
+          .map((e: any) => {
+            try {
+              return iface.parseLog(e);
+            } catch (error) {
+              return null;
+            }
+          })
+          .find((e: any) => e && e.name === 'Withdraw')?.args;
+
+        console.log('withdrawWithErc20Wrapping:', result);
+        expect(formatBigInt(result.shares)).toEqual(sharesToWithdraw);
+      });
+  });
 });
 
 describe('GraphQL', () => {
-  // it('GetIchiVaultInfo', async () => {
-  //   const vaultInfo = await getIchiVaultInfo(vault.chainId, vault.dex, vault.address, provider);
-  //   console.log({vaultInfo})
-  //   expect(vaultInfo).toBeTruthy();
-  // });
-  // it('Get vaults by tokens', async () => {
-  //   const vaultsByTokens = await getVaultsByTokens(vault.chainId, vault.dex, tokens.depositToken, tokens.pairedToken);
-  //   console.log({vaultsByTokens})
+  it('GetIchiVaultInfo', async () => {
+    const vaultInfo = await getIchiVaultInfo(vault.chainId, vault.dex, vault.address, provider);
+    expect(vaultInfo).toBeTruthy();
+  });
+  it('Get vaults by tokens', async () => {
+    const vaultsByTokens = await getVaultsByTokens(vault.chainId, vault.dex, tokens.depositToken, tokens.pairedToken);
 
-  //   expect(vaultsByTokens).toBeTruthy();
-  // });
-  // it('Get vaults by pool', async () => {
-  //   const vaultsByPool = await getVaultsByPool(pool.address, pool.chainId, pool.dex);
-  //   console.log({vaultsByPool})
+    expect(vaultsByTokens).toBeTruthy();
+  });
+  it('Get vaults by pool', async () => {
+    const vaultsByPool = await getVaultsByPool(pool.address, pool.chainId, pool.dex);
 
-  //   expect(vaultsByPool).toBeTruthy();
-  // });
+    expect(vaultsByPool).toBeTruthy();
+  });
 });
 
-// describe('Dexes', () => {
-  // it('getSupportedDexes', async () => {
-  //   const dexes = getSupportedDexes(vault.chainId);
-  //   console.log({dexes})
-  //   expect(dexes.length).toBeGreaterThan(0);
-  // });
-  // it('getChainsForDex', async () => {
-  //   const chains = getChainsForDex(vault.dex);
-  //   console.log({chains})
-  //   expect(chains.length).toBeGreaterThan(0);
-  // });
-// });
+describe('Dexes', () => {
+  it('getSupportedDexes', async () => {
+    const dexes = getSupportedDexes(vault.chainId);
+    expect(dexes.length).toBeGreaterThan(0);
+  });
+  it('getChainsForDex', async () => {
+    const chains = getChainsForDex(vault.dex);
+    expect(chains.length).toBeGreaterThan(0);
+  });
+});
 
 describe('Rewards', () => {
-  it('getRewardInfo', async () => {
+  it.skip('getRewardInfo', async () => {
     const rewardInfo = await getRewardInfo(vault.chainId, vault.dex, vault.address);
-    console.log({rewardInfo})
 
     expect(rewardInfo.id).toBeDefined();
   });
-  it('getAllRewardInfo', async () => {
+  it.skip('getAllRewardInfo', async () => {
     const allRewardInfo = await getAllRewardInfo(vault.chainId, vault.dex);
-    console.log({allRewardInfo})
 
     expect(allRewardInfo.length).toBeGreaterThan(0);
   });
-  it('getUserRewards', async () => {
+  it.skip('getUserRewards', async () => {
     const userRewards = await getUserRewards(account, vault.address, provider, vault.dex);
-    console.log({userRewards})
 
     expect(Number(userRewards[0].rewardAmount)).toBeGreaterThan(0);
   });
-  // it.skip('claimRewards', async () => {
-  //   const tx = await claimRewards(account, vault.address, provider, vault.dex);
-  //   const a = await tx.wait();
+  it.skip('claimRewards', async () => {
+    const tx = await claimRewards(account, vault.address, wallet, vault.dex);
+    const a = await tx.wait();
 
-  //   a!.logs.map((e: any) => {
-  //     try {
-  //       console.log('iface.parseLog(e):', iface.parseLog(e));
-  //       return iface.parseLog(e);
-  //     } catch (error) {
-  //       return null;
-  //     }
-  //   });
-  // });
-  it('getAllUserRewards', async () => {
+    a!.logs.map((e: any) => {
+      try {
+        console.log('iface.parseLog(e):', iface.parseLog(e));
+        return iface.parseLog(e);
+      } catch (error) {
+        return null;
+      }
+    });
+  });
+  it.skip('getAllUserRewards', async () => {
     const rewards = await getAllUserRewards(account, provider, vault.dex);
     console.log({rewards})
 
@@ -407,74 +445,74 @@ describe('Rewards', () => {
 });
 
 describe('Factory Config', () => {
-  // it('getConfigByFactory returns config for valid factory', () => {
-  //   // Use Base Aerodrome factory address
-  //   const factoryAddress = '0xf6B5Ab192F2696921F60a1Ff00b99596C4045FA6';
-  //   const config = getConfigByFactory(SupportedChainId.base, factoryAddress);
+  it('getConfigByFactory returns config for valid factory', () => {
+    // Use Base Aerodrome factory address
+    const factoryAddress = '0xf6B5Ab192F2696921F60a1Ff00b99596C4045FA6';
+    const config = getConfigByFactory(SupportedChainId.base, factoryAddress);
 
-  //   expect(config).toBeDefined();
-  //   expect(config?.dex).toBe(SupportedDex.Aerodrome);
-  //   expect(config?.factoryAddress.toLowerCase()).toBe(factoryAddress.toLowerCase());
-  //   expect(config?.vaultDeployerAddress).toBeDefined();
-  //   expect(config?.graphUrl).toBeDefined();
-  //   expect(typeof config?.supportsCollectFees).toBe('boolean');
-  //   expect(typeof config?.isAlgebra).toBe('boolean');
-  // });
+    expect(config).toBeDefined();
+    expect(config?.dex).toBe(SupportedDex.Aerodrome);
+    expect(config?.factoryAddress.toLowerCase()).toBe(factoryAddress.toLowerCase());
+    expect(config?.vaultDeployerAddress).toBeDefined();
+    expect(config?.graphUrl).toBeDefined();
+    expect(typeof config?.supportsCollectFees).toBe('boolean');
+    expect(typeof config?.isAlgebra).toBe('boolean');
+  });
 
-  // it('getConfigByFactory returns config case-insensitively', () => {
-  //   // Use lowercase version of factory address
-  //   const factoryAddress = '0xf6b5ab192f2696921f60a1ff00b99596c4045fa6';
-  //   const config = getConfigByFactory(SupportedChainId.base, factoryAddress);
+  it('getConfigByFactory returns config case-insensitively', () => {
+    // Use lowercase version of factory address
+    const factoryAddress = '0xf6b5ab192f2696921f60a1ff00b99596c4045fa6';
+    const config = getConfigByFactory(SupportedChainId.base, factoryAddress);
 
-  //   expect(config).toBeDefined();
-  //   expect(config?.dex).toBe(SupportedDex.Aerodrome);
-  // });
+    expect(config).toBeDefined();
+    expect(config?.dex).toBe(SupportedDex.Aerodrome);
+  });
 
-  // it('getConfigByFactory returns undefined for invalid factory', () => {
-  //   const config = getConfigByFactory(SupportedChainId.base, '0x0000000000000000000000000000000000000000');
+  it('getConfigByFactory returns undefined for invalid factory', () => {
+    const config = getConfigByFactory(SupportedChainId.base, '0x0000000000000000000000000000000000000000');
 
-  //   expect(config).toBeUndefined();
-  // });
+    expect(config).toBeUndefined();
+  });
 
-  // it('getConfigByFactory returns undefined for invalid chain', () => {
-  //   const factoryAddress = '0xf6B5Ab192F2696921F60a1Ff00b99596C4045FA6';
-  //   const config = getConfigByFactory(999999 as SupportedChainId, factoryAddress);
+  it('getConfigByFactory returns undefined for invalid chain', () => {
+    const factoryAddress = '0xf6B5Ab192F2696921F60a1Ff00b99596C4045FA6';
+    const config = getConfigByFactory(999999 as SupportedChainId, factoryAddress);
 
-  //   expect(config).toBeUndefined();
-  // });
+    expect(config).toBeUndefined();
+  });
 
-  // it('getAllFactoryConfigs returns all factories for a chain', () => {
-  //   const configs = getAllFactoryConfigs(SupportedChainId.base);
+  it('getAllFactoryConfigs returns all factories for a chain', () => {
+    const configs = getAllFactoryConfigs(SupportedChainId.base);
 
-  //   expect(configs.size).toBeGreaterThan(0);
+    expect(configs.size).toBeGreaterThan(0);
 
-  //   // Verify the structure of returned configs
-  //   const firstConfig = configs.values().next().value;
-  //   expect(firstConfig?.dex).toBeDefined();
-  //   expect(firstConfig?.factoryAddress).toBeDefined();
-  //   expect(firstConfig?.vaultDeployerAddress).toBeDefined();
-  //   expect(typeof firstConfig?.isAlgebra).toBe('boolean');
-  // });
+    // Verify the structure of returned configs
+    const firstConfig = configs.values().next().value;
+    expect(firstConfig?.dex).toBeDefined();
+    expect(firstConfig?.factoryAddress).toBeDefined();
+    expect(firstConfig?.vaultDeployerAddress).toBeDefined();
+    expect(typeof firstConfig?.isAlgebra).toBe('boolean');
+  });
 
-  // it('getAllFactoryConfigs returns empty map for invalid chain', () => {
-  //   const configs = getAllFactoryConfigs(999999 as SupportedChainId);
+  it('getAllFactoryConfigs returns empty map for invalid chain', () => {
+    const configs = getAllFactoryConfigs(999999 as SupportedChainId);
 
-  //   expect(configs.size).toBe(0);
-  // });
+    expect(configs.size).toBe(0);
+  });
 
-  // it('getAllFactoryConfigs keys are lowercase factory addresses', () => {
-  //   const configs = getAllFactoryConfigs(SupportedChainId.base);
+  it('getAllFactoryConfigs keys are lowercase factory addresses', () => {
+    const configs = getAllFactoryConfigs(SupportedChainId.base);
 
-  //   configs.forEach((value, key) => {
-  //     expect(key).toBe(key.toLowerCase());
-  //     expect(key).toBe(value.factoryAddress.toLowerCase());
-  //   });
-  // });
+    configs.forEach((value, key) => {
+      expect(key).toBe(key.toLowerCase());
+      expect(key).toBe(value.factoryAddress.toLowerCase());
+    });
+  });
 
-  // it('addressConfig is exported and has expected structure', () => {
-  //   expect(addressConfig).toBeDefined();
-  //   expect(addressConfig[SupportedChainId.base]).toBeDefined();
-  //   expect(addressConfig[SupportedChainId.base]?.[SupportedDex.Aerodrome]).toBeDefined();
-  //   expect(addressConfig[SupportedChainId.base]?.[SupportedDex.Aerodrome]?.factoryAddress).toBeDefined();
-  // });
+  it('addressConfig is exported and has expected structure', () => {
+    expect(addressConfig).toBeDefined();
+    expect(addressConfig[SupportedChainId.base]).toBeDefined();
+    expect(addressConfig[SupportedChainId.base]?.[SupportedDex.Aerodrome]).toBeDefined();
+    expect(addressConfig[SupportedChainId.base]?.[SupportedDex.Aerodrome]?.factoryAddress).toBeDefined();
+  });
 });
