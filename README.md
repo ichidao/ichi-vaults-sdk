@@ -1279,6 +1279,7 @@ enum SupportedDex {
   Agni = 'Agni',
   Ascent = 'Ascent',
   Atlantis = 'Anlantis',
+  Aux = 'Aux',
   Bitzy = 'Bitzy',
   Blueprint = 'Blueprint',
   Bonzo = 'Bonzo',
