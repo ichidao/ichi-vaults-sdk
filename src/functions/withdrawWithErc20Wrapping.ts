@@ -1,3 +1,5 @@
+/* eslint-disable import/prefer-default-export */
+/* eslint-disable import/no-extraneous-dependencies */
 import { ContractTransaction, Overrides } from '@ethersproject/contracts';
 import { JsonRpcProvider } from '@ethersproject/providers';
 import { BigNumber } from 'ethers';

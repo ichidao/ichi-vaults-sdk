@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable import/no-extraneous-dependencies */
 /* eslint-disable no-undef */
 
@@ -118,9 +119,23 @@ describe('Vault', () => {
 
   it.skip('approveToken', async () => {
     let approve: ethers.ContractTransaction | null = null;
-    approve = await approveToken(account, '0xd7d4d91d64a6061fa00a94e2b3a2d2a5fb677849', vault.address, provider, vault.dex, amount1);
+    approve = await approveToken(
+      account,
+      '0xd7d4d91d64a6061fa00a94e2b3a2d2a5fb677849',
+      vault.address,
+      provider,
+      vault.dex,
+      amount1,
+    );
     await approve.wait();
-    const isApproved = await isTokenApproved(account, '0xd7d4d91d64a6061fa00a94e2b3a2d2a5fb677849', amount1, vault.address, provider, vault.dex);
+    const isApproved = await isTokenApproved(
+      account,
+      '0xd7d4d91d64a6061fa00a94e2b3a2d2a5fb677849',
+      amount1,
+      vault.address,
+      provider,
+      vault.dex,
+    );
     expect(isApproved).toEqual(true);
   });
 
@@ -208,7 +223,7 @@ describe('Vault', () => {
   it.skip('depositWithHtsWrapping', async () => {
     const isAllowed0 = await isTokenAllowed(0, vault.address, provider, vault.dex);
     const isAllowed1 = await isTokenAllowed(1, vault.address, provider, vault.dex);
-    console.log({isAllowed0}, {isAllowed1});
+    console.log({ isAllowed0 }, { isAllowed1 });
 
     const vaultFromQuery = await getIchiVaultInfo(vault.chainId, vault.dex, vault.address, provider);
     if (!vaultFromQuery)

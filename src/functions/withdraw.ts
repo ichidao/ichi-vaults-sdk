@@ -1,3 +1,4 @@
+/* eslint-disable import/no-extraneous-dependencies */
 /* eslint-disable import/prefer-default-export */
 
 import { ContractTransaction, Overrides } from '@ethersproject/contracts';
