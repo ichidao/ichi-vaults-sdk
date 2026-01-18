@@ -162,6 +162,15 @@ export const addressConfig: Record<SupportedChainId, Config> = {
       isAlgebra: false,
       ammVersion: AMM_VERSIONS.VELODROME,
     },
+    [SupportedDex.Aux]: {
+      factoryAddress: '0x8371E865eB806631BE237c392C429E2e0c5f8671',
+      depositGuard: {
+        address: '0x92678D60e3d232307c6C7040CAa8acde8a4FA3a5',
+        version: 2,
+      },
+      vaultDeployerAddress: '0x7d11De61c219b70428Bb3199F0DD88bA9E76bfEE',
+      isAlgebra: false,
+    },
     [SupportedDex.Equalizer]: {
       factoryAddress: '0xfBf38920cCbCFF7268Ad714ae5F9Fad6dF607065',
       depositGuard: {

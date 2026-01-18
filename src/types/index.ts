@@ -68,6 +68,7 @@ export enum SupportedDex {
   Agni = 'Agni',
   Ascent = 'Ascent',
   Atlantis = 'Atlantis',
+  Aux = 'Aux',
   Bitzy = 'Bitzy',
   Blueprint = 'Blueprint',
   Bonzo = 'Bonzo',

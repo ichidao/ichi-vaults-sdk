@@ -109,6 +109,13 @@ export const graphUrls: Record<SupportedChainId, dexGraph> = {
       supportsCollectFees: true,
       version: 2,
     },
+    [SupportedDex.Aux]: {
+      url: 'https://api.studio.thegraph.com/query/88584/base-v-2-aux-uniswap/version/latest',
+      publishedUrl:
+        'https://gateway-arbitrum.network.thegraph.com/api/[api-key]/subgraphs/id/6VPXnjNNHVD4pF42txnerqA8zjarFcLFcT6hjmLKurX4',
+      supportsCollectFees: true,
+      version: 2,
+    },
     [SupportedDex.Equalizer]: {
       url: 'https://api.studio.thegraph.com/query/88584/base-v1-equalizer/version/latest',
       publishedUrl:
