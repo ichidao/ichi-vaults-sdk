@@ -23,6 +23,7 @@ This sdk contains collection of functions to interact with IchiVault's smart con
         * [`getActualDepositToken()`](#8c-getActualDepositToken)
         * [`depositWithHtsWrapping()`](#8d-depositWithHtsWrapping)
         * [`withdrawWithErc20Wrapping()`](#8e-withdrawWithErc20Wrapping)
+        * [`withdrawNativeTokenWithErc20Wrapping()`](#8f-withdrawNativeTokenWithErc20Wrapping)
         * [`isDepositTokenApproved()`](#9-isDepositTokenApproved)
         * [`isTokenAllowed()`](#10-isTokenAllowed)
         * [`getMaxDepositAmount()`](#11-getMaxDepositAmount)
@@ -465,7 +466,7 @@ const isApproved: boolean = await isTokenApproved(
 )
 ```
 
-#### 8c. `getActualDepositToken()` - Bonzo on Hedera Only
+#### 8c. `getActualDepositToken()`
 
 | param | type |  default | required
 | -------- | -------- | -------- | --------
@@ -489,7 +490,7 @@ const actualToken = await getActualDepositToken(depositToken, web3Provider);
 // actualToken will be the ERC20 counterpart if one exists, otherwise the original token
 ```
 
-#### 8d. `depositWithHtsWrapping()` - Bonzo on Hedera Only
+#### 8d. `depositWithHtsWrapping()`
 
 | param | type |  default | required
 | -------- | -------- | -------- | --------
@@ -536,7 +537,7 @@ const txnDetails = await depositWithHtsWrapping(
 )
 ```
 
-#### 8e. `withdrawWithErc20Wrapping()` - Bonzo on Hedera Only
+#### 8e. `withdrawWithErc20Wrapping()`
 
 | param | type |  default | required
 | -------- | -------- | -------- | --------
@@ -576,6 +577,55 @@ let shares = Number(totalUserShares) * 0.5 // 50% of user share balance
 await approveVaultToken(accountAddress, vaultAddress, web3Provider, dex, shares);
 
 const txnDetails = await withdrawWithErc20Wrapping(
+    accountAddress,
+    shares,
+    vaultAddress,
+    web3Provider,
+    dex,
+    1 // acceptable slippage (percent)
+)
+```
+
+#### 8f. `withdrawNativeTokenWithErc20Wrapping()`
+
+| param | type |  default | required
+| -------- | -------- | -------- | --------
+| accountAddress   | string | - | true
+| shares           | string \| number \| BigNumber | - | true
+| vaultAddress   | string | - | true
+| jsonProvider      | [JsonRpcProvider](https://github.com/ethers-io/ethers.js/blob/f97b92bbb1bde22fcc44100af78d7f31602863ab/packages/providers/src.ts/json-rpc-provider.ts#L393) | - | true
+| dex   | SupportedDex | - | true
+| percentSlippage   | number | 1 | false
+| overrides         | [Overrides](https://github.com/ethers-io/ethers.js/blob/f97b92bbb1bde22fcc44100af78d7f31602863ab/packages/contracts/lib/index.d.ts#L7)  | undefined | false
+
+<br/>
+
+> **Note:** This function is only available for Bonzo vaults on the Hedera chain. Using it with other vaults or chains will throw an error.
+
+This function facilitates withdrawals from Bonzo vaults on Hedera with automatic unwrapping of HTS tokens to their ERC20 counterparts, while also forwarding the native token (HBAR) directly to the user instead of wrapped HBAR. This is useful when one of the vault tokens is wrapped HBAR and you want to receive native HBAR. Ensure to use the `approveVaultToken()` function before invoking this function.
+
+```typescript
+import { Web3Provider } from '@ethersproject/providers';
+import { getUserBalance, withdrawNativeTokenWithErc20Wrapping, approveVaultToken, SupportedDex } from '@ichidao/ichi-vaults-sdk';
+
+const web3Provider = new Web3Provider(YOUR_WEB3_PROVIDER);
+const vaultAddress = "0x3ac9...a5f132"
+const dex = SupportedDex.Bonzo
+const accountAddress = "0xaaaa...aaaaaa"
+
+const totalUserShares: string = await getUserBalance(
+    accountAddress,
+    vaultAddress,
+    web3Provider,
+    dex
+)
+
+let shares = Number(totalUserShares) * 0.5 // 50% of user share balance
+
+// Approve vault tokens first
+await approveVaultToken(accountAddress, vaultAddress, web3Provider, dex, shares);
+
+const txnDetails = await withdrawNativeTokenWithErc20Wrapping(
     accountAddress,
     shares,
     vaultAddress,
