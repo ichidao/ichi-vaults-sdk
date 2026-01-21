@@ -620,7 +620,7 @@ export const addressConfig: Record<SupportedChainId, Config> = {
     [SupportedDex.Bonzo]: {
       factoryAddress: '0x822b0bE4958ab5b4A48DA3c5f68Fc54846093618',
       depositGuard: {
-        address: '0xCCD6D4a3308cb318BFFebF03030585cF40A6cfa2', // with HTS Wrapping
+        address: '0xCEc8716cdd60856eaCaa74d499Abd14AE34B7dA8', // with HTS Wrapping new
         version: 2,
       },
       vaultDeployerAddress: '0xC159b19C5bd0E4a0709eC13C1303Ff2Bb67F7145',

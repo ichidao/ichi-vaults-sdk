@@ -47,6 +47,7 @@ import {
   addressConfig,
   depositWithHtsWrapping,
   withdrawWithErc20Wrapping,
+  withdrawNativeTokenWithErc20Wrapping,
   approveToken,
   isTokenApproved,
 } from '../index';
@@ -61,7 +62,7 @@ const wallet = new Wallet(process.env.PRIVATE_KEY!, provider);
 const account = process.env.ACCOUNT!;
 
 const vault = {
-  address: '0x4431a822e59e12cea7fa614791ae39fe8b931d0f',
+  address: '0xe716bb7cf4cf69f94d3ce4cf0115e76368107fca',
   chainId: SupportedChainId.hedera,
   dex: SupportedDex.Bonzo,
 };
@@ -78,9 +79,9 @@ const tokens = {
 };
 
 const iface = new ethers.Interface(ICHIVAULT_ABI);
-const amount1 = '10';
-const amount0 = '0';
-const sharesToWithdraw = '10';
+const amount0 = '0.5';
+const amount1 = '0';
+const sharesToWithdraw = '1.8e-16';
 const bigAmount = '1000';
 
 describe('Vault', () => {
@@ -106,9 +107,9 @@ describe('Vault', () => {
 
   it.skip('approve', async () => {
     let approve: ethers.ContractTransactionResponse | null = null;
-    approve = await approveDepositToken(account, 1, vault.address, wallet, vault.dex, amount1);
+    approve = await approveDepositToken(account, 0, vault.address, wallet, vault.dex, amount0);
     await approve.wait();
-    const isApproved = await isDepositTokenApproved(account, 1, amount1, vault.address, provider, vault.dex);
+    const isApproved = await isDepositTokenApproved(account, 0, amount0, vault.address, provider, vault.dex);
     expect(isApproved).toEqual(true);
   });
 
