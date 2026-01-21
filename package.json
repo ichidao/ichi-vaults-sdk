@@ -1,6 +1,6 @@
 {
   "name": "@ichidao/ichi-vaults-sdk",
-  "version": "0.1.43",
+  "version": "0.1.45",
   "description": "The ICHI Vaults SDK",
   "main": "dist/src/index.cjs.js",
   "module": "dist/src/index.esm.js",

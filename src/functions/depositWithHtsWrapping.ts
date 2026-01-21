@@ -67,10 +67,7 @@ export async function approveToken(
   return tokenContract.approve(depositGuardAddress, amountBN, { gasLimit });
 }
 
-export async function getActualDepositToken(
-  depositToken: string,
-  jsonProvider: JsonRpcProvider,
-): Promise<string> {
+export async function getActualDepositToken(depositToken: string, jsonProvider: JsonRpcProvider): Promise<string> {
   const erc20WrapperContract = getERC20WrapperContract(ERC20_WRAPPER_ADDRESS, jsonProvider);
   const erc20Counterpart = await erc20WrapperContract.erc20Counterpart(depositToken);
 
@@ -126,7 +123,14 @@ export async function depositWithHtsWrapping(
   // Check if the deposit token has an ERC20 counterpart
   const actualDepositToken = await getActualDepositToken(depositToken, jsonProvider);
 
-  const isApproved = await isTokenApproved(accountAddress, actualDepositToken, depositAmount, vaultAddress, jsonProvider, dex);
+  const isApproved = await isTokenApproved(
+    accountAddress,
+    actualDepositToken,
+    depositAmount,
+    vaultAddress,
+    jsonProvider,
+    dex,
+  );
   if (!isApproved) {
     throw new Error(
       `Deposit is not approved for token: ${actualDepositToken}, chain ${chainId}, vault ${vaultAddress}`,

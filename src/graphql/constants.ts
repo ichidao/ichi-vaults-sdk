@@ -380,13 +380,15 @@ export const graphUrls: Record<SupportedChainId, dexGraph> = {
   [SupportedChainId.flow]: {
     [SupportedDex.FlowSwap]: {
       url: 'https://api.goldsky.com/api/public/project_clynrq1h8gam301xx6vgngo9p/subgraphs/g2/flow-v2-flowswap/gn',
-      publishedUrl: 'https://api.goldsky.com/api/public/project_clynrq1h8gam301xx6vgngo9p/subgraphs/g2/flow-v2-flowswap/gn',
+      publishedUrl:
+        'https://api.goldsky.com/api/public/project_clynrq1h8gam301xx6vgngo9p/subgraphs/g2/flow-v2-flowswap/gn',
       supportsCollectFees: true,
       version: 2,
     },
     [SupportedDex.KittyPunch]: {
       url: 'https://api.goldsky.com/api/public/project_clynrq1h8gam301xx6vgngo9p/subgraphs/g2/flow-v2-kittypunch/gn',
-      publishedUrl: 'https://api.goldsky.com/api/public/project_clynrq1h8gam301xx6vgngo9p/subgraphs/g2/flow-v2-kittypunch/gn',
+      publishedUrl:
+        'https://api.goldsky.com/api/public/project_clynrq1h8gam301xx6vgngo9p/subgraphs/g2/flow-v2-kittypunch/gn',
       supportsCollectFees: true,
       version: 2,
     },
