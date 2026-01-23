@@ -317,6 +317,15 @@ export const graphUrls: Record<SupportedChainId, dexGraph> = {
       version: 2,
     },
   },
+  [SupportedChainId.citrea]: {
+    [SupportedDex.Satsuma]: {
+      url: 'https://api.goldsky.com/api/public/project_clynrq1h8gam301xx6vgngo9p/subgraphs/g2/citrea-v2-satsuma/gn',
+      publishedUrl:
+        'https://api.goldsky.com/api/public/project_clynrq1h8gam301xx6vgngo9p/subgraphs/g2/citrea-v2-satsuma/gn',
+      supportsCollectFees: true,
+      version: 2,
+    },
+  },
   [SupportedChainId.citrea_testnet]: {
     [SupportedDex.Satsuma]: {
       url: 'https://api.goldsky.com/api/public/project_clynrq1h8gam301xx6vgngo9p/subgraphs/g2/citrea-testnet-v2-satsuma/gn',

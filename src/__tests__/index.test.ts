@@ -57,20 +57,20 @@ import { getTokenDecimals } from '../functions/_totalBalances';
 
 // In ethers v6, use JsonRpcProvider directly for read operations
 // For write operations (transactions), a Wallet with the private key is needed
-const provider = new JsonRpcProvider(process.env.PROVIDER_URL!, SupportedChainId.hedera);
+const provider = new JsonRpcProvider(process.env.PROVIDER_URL!, SupportedChainId.citrea);
 const wallet = new Wallet(process.env.PRIVATE_KEY!, provider);
 const account = process.env.ACCOUNT!;
 
 const vault = {
-  address: '0xe716bb7cf4cf69f94d3ce4cf0115e76368107fca',
-  chainId: SupportedChainId.hedera,
-  dex: SupportedDex.Bonzo,
+  address: '0x0b3e6074502301d4cf62f9748d38ca781d95f944',
+  chainId: SupportedChainId.citrea,
+  dex: SupportedDex.Satsuma,
 };
 
 const pool = {
   address: '0xE539b14a87D3Db4a2945ac99b29A69DE61531592',
-  chainId: SupportedChainId.hedera,
-  dex: SupportedDex.Bonzo,
+  chainId: SupportedChainId.citrea,
+  dex: SupportedDex.Satsuma,
 };
 
 const tokens = {
