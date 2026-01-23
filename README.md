@@ -1421,6 +1421,7 @@ enum SupportedChainId {
   botanix = 3637,
   bsc = 56,
   celo = 42220,
+  citrea = 4114,
   citrea_testnet = 5115,
   cronos = 25,
   eon = 7332,

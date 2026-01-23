@@ -465,6 +465,18 @@ export const addressConfig: Record<SupportedChainId, Config> = {
       ammVersion: AMM_VERSIONS.VELODROME,
     },
   },
+  [SupportedChainId.citrea]: {
+    [SupportedDex.Satsuma]: {
+      factoryAddress: '0x1E3B3F9562adaF0351A558f8A1cE281E5a2623AC',
+      depositGuard: {
+        address: '0x24430E837efB64EF87bb32be03437fc6005EEF74',
+        version: 2,
+      },
+      vaultDeployerAddress: '0x90434237670C37bfbBadF61EBbbf60be70c214dD',
+      isAlgebra: true,
+      ammVersion: AMM_VERSIONS.ALGEBRA_INTEGRAL,
+    },
+  },
   [SupportedChainId.citrea_testnet]: {
     [SupportedDex.Satsuma]: {
       factoryAddress: '0x8cCd02E769e6A668a447Bd15e134C31bEccd8182',
@@ -1085,6 +1097,7 @@ export const MULTICALL_ADDRESSES: Partial<Record<SupportedChainId, string>> = {
   [SupportedChainId.base_sepolia]: '0xd867e273eAbD6c853fCd0Ca0bFB6a3aE6491d2C1',
   [SupportedChainId.berachain]: '0x89ff70257bc747F310bB538eeFC46aDD763e75d8',
   [SupportedChainId.botanix]: '0xE89F840427D043ED96d70D3b63916776216f55D6',
+  [SupportedChainId.citrea]: '0xa730caa84b6e72bb51ed5b2a1b08bc6031a95294',
   [SupportedChainId.citrea_testnet]: '0xB4F9b6b019E75CBe51af4425b2Fc12797e2Ee2a1',
   [SupportedChainId.cronos]: '0x088ee1FB556Cbd24383AFE3ED9812235Ee931e13',
   [SupportedChainId.haven1_devnet]: '0xe573920139a208989d83C57ea48837C6285F2cd3',
