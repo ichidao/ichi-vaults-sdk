@@ -20,6 +20,8 @@ This sdk contains collection of functions to interact with IchiVault's smart con
         * [`withdraw()`](#6-withdraw)
         * [`withdrawWithSlippage()`](#7-withdraw)
         * [`withdrawNativeToken()`](#8-withdraw)
+        * [`withdrawWithErc20Wrapping()`](#8a-withdrawWithErc20Wrapping)
+        * [`withdrawNativeTokenWithErc20Wrapping()`](#8b-withdrawNativeTokenWithErc20Wrapping)
         * [`isDepositTokenApproved()`](#9-isDepositTokenApproved)
         * [`isTokenAllowed()`](#10-isTokenAllowed)
         * [`getMaxDepositAmount()`](#11-getMaxDepositAmount)
@@ -438,6 +440,106 @@ const txnDetails = await withdraw(
     vaultAddress,
     web3Provider,
     dex
+)
+```
+
+#### 8a. `withdrawWithErc20Wrapping()`
+
+| param | type |  default | required
+| -------- | -------- | -------- | --------
+| accountAddress   | string | - | true
+| shares           | string \| number \| bigint | - | true
+| vaultAddress   | string | - | true
+| signer      | [Signer](https://docs.ethers.org/v6/api/providers/#Signer) | - | true
+| dex   | SupportedDex | - | true
+| percentSlippage   | number | 1 | false
+| overrides         | [Overrides](https://docs.ethers.org/v6/api/contract/#Overrides)  | undefined | false
+
+<br/>
+
+> **Note:** This function is only available for Bonzo vaults on the Hedera chain. Using it with other vaults or chains will throw an error.
+
+This function facilitates withdrawals from Bonzo vaults on Hedera with automatic unwrapping of HTS tokens to their ERC20 counterparts. If the vault tokens are HTS wrapped, they will be automatically converted to ERC20 tokens during withdrawal. Ensure to use the `approveVaultToken()` function before invoking this function.
+
+```typescript
+import { JsonRpcProvider, Wallet } from 'ethers';
+import { getUserBalance, withdrawWithErc20Wrapping, approveVaultToken, SupportedDex } from '@ichidao/ichi-vaults-sdk';
+
+const provider = new JsonRpcProvider(rpcUrl);
+const signer = new Wallet(privateKey, provider);
+const vaultAddress = "0x3ac9...a5f132"
+const dex = SupportedDex.Bonzo
+const accountAddress = "0xaaaa...aaaaaa"
+
+const totalUserShares: string = await getUserBalance(
+    accountAddress,
+    vaultAddress,
+    provider,
+    dex
+)
+
+let shares = Number(totalUserShares) * 0.5 // 50% of user share balance
+
+// Approve vault tokens first
+await approveVaultToken(accountAddress, vaultAddress, signer, dex, shares);
+
+const txnDetails = await withdrawWithErc20Wrapping(
+    accountAddress,
+    shares,
+    vaultAddress,
+    signer,
+    dex,
+    1 // acceptable slippage (percent)
+)
+```
+
+#### 8b. `withdrawNativeTokenWithErc20Wrapping()`
+
+| param | type |  default | required
+| -------- | -------- | -------- | --------
+| accountAddress   | string | - | true
+| shares           | string \| number \| bigint | - | true
+| vaultAddress   | string | - | true
+| signer      | [Signer](https://docs.ethers.org/v6/api/providers/#Signer) | - | true
+| dex   | SupportedDex | - | true
+| percentSlippage   | number | 1 | false
+| overrides         | [Overrides](https://docs.ethers.org/v6/api/contract/#Overrides)  | undefined | false
+
+<br/>
+
+> **Note:** This function is only available for Bonzo vaults on the Hedera chain. Using it with other vaults or chains will throw an error.
+
+This function facilitates withdrawals from Bonzo vaults on Hedera with automatic unwrapping of HTS tokens to their ERC20 counterparts, while also forwarding the native token (HBAR) directly to the user instead of wrapped HBAR. This is useful when one of the vault tokens is wrapped HBAR and you want to receive native HBAR. Ensure to use the `approveVaultToken()` function before invoking this function.
+
+```typescript
+import { JsonRpcProvider, Wallet } from 'ethers';
+import { getUserBalance, withdrawNativeTokenWithErc20Wrapping, approveVaultToken, SupportedDex } from '@ichidao/ichi-vaults-sdk';
+
+const provider = new JsonRpcProvider(rpcUrl);
+const signer = new Wallet(privateKey, provider);
+const vaultAddress = "0x3ac9...a5f132"
+const dex = SupportedDex.Bonzo
+const accountAddress = "0xaaaa...aaaaaa"
+
+const totalUserShares: string = await getUserBalance(
+    accountAddress,
+    vaultAddress,
+    provider,
+    dex
+)
+
+let shares = Number(totalUserShares) * 0.5 // 50% of user share balance
+
+// Approve vault tokens first
+await approveVaultToken(accountAddress, vaultAddress, signer, dex, shares);
+
+const txnDetails = await withdrawNativeTokenWithErc20Wrapping(
+    accountAddress,
+    shares,
+    vaultAddress,
+    signer,
+    dex,
+    1 // acceptable slippage (percent)
 )
 ```
 
@@ -1227,6 +1329,7 @@ enum SupportedChainId {
   botanix = 3637,
   bsc = 56,
   celo = 42220,
+  citrea = 4114,
   citrea_testnet = 5115,
   cronos = 25,
   eon = 7332,
