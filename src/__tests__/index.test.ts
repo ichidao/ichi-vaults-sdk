@@ -61,27 +61,28 @@ import { getTokenDecimals } from '../functions/_totalBalances';
 const hdWalletProvider = new HDWalletProvider([process.env.PRIVATE_KEY!], process.env.PROVIDER_URL!, 0, 1);
 
 const provider = new Web3Provider(hdWalletProvider, {
-  chainId: SupportedChainId.hedera,
-  name: 'hedera',
+  chainId: SupportedChainId.bsc,
+  name: 'bsc',
 });
 const account = process.env.ACCOUNT!;
 
 const vault = {
-  address: '0xe716bb7cf4cf69f94d3ce4cf0115e76368107fca',
-  chainId: SupportedChainId.hedera,
-  dex: SupportedDex.Bonzo,
+  address: '0xb9bC3711e4d3807FAB47dc6EA32C15b8033B9A32',
+  chainId: SupportedChainId.bsc,
+  dex: SupportedDex.ThenaV4Rewards,
 };
 
 const pool = {
-  address: '0x1123E75b71019962CD4d21b0F3018a6412eDb63C',
-  chainId: SupportedChainId.hedera,
-  dex: SupportedDex.Bonzo,
+  address: '0x58F04AAda1051885a3C4e296aaB0A454Ea1233A3',
+  chainId: SupportedChainId.bsc,
+  dex: SupportedDex.ThenaV4Rewards,
 };
 
 const tokens = {
-  pairedToken: '0x0EF4A107b48163ab4b57FCa36e1352151a587Be4',
+  pairedToken: '0x2170Ed0880ac9A755fd29B2688956BD959F933F8',
   depositToken: '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c',
 };
+
 
 const iface = new ethers.utils.Interface(ICHIVAULT_ABI);
 const amount0 = '0.5';

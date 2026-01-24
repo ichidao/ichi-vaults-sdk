@@ -295,6 +295,13 @@ export const graphUrls: Record<SupportedChainId, dexGraph> = {
       supportsCollectFees: true,
       version: 2,
     },
+    [SupportedDex.ThenaV4Rewards]: {
+      url: 'https://api.studio.thegraph.com/query/88584/bsc-v-4-thena-rw/version/latest',
+      publishedUrl:
+        'https://gateway-arbitrum.network.thegraph.com/api/[api-key]/subgraphs/id/oQ2dLgNeZYJcn8gqViDRrEm9r4vkXwbWgZaeUKqYw8h',
+      supportsCollectFees: true,
+      version: 2,
+    },
   },
   [SupportedChainId.celo]: {
     [SupportedDex.Ubeswap]: {

@@ -1517,6 +1517,7 @@ enum SupportedDex {
   Thena = 'Thena',
   ThenaV3Fees = 'ThenaV3Fees',
   ThenaV3Rewards = 'ThenaV3Rewards',
+  ThenaV4Rewards = 'ThenaV4Rewards',
   Thirdfy = 'Thirdfy',
   Thruster = 'Thruster',
   Trebleswap = 'Trebleswap',
