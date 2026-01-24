@@ -57,25 +57,25 @@ import { getTokenDecimals } from '../functions/_totalBalances';
 
 // In ethers v6, use JsonRpcProvider directly for read operations
 // For write operations (transactions), a Wallet with the private key is needed
-const provider = new JsonRpcProvider(process.env.PROVIDER_URL!, SupportedChainId.citrea);
+const provider = new JsonRpcProvider(process.env.PROVIDER_URL!, SupportedChainId.bsc);
 const wallet = new Wallet(process.env.PRIVATE_KEY!, provider);
 const account = process.env.ACCOUNT!;
 
 const vault = {
-  address: '0x0b3e6074502301d4cf62f9748d38ca781d95f944',
-  chainId: SupportedChainId.citrea,
-  dex: SupportedDex.Satsuma,
+  address: '0xb9bC3711e4d3807FAB47dc6EA32C15b8033B9A32',
+  chainId: SupportedChainId.bsc,
+  dex: SupportedDex.ThenaV4Rewards,
 };
 
 const pool = {
-  address: '0xE539b14a87D3Db4a2945ac99b29A69DE61531592',
-  chainId: SupportedChainId.citrea,
-  dex: SupportedDex.Satsuma,
+  address: '0x58F04AAda1051885a3C4e296aaB0A454Ea1233A3',
+  chainId: SupportedChainId.bsc,
+  dex: SupportedDex.ThenaV4Rewards,
 };
 
 const tokens = {
-  pairedToken: '0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913',
-  depositToken: '0xD302A92fb82EA59aa676Ae3d5799AC296AFa7390',
+  pairedToken: '0x2170Ed0880ac9A755fd29B2688956BD959F933F8',
+  depositToken: '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c',
 };
 
 const iface = new ethers.Interface(ICHIVAULT_ABI);
