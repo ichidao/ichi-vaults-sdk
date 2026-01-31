@@ -259,6 +259,16 @@ export const addressConfig: Record<SupportedChainId, Config> = {
       isAlgebra: true,
       ammVersion: AMM_VERSIONS.ALGEBRA_INTEGRAL,
     },
+    [SupportedDex.TrebleswapV2]: {
+      factoryAddress: '0xB7864cfC3F1d36F8D6d87137f7c4Fc0a2dCc39A3',
+      depositGuard: {
+        address: '0xe0b5A8f510e81C65B649657507b1896E699F53c7',
+        version: 2,
+      },
+      vaultDeployerAddress: '0x7d11De61c219b70428Bb3199F0DD88bA9E76bfEE',
+      isAlgebra: true,
+      ammVersion: AMM_VERSIONS.ALGEBRA_INTEGRAL,
+    },
     [SupportedDex.UniswapV3]: {
       factoryAddress: '0xaBe5B5AC472Ead17B4B4CaC7fAF42430748ab3b3',
       depositGuard: {

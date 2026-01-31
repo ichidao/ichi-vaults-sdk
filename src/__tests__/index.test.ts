@@ -61,31 +61,30 @@ import { getTokenDecimals } from '../functions/_totalBalances';
 const hdWalletProvider = new HDWalletProvider([process.env.PRIVATE_KEY!], process.env.PROVIDER_URL!, 0, 1);
 
 const provider = new Web3Provider(hdWalletProvider, {
-  chainId: SupportedChainId.bsc,
-  name: 'bsc',
+  chainId: SupportedChainId.base,
+  name: 'base',
 });
 const account = process.env.ACCOUNT!;
 
 const vault = {
-  address: '0xb9bC3711e4d3807FAB47dc6EA32C15b8033B9A32',
-  chainId: SupportedChainId.bsc,
-  dex: SupportedDex.ThenaV4Rewards,
+  address: '0x88213a99d59e73763230342652104cA5c8430d10',
+  chainId: SupportedChainId.base,
+  dex: SupportedDex.TrebleswapV2,
 };
 
 const pool = {
-  address: '0x58F04AAda1051885a3C4e296aaB0A454Ea1233A3',
-  chainId: SupportedChainId.bsc,
-  dex: SupportedDex.ThenaV4Rewards,
+  address: '0x205918f0Cbf3d02fFFf97A472A24610b03bB7fF4',
+  chainId: SupportedChainId.base,
+  dex: SupportedDex.TrebleswapV2,
 };
 
 const tokens = {
-  pairedToken: '0x2170Ed0880ac9A755fd29B2688956BD959F933F8',
-  depositToken: '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c',
+  pairedToken: '0xB96450dCB16e4a30b999Cb5F4087bae9c0ffAc4e',
+  depositToken: '0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913',
 };
 
-
 const iface = new ethers.utils.Interface(ICHIVAULT_ABI);
-const amount0 = '0.5';
+const amount0 = '0.1';
 const amount1 = '0';
 const sharesToWithdraw = '1.8e-16';
 const bigAmount = '1000';
