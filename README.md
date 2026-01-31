@@ -1428,6 +1428,7 @@ enum SupportedDex {
   Thirdfy = 'Thirdfy',
   Thruster = 'Thruster',
   Trebleswap = 'Trebleswap',
+  TrebleswapV2 = 'TrebleswapV2',
   Ubeswap = 'Ubeswap',
   UniswapV3 = 'Uniswap V3',
   Velocore = 'Velocore',

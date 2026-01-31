@@ -116,6 +116,7 @@ export enum SupportedDex {
   Thirdfy = 'Thirdfy',
   Thruster = 'Thruster',
   Trebleswap = 'Trebleswap',
+  TrebleswapV2 = 'TrebleswapV2',
   Ubeswap = 'Ubeswap',
   UniswapNew = 'Uniswap New',
   UniswapV3 = 'Uniswap V3',
