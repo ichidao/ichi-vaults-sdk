@@ -710,6 +710,15 @@ export const addressConfig: Record<SupportedChainId, Config> = {
       isAlgebra: true,
       ammVersion: AMM_VERSIONS.ALGEBRA_INTEGRAL,
     },
+    [SupportedDex.ProjectX]: {
+      factoryAddress: '0xF0974cB26aB861221C16d4A93B1273Cd668ed0B3',
+      depositGuard: {
+        address: '0x8CB886A9F7e86d0429bB79aF468258e54735a23C',
+        version: 2,
+      },
+      vaultDeployerAddress: '0xd71D9b66875C7d57AD630ee58F82e5e76B227aaB',
+      isAlgebra: false,
+    },
   },
   [SupportedChainId.ink]: {
     [SupportedDex.Reservoir]: {
