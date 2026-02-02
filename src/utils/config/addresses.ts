@@ -489,7 +489,7 @@ export const addressConfig: Record<SupportedChainId, Config> = {
     [SupportedDex.Satsuma]: {
       factoryAddress: '0x1E3B3F9562adaF0351A558f8A1cE281E5a2623AC',
       depositGuard: {
-        address: '0x24430E837efB64EF87bb32be03437fc6005EEF74',
+        address: '0x968bD363728e85D696b2C981a12864E32337C2d0',
         version: 2,
       },
       vaultDeployerAddress: '0x90434237670C37bfbBadF61EBbbf60be70c214dD',
