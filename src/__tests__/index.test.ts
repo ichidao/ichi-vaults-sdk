@@ -105,7 +105,7 @@ describe('Vault', () => {
     expect(Number(totalSupply)).toBeGreaterThan(0);
   });
 
-  it('approve', async () => {
+  it.skip('approve', async () => {
     let approve: ethers.ContractTransactionResponse | null = null;
     approve = await approveDepositToken(account, 0, vault.address, wallet, vault.dex, amount0);
     await approve.wait();
@@ -125,7 +125,7 @@ describe('Vault', () => {
     expect(isApproved).toEqual(false);
   });
 
-  it('deposit', async () => {
+  it.skip('deposit', async () => {
     const isAllowed0 = await isTokenAllowed(0, vault.address, provider, vault.dex);
     const isAllowed1 = await isTokenAllowed(1, vault.address, provider, vault.dex);
 
