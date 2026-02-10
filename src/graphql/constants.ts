@@ -495,6 +495,13 @@ export const graphUrls: Record<SupportedChainId, dexGraph> = {
       supportsCollectFees: true,
       version: 2,
     },
+    [SupportedDex.ProjectX]: {
+      url: 'https://api.goldsky.com/api/public/project_clynrq1h8gam301xx6vgngo9p/subgraphs/g2/hyperevm-v2-projectx/gn',
+      publishedUrl:
+        'https://api.goldsky.com/api/public/project_clynrq1h8gam301xx6vgngo9p/subgraphs/g2/hyperevm-v2-projectx/gn',
+      supportsCollectFees: true,
+      version: 2,
+    },
   },
   [SupportedChainId.ink]: {
     [SupportedDex.Reservoir]: {

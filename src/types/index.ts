@@ -98,6 +98,7 @@ export enum SupportedDex {
   Ocelex = 'Ocelex',
   Pancakeswap = 'PancakeSwap',
   Pearl = 'Pearl',
+  ProjectX = 'ProjectX',
   Quickswap = 'QuickSwap',
   Ramses = 'Ramses',
   Reservoir = 'Reservoir',
