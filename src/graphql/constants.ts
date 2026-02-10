@@ -592,6 +592,15 @@ export const graphUrls: Record<SupportedChainId, dexGraph> = {
       supportsCollectFees: true,
     },
   },
+  [SupportedChainId.megaeth]: {
+    [SupportedDex.Kumbaya]: {
+      url: 'https://api.studio.thegraph.com/query/88584/megaeth-v-2-kumbaya/version/latest',
+      publishedUrl:
+        'https://gateway-arbitrum.network.thegraph.com/api/[api-key]/subgraphs/id/Cii4puahhoSVBLrvnSb938vQWKBwD2Zr2z9tBv9VPjEW',
+      supportsCollectFees: true,
+      version: 2,
+    },
+  },
   [SupportedChainId.mode]: {
     [SupportedDex.Kim]: {
       url: 'https://api.goldsky.com/api/public/project_clynrq1h8gam301xx6vgngo9p/subgraphs/ichi-org/mode-v1-kim/gn',
