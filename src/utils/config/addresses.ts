@@ -582,6 +582,16 @@ export const addressConfig: Record<SupportedChainId, Config> = {
       vaultDeployerAddress: '0x2d1918dBa43d55B9F0E2596aecC74826BbB7d668',
       isAlgebra: false,
     },
+    [SupportedDex.SparkDexV4]: {
+      factoryAddress: '0xAD8408D13381815fDb1B598bf162e7bE8740b780',
+      depositGuard: {
+        address: '0x03503AA94c1588abD9Df7f1c8B0e3c6e94fb6E36',
+        version: 2,
+      },
+      vaultDeployerAddress: '0x2d1918dBa43d55B9F0E2596aecC74826BbB7d668',
+      isAlgebra: true,
+      ammVersion: AMM_VERSIONS.ALGEBRA_INTEGRAL,
+    },
   },
   [SupportedChainId.flow]: {
     [SupportedDex.FlowSwap]: {
@@ -650,6 +660,15 @@ export const addressConfig: Record<SupportedChainId, Config> = {
       factoryAddress: '0x822b0bE4958ab5b4A48DA3c5f68Fc54846093618',
       depositGuard: {
         address: '0xCEc8716cdd60856eaCaa74d499Abd14AE34B7dA8', // with HTS Wrapping new
+        version: 2,
+      },
+      vaultDeployerAddress: '0xC159b19C5bd0E4a0709eC13C1303Ff2Bb67F7145',
+      isAlgebra: false,
+    },
+    [SupportedDex.Aux]: {
+      factoryAddress: '0x3A85eDF32EF87A67771A9Be4a0B93a07987FbBD6',
+      depositGuard: {
+        address: '0x7F4045Dc51EA17F33a8695c7C98E83da58c6418f',
         version: 2,
       },
       vaultDeployerAddress: '0xC159b19C5bd0E4a0709eC13C1303Ff2Bb67F7145',
