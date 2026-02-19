@@ -1420,6 +1420,7 @@ enum SupportedDex {
   Snap = 'Snap',
   SparkDex = 'SparkDex',
   SparkDexV1 = 'SparkDexV1',
+  SparkDexV4 = 'SparkDexV4',
   SpiritSwap = 'SpiritSwap',
   StellaSwap = 'StellaSwap',
   Sushiswap = 'SushiSwap',

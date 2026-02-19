@@ -399,6 +399,13 @@ export const graphUrls: Record<SupportedChainId, dexGraph> = {
         'https://api.goldsky.com/api/public/project_clynrq1h8gam301xx6vgngo9p/subgraphs/ichi-org/flare-v1-sparkdex/gn',
       supportsCollectFees: true,
     },
+    [SupportedDex.SparkDexV4]: {
+      url: 'https://api.goldsky.com/api/public/project_clynrq1h8gam301xx6vgngo9p/subgraphs/g2/flare-v4-sparkdex/gn',
+      publishedUrl:
+        'https://api.goldsky.com/api/public/project_clynrq1h8gam301xx6vgngo9p/subgraphs/g2/flare-v4-sparkdex/gn',
+      supportsCollectFees: true,
+      version: 2,
+    },
   },
   [SupportedChainId.flow]: {
     [SupportedDex.FlowSwap]: {
@@ -451,6 +458,13 @@ export const graphUrls: Record<SupportedChainId, dexGraph> = {
       url: 'https://api.goldsky.com/api/public/project_clynrq1h8gam301xx6vgngo9p/subgraphs/g2/hedera-v2-bonzo/gn',
       publishedUrl:
         'https://api.goldsky.com/api/public/project_clynrq1h8gam301xx6vgngo9p/subgraphs/g2/hedera-v2-bonzo/gn',
+      supportsCollectFees: true,
+      version: 2,
+    },
+    [SupportedDex.Aux]: {
+      url: 'https://api.goldsky.com/api/public/project_clynrq1h8gam301xx6vgngo9p/subgraphs/g2/hedera-v2-aux/gn',
+      publishedUrl:
+        'https://api.goldsky.com/api/public/project_clynrq1h8gam301xx6vgngo9p/subgraphs/g2/hedera-v2-aux/gn',
       supportsCollectFees: true,
       version: 2,
     },
